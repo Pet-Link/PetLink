@@ -1,14 +1,21 @@
 version: '3'
 services:
   web:
-    image: petlink
+    platform: linux/amd64
+    build: 
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
     volumes:
       - ./app:/app
     working_dir: /app
     command: python app.py
+    # if container gots stuck on restart remove the following line
+    # this line is for ensuring the web container to be up after db container even if it crashes earlier
+    restart: on-failure
   db:
+    platform: linux/amd64
     image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: password
