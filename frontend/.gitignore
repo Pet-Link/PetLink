@@ -1,0 +1,58 @@
+# Created by https://www.toptal.com/developers/gitignore/api/web,react
+# Edit at https://www.toptal.com/developers/gitignore?templates=web,react
+
+### react ###
+.DS_*
+*.log
+logs
+**/*.backup.*
+**/*.back.*
+
+node_modules
+bower_components
+
+*.sublime*
+
+psd
+thumb
+sketch
+
+### Web ###
+*.asp
+*.cer
+*.csr
+*.css
+*.htm
+*.html
+*.js
+*.jsp
+*.php
+*.rss
+*.wasm
+*.wat
+*.xhtml
+
+# End of https://www.toptal.com/developers/gitignore/api/web,react
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
