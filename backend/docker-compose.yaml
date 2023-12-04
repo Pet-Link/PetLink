@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    platform: linux/amd64
+    container_name: petlink_web
     build: 
       context: .
       dockerfile: Dockerfile
@@ -15,6 +15,7 @@ services:
     # this line is for ensuring the web container to be up after db container even if it crashes earlier
     restart: on-failure
   db:
+    container_name: petlink_db_mysql
     platform: linux/amd64
     image: mysql:5.7
     environment:
