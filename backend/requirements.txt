@@ -1,4 +1,5 @@
 Flask==2.2.2
+flask_cors
 mysqlclient
 mysql-connector-python
 flask_mysqldb
