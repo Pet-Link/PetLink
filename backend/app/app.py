@@ -1,27 +1,26 @@
 import re  
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
-import mysql.connector
+from flask_cors import CORS
+from database import db, get_connection
+from post import post
 
-app = Flask(__name__) 
+CORS(db)
 
-app.secret_key = 'abcdefgh'
+db.register_blueprint(post)
 
-connection = mysql.connector.connect(host='db',
-                                         database='petlink',
-                                         user='root',
-                                         password='password')
-
-@app.route('/')
+# Initialize Flask app
+@db.route('/')
 
 # login endpoint for REST API
-@app.route('/login', methods=['GET', 'POST'])
+@db.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         # Fetch form data
         userDetails = request.form
-        username = userDetails['username']
+        username = userDetails['username']  
         password = userDetails['password']
+        connection = get_connection()
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
         account = cursor.fetchone()
@@ -37,4 +36,4 @@ def login():
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    db.run(debug=True, host='0.0.0.0', port=port)
