@@ -4,10 +4,14 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_cors import CORS
 from database import db, get_connection
 from post import post
+from document import document
+from appointment import appointment
 
 CORS(db)
 
 db.register_blueprint(post)
+db.register_blueprint(document)
+db.register_blueprint(appointment)
 
 # Initialize Flask app
 @db.route('/')

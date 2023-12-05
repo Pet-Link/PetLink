@@ -1,4 +1,3 @@
-import datetime
 from flask import Blueprint, Response, request, jsonify
 from database import get_connection
 from enums import VerificationStatus
