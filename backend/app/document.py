@@ -19,7 +19,7 @@ def create_document():
     cursor = connection.cursor()
     try:
         # Fetch form data
-        documentDetails = request.form
+        documentDetails = request.json
         title = documentDetails['title']
         content = documentDetails['content']
         verification_status = VerificationStatus.PENDING.value
@@ -76,7 +76,7 @@ def update_document(document_ID):
     cursor = connection.cursor()
     try:
         # Fetch form data
-        documentDetails = request.form
+        documentDetails = request.json
         title = documentDetails['title']
         content = documentDetails['content']
 

@@ -8,7 +8,7 @@ post = Blueprint('post', __name__, url_prefix='/post')
 # Create Post - POST
 @post.route('/create', methods=['POST'])
 def create_post():
-    data = request.get_json()
+    data = request.json
     title = data['title']
     content = data['content']
     post_date = datetime.datetime.now()

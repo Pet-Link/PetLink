@@ -12,7 +12,7 @@ def create_appointment():
     cursor = connection.cursor()
     try:
         # Fetch form data
-        appointmentDetails = request.form
+        appointmentDetails = request.json
         adopter_ID = appointmentDetails['adopter_ID']
         veterinarian_ID = appointmentDetails['veterinarian_ID']
         date = appointmentDetails['date'] # if you get an error consider the seconds of the datetime parameter (00:00:00)
@@ -46,7 +46,7 @@ def read_appointment():
     cursor = connection.cursor()
     try:
         # Fetch form data
-        appointmentDetails = request.form
+        appointmentDetails = request.json
         adopter_ID = appointmentDetails['adopter_ID']
         veterinarian_ID = appointmentDetails['veterinarian_ID']
 
@@ -80,7 +80,7 @@ def update_appointment():
     cursor = connection.cursor()
     try:
         # Fetch form data
-        appointmentDetails = request.form
+        appointmentDetails = request.json
         adopter_ID = appointmentDetails['adopter_ID']
         veterinarian_ID = appointmentDetails['veterinarian_ID']
         date = appointmentDetails['date']
@@ -114,7 +114,7 @@ def delete_appointment():
     cursor = connection.cursor()
     try:
         # Fetch form data
-        appointmentDetails = request.form
+        appointmentDetails = request.json
         adopter_ID = appointmentDetails['adopter_ID']
         veterinarian_ID = appointmentDetails['veterinarian_ID']
 
@@ -199,7 +199,7 @@ def approve_appointment():
     cursor = connection.cursor()
     try:
         # Fetch form data
-        appointmentDetails = request.form
+        appointmentDetails = request.json
         adopter_ID = appointmentDetails['adopter_ID']
         veterinarian_ID = appointmentDetails['veterinarian_ID']
 
@@ -230,7 +230,7 @@ def reject_appointment():
     cursor = connection.cursor()
     try:
         # Fetch form data
-        appointmentDetails = request.form
+        appointmentDetails = request.json
         adopter_ID = appointmentDetails['adopter_ID']
         veterinarian_ID = appointmentDetails['veterinarian_ID']
 
