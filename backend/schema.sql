@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS Administrator(
     employee_ID INT NOT NULL,
     FOREIGN KEY(user_ID) REFERENCES User(user_ID)
     ON DELETE CASCADE,
+    UNIQUE(employee_ID),
     PRIMARY KEY (user_ID)
 );
 

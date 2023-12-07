@@ -52,6 +52,7 @@ def create_user():
             'INSERT INTO User (password, name, phone_number, e_mail, verification_code) VALUES (%s, %s, %s, %s, NULL)',
             (password, name, phone_number, e_mail))
         connection.commit()
+        
 
         return Response('User created successfully', 201)
     except Exception as e:
@@ -74,6 +75,7 @@ def delete_user(e_mail):
         # execute the query
         cursor.execute('DELETE FROM User WHERE e_mail = %s', (e_mail,))
         connection.commit()
+        
 
         return Response('User deleted successfully', 200)
     except Exception as e:
@@ -96,6 +98,7 @@ def delete_user_with_phone_number(phone_number):
         # execute the query
         cursor.execute('DELETE FROM User WHERE phone_number = %s', (phone_number,))
         connection.commit()
+        
 
         return Response('User deleted successfully', 200)
     except Exception as e:
@@ -110,6 +113,7 @@ def read_user(user_id):
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM User WHERE user_ID = %s', (user_id,))
         result = cursor.fetchone()
+        
 
         return jsonify(result)
     except Exception as e:
@@ -124,6 +128,7 @@ def read_user_by_email(e_mail):
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM User WHERE e_mail = %s', (e_mail,))
         result = cursor.fetchone()
+        
 
         return jsonify(result)
     except Exception as e:
@@ -138,6 +143,7 @@ def read_user_by_phone_number(phone_number):
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM User WHERE phone_number = %s', (phone_number,))
         result = cursor.fetchone()
+        
 
         return jsonify(result)
     except Exception as e:
@@ -163,6 +169,7 @@ def create_verification_code(e_mail):
         # update the verification code
         cursor.execute('UPDATE User SET verification_code = %s WHERE e_mail = %s', (verification_code, e_mail))
         connection.commit()
+        
 
         # return the verification code
         return jsonify(verification_code)
@@ -199,6 +206,7 @@ def check_verification_code(e_mail):
         # update the verification code
         cursor.execute('UPDATE User SET verification_code = NULL WHERE e_mail = %s', (e_mail,))
         connection.commit()
+        
 
         # return the verification code
         return Response('Verification code correct', 200)
@@ -224,6 +232,7 @@ def update_password(user_id):
         # update the password
         cursor.execute('UPDATE User SET password = %s WHERE user_id = %s', (password, user_id))
         connection.commit()
+        
 
         return Response('Password updated successfully', 200)
     except Exception as e:

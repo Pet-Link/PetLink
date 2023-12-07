@@ -6,12 +6,16 @@ from database import db, get_connection
 from post import post
 from document import document
 from appointment import appointment
+from user import user
+from administrator import administrator
 
 CORS(db)
 
 db.register_blueprint(post)
 db.register_blueprint(document)
 db.register_blueprint(appointment)
+db.register_blueprint(user)
+db.register_blueprint(administrator)
 
 # Initialize Flask app
 @db.route('/')

@@ -1,4 +1,3 @@
-import datetime
 from flask import Blueprint, Response, request, jsonify
 from database import get_connection
 
@@ -33,7 +32,7 @@ def create_appointment():
 
         cursor.execute('INSERT INTO Appointment(adopter_ID, veterinarian_ID, date, approval_status, details) VALUES (%s, %s, %s, %s, %s)', (adopter_ID, veterinarian_ID, date, approval_status, details))
         connection.commit()
-        cursor.close()
+        
         return Response('Appointment created', status=200, mimetype='application/json')
     except Exception as e:
         print(e)
@@ -67,7 +66,6 @@ def read_appointment():
         if not appointment:
             return Response(f"Appointment with adopter ID {adopter_ID} and veterinarian ID {veterinarian_ID} not found", status=400, mimetype='application/json')
         
-        cursor.close()
         return jsonify(appointment)
     except Exception as e:
         print(e)
@@ -101,7 +99,6 @@ def update_appointment():
 
         cursor.execute('UPDATE Appointment SET date = %s, approval_status = %s, details = %s WHERE adopter_ID = %s AND veterinarian_ID = %s', (date, approval_status, details, adopter_ID, veterinarian_ID))
         connection.commit()
-        cursor.close()
         return Response('Appointment updated', status=200, mimetype='application/json')
     except Exception as e:
         print(e)
@@ -132,7 +129,6 @@ def delete_appointment():
 
         cursor.execute('DELETE FROM Appointment WHERE adopter_ID = %s AND veterinarian_ID = %s', (adopter_ID, veterinarian_ID))
         connection.commit()
-        cursor.close()
         return Response('Appointment deleted', status=200, mimetype='application/json')
     except Exception as e:
         print(e)
@@ -146,7 +142,6 @@ def get_all_appointments():
     try:
         cursor.execute('SELECT * FROM Appointment')
         appointments = cursor.fetchall()
-        cursor.close()
         return jsonify(appointments)
     except Exception as e:
         print(e)
@@ -166,7 +161,6 @@ def get_all_appointments_for_veterinarian(veterinarian_ID):
 
         cursor.execute('SELECT * FROM Appointment WHERE veterinarian_ID = %s', (veterinarian_ID))
         appointments = cursor.fetchall()
-        cursor.close()
         return jsonify(appointments)
     except Exception as e:
         print(e)
@@ -186,7 +180,6 @@ def get_all_appointments_for_adopter(adopter_ID):
 
         cursor.execute('SELECT * FROM Appointment WHERE adopter_ID = %s', (adopter_ID))
         appointments = cursor.fetchall()
-        cursor.close()
         return jsonify(appointments)
     except Exception as e:
         print(e)
@@ -217,7 +210,6 @@ def approve_appointment():
 
         cursor.execute('UPDATE Appointment SET approval_status = %s WHERE adopter_ID = %s AND veterinarian_ID = %s', (True, adopter_ID, veterinarian_ID))
         connection.commit()
-        cursor.close()
         return Response('Appointment approved', status=200, mimetype='application/json')
     except Exception as e:
         print(e)
@@ -248,7 +240,6 @@ def reject_appointment():
 
         cursor.execute('UPDATE Appointment SET approval_status = %s WHERE adopter_ID = %s AND veterinarian_ID = %s', (False, adopter_ID, veterinarian_ID))
         connection.commit()
-        cursor.close()
         return Response('Appointment rejected', status=200, mimetype='application/json')
     except Exception as e:
         print(e)
