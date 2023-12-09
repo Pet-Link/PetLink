@@ -2,6 +2,8 @@ import random
 import string
 from flask import Blueprint, Response, request, jsonify
 from database import get_connection
+from backend.app.auxiliary import send_email
+import bcrypt
 
 user = Blueprint('user', __name__, url_prefix='/user')
 
@@ -46,11 +48,15 @@ def create_user():
         result = cursor.fetchone()
         if result:
             return Response(f'User already registered with the phone number: {phone_number}', 409)
+        
+        # hash the password
+        bcrypt = Bcrypt(app)
+        hashed_password = bcrypt.generate_password_hash (password).decode('utf-8')
 
         # execute the query
         cursor.execute(
             'INSERT INTO User (password, name, phone_number, e_mail, verification_code) VALUES (%s, %s, %s, %s, NULL)',
-            (password, name, phone_number, e_mail))
+            (hashed_password, name, phone_number, e_mail))
         connection.commit()
         
 
@@ -128,7 +134,6 @@ def read_user_by_email(e_mail):
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM User WHERE e_mail = %s', (e_mail,))
         result = cursor.fetchone()
-        
 
         return jsonify(result)
     except Exception as e:
@@ -169,7 +174,10 @@ def create_verification_code(e_mail):
         # update the verification code
         cursor.execute('UPDATE User SET verification_code = %s WHERE e_mail = %s', (verification_code, e_mail))
         connection.commit()
-        
+
+        # Send e-mail to the user with the verification code
+        if not send_email(verification_code, e_mail):
+            return Response(f'Verification code could not be sent to {e_mail}', 500)
 
         # return the verification code
         return jsonify(verification_code)
@@ -228,9 +236,11 @@ def update_password(user_id):
         result = cursor.fetchone()
         if not result:
             return Response(f'User with user_id {user_id} does not exist', 404)
-
-        # update the password
-        cursor.execute('UPDATE User SET password = %s WHERE user_id = %s', (password, user_id))
+        
+        # hash & update the password
+        bcrypt = Bcrypt(app) 
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        cursor.execute('UPDATE User SET password = %s WHERE user_id = %s', (hashed_password, user_id))
         connection.commit()
         
 
@@ -282,3 +292,38 @@ def update_user(user_id):
     except Exception as e:
         # return the error
         return Response(f'An error occurred {e}', 500)
+    
+# Login
+@user.route('/login', methods=['POST'])
+def login():
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+        body = request.json
+        
+        email = body['e_mail']
+        password = body['password']
+        
+        # Check whether the user with the given email exists and whether the password is correct
+        cursor.execute("SELECT * FROM User WHERE email=?", (email))
+        result = cursor.fetchone()
+        if not result or !bcrypt.check_password_hash(result[1], password):
+            return Response('Invalid email or password', 409)
+        
+        user_id = result[0]
+        
+        cursor.execute(
+            "SELECT CASE WHEN EXISTS (SELECT 1 FROM Adopter WHERE Adopter.user_id = User.user_id) THEN 'Adopter'" /
+            "WHEN EXISTS (SELECT 1 FROM Shelter WHERE Shelter.user_id = User.user_id) THEN 'Shelter'" /
+            "WHEN EXISTS (SELECT 1 FROM Administrator WHERE Administrator.user_id = User.user_id) THEN 'Administrator'" /
+            "WHEN EXISTS (SELECT 1 FROM Veterinarian WHERE Veterinarian.user_id = User.user_id) THEN 'Veterinarian'" /
+            "ELSE 'unknown' END AS user_type FROM User WHERE User.user_id = ?", user_id    
+        )
+        result = cursor.fetchone()
+        user_role = result[0]
+        
+        session['loggedin'] = True
+        session['user_id'] = user_id
+        session['user_role'] = user_role
+        
+        return Response(session, 200)

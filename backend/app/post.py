@@ -83,3 +83,26 @@ def delete_post(post_id):
 
     response = Response('Post deleted successfully!', status=200, mimetype='application/json')
     return response
+
+# Get All replies of a post - GET
+@post.route('/<int:post_id>/replies', methods=['GET'])
+def get_all_replies(post_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM Reply WHERE post_ID = %s', (post_id,))
+    replies = cursor.fetchall()
+
+    response = jsonify(replies)
+    response.status_code = 200
+    return response
+
+# Detele All replies of a post - DELETE
+@post.route('/<int:post_id>/replies/delete', methods=['DELETE'])
+def delete_all_replies(post_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('DELETE FROM Reply WHERE post_ID = %s', (post_id,))
+    connection.commit()
+
+    response = Response('All replies of the post deleted successfully!', status=200, mimetype='application/json')
+    return response

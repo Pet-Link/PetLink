@@ -28,9 +28,6 @@ CREATE TABLE IF NOT EXISTS User(
 );
 '''
 
-# TODO: add a password hashing mechanism
-# TODO: complete this file
-
 # Create Administrator - POST
 # Check if the administrator exists if not create a user and then create an administrator
 @administrator.route('/create', methods=['POST'])

@@ -4,3 +4,4 @@ mysqlclient
 mysql-connector-python
 flask_mysqldb
 Werkzeug==2.2.2
+bcrypt
