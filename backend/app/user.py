@@ -1,6 +1,6 @@
 import random
 import string
-from flask import Blueprint, Response, request, jsonify
+from flask import Blueprint, Response, app, request, jsonify, session
 from database import get_connection
 from backend.app.auxiliary import send_email
 import bcrypt
@@ -50,7 +50,7 @@ def create_user():
             return Response(f'User already registered with the phone number: {phone_number}', 409)
         
         # hash the password
-        bcrypt = Bcrypt(app)
+        bcrypt = bcrypt(app)
         hashed_password = bcrypt.generate_password_hash (password).decode('utf-8')
 
         # execute the query
