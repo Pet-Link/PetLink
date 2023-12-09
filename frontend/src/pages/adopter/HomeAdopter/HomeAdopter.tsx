@@ -17,7 +17,7 @@ import './styles.css';
 import MenuItem from "@mui/material/MenuItem"; // Import your CSS file
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
-const Home = () => {
+const HomeAdopter = () => {
 
     const [open, setOpen] = useState(false);
 
@@ -294,4 +294,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default HomeAdopter;

@@ -12,6 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 
 const pages = ['About Us', 'Adopt', 'Contact Us', 'Forum', 'Forum', 'List Your Pets', 'Add Your Pet'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -141,6 +142,8 @@ function ResponsiveAppBar() {
                     >
                         See My Meet&Greets
                     </Button>
+
+                    <NotificationsActiveIcon color={"primary"} style={{ marginRight: 15 }}></NotificationsActiveIcon>
 
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
