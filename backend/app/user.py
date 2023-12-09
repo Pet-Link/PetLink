@@ -327,3 +327,6 @@ def login():
         session['user_role'] = user_role
         
         return Response(session, 200)
+    except Exception as e:
+        # return the error
+        return Response(f'An error occurred {e}', 500)
