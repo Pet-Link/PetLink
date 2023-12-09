@@ -2,6 +2,7 @@ import random
 import string
 from flask import Blueprint, Response, request, jsonify
 from database import get_connection
+from aux import send_email
 
 user = Blueprint('user', __name__, url_prefix='/user')
 
@@ -128,7 +129,6 @@ def read_user_by_email(e_mail):
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM User WHERE e_mail = %s', (e_mail,))
         result = cursor.fetchone()
-        
 
         return jsonify(result)
     except Exception as e:
@@ -169,7 +169,10 @@ def create_verification_code(e_mail):
         # update the verification code
         cursor.execute('UPDATE User SET verification_code = %s WHERE e_mail = %s', (verification_code, e_mail))
         connection.commit()
-        
+
+        # Send e-mail to the user with the verification code
+        if not send_email(verification_code, e_mail):
+            return Response(f'Verification code could not be sent to {e_mail}', 500)
 
         # return the verification code
         return jsonify(verification_code)

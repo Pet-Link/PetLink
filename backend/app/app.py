@@ -8,14 +8,24 @@ from document import document
 from appointment import appointment
 from user import user
 from administrator import administrator
+from medicalrecod import medicalrecord
+from petcareinfo import petcareinfo
+from overseerecord import overseerecord
+from meetandgreet import meetandgreet
+from photo import photo
 
 CORS(db)
 
 db.register_blueprint(post)
 db.register_blueprint(document)
 db.register_blueprint(appointment)
+db.register_blueprint(overseerecord)
 db.register_blueprint(user)
+db.register_blueprint(petcareinfo)
+db.register_blueprint(photo)
+db.register_blueprint(meetandgreet)
 db.register_blueprint(administrator)
+db.register_blueprint(medicalrecord)
 
 # Initialize Flask app
 @db.route('/')
