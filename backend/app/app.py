@@ -13,6 +13,7 @@ from petcareinfo import petcareinfo
 from overseerecord import overseerecord
 from meetandgreet import meetandgreet
 from photo import photo
+from reply import reply
 
 CORS(db)
 
@@ -22,6 +23,7 @@ db.register_blueprint(appointment)
 db.register_blueprint(overseerecord)
 db.register_blueprint(user)
 db.register_blueprint(petcareinfo)
+db.register_blueprint(reply)
 db.register_blueprint(photo)
 db.register_blueprint(meetandgreet)
 db.register_blueprint(administrator)
