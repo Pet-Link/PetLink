@@ -2,7 +2,7 @@ import random
 import string
 from flask import Blueprint, Response, request, jsonify
 from database import get_connection
-from aux import send_email
+from backend.app.auxiliary import send_email
 
 user = Blueprint('user', __name__, url_prefix='/user')
 
