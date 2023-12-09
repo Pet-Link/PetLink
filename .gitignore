@@ -1,5 +1,12 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,macos,flask
-# Edit at https://www.toptal.com/developers/gitignore?templates=python,macos,flask
+#
+
+.DS_Store
+*/.DS_Store
+*/.env
+*/.env.*
+*/.venv
+*/.venv/
 
 ### Flask ###
 instance/*

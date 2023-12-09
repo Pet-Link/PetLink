@@ -17,7 +17,7 @@ services:
   db:
     container_name: petlink_db_mysql
     platform: linux/amd64
-    image: mysql:5.7
+    image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: petlink
