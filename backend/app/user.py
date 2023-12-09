@@ -3,6 +3,7 @@ import string
 from flask import Blueprint, Response, request, jsonify
 from database import get_connection
 from backend.app.auxiliary import send_email
+import bcrypt
 
 user = Blueprint('user', __name__, url_prefix='/user')
 
@@ -49,9 +50,8 @@ def create_user():
             return Response(f'User already registered with the phone number: {phone_number}', 409)
         
         # hash the password
-        bcrypt = Bcrypt(app) 
-        hashed_password = bcrypt.generate_password_hash 
-                (password).decode('utf-8') 
+        bcrypt = Bcrypt(app)
+        hashed_password = bcrypt.generate_password_hash (password).decode('utf-8')
 
         # execute the query
         cursor.execute(
@@ -239,8 +239,7 @@ def update_password(user_id):
         
         # hash & update the password
         bcrypt = Bcrypt(app) 
-        hashed_password = bcrypt.generate_password_hash 
-                (password).decode('utf-8') 
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         cursor.execute('UPDATE User SET password = %s WHERE user_id = %s', (hashed_password, user_id))
         connection.commit()
         
@@ -306,7 +305,7 @@ def login():
         password = body['password']
         
         # Check whether the user with the given email exists and whether the password is correct
-        cursor.execute("SELECT * FROM User WHERE email=?", (username))
+        cursor.execute("SELECT * FROM User WHERE email=?", (email))
         result = cursor.fetchone()
         if not result or !bcrypt.check_password_hash(result[1], password):
             return Response('Invalid email or password', 409)
