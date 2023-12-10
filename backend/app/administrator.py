@@ -4,7 +4,7 @@ from database import get_connection
 administrator = Blueprint('administrator', __name__, url_prefix='/administrator')
 
 '''
-consider  the following mysql schemas
+consider the following mysql schemas
 
 CREATE TABLE IF NOT EXISTS Administrator(
     user_ID INT NOT NULL,
@@ -129,7 +129,7 @@ def delete_administrator(user_ID):
         cursor.execute('SELECT * FROM Administrator WHERE user_ID = %s', (user_ID,))
         administrator = cursor.fetchone()
         if administrator:
-            cursor.execute('DELETE FROM Administrator WHERE user_ID = %s', (user_ID,))
+            cursor.execute('DELETE FROM User WHERE user_ID = %s', (user_ID,))  # ON DELETE CASCADE relation
             connection.commit()
             return Response(f'Administrator with user_ID {user_ID} is deleted', status=200)
         return Response(f'Administrator with user_ID {user_ID} does not exist', status=404)
@@ -148,9 +148,7 @@ def delete_administrator_with_employee_id(employee_ID):
         administrator = cursor.fetchone()
         if administrator:
             user_ID = administrator[0]
-            cursor.execute('DELETE FROM Administrator WHERE employee_ID = %s', (employee_ID,))
-            connection.commit()
-            cursor.execute('DELETE FROM User WHERE user_ID = %s', (user_ID,))
+            cursor.execute('DELETE FROM User WHERE user_ID = %s', (user_ID,))  # ON DELETE CASCADE relation
             connection.commit()
             return Response(f'Administrator with employee_ID {employee_ID} is deleted', status=200)
         return Response(f'Administrator with employee_ID {employee_ID} does not exist', status=404)
