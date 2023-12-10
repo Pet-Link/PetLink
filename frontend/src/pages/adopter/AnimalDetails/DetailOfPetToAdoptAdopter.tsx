@@ -19,7 +19,7 @@ const PetDetailsPage = () => {
                 </Typography>
                 <img
                     src={`./HomePageAnimals/dog-1.png`}
-                    style={{ width: '350px', height: 'auto' }}
+                    style={{ width: '350px', height: 'auto', borderRadius: 15}}
                 />
             </Grid>
 
@@ -128,11 +128,15 @@ const PetDetailsPage = () => {
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker />
                         </LocalizationProvider>
+
+                        <Button variant="contained" color="secondary" style={{height: 50,marginLeft:15, marginTop:2.5}}>
+                            Arrange Meet&Greet
+                        </Button>
                     </Grid>
 
                     {/* Apply For Adoption Button */}
-                    <Grid item xs={12} style={{ marginTop: '20px' }}>
-                        <Button variant="contained" color="secondary">
+                    <Grid item xs={12} style={{ marginTop: '10px' }}>
+                        <Button variant="contained" color="primary" sx={{height: 50, bgcolor: '#04C35C',}}>
                             Apply For Adoption
                         </Button>
                     </Grid>
