@@ -1,7 +1,7 @@
 from flask import Blueprint, Response, request, jsonify
 from database import get_connection
 
-medicalrecord = Blueprint('medicalrecord', __name__, url_prefix='/medicalrecord')
+petcareinfo = Blueprint('petcareinfo', __name__, url_prefix='/petcareinfo')
 
 '''
 CREATE TABLE IF NOT EXISTS PetCareInfo(
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS PetCareInfo(
 '''
 
 # Create Pet Care Info - POST
-@medicalrecord.route('/create', methods=['POST'])
+@petcareinfo.route('/create', methods=['POST'])
 def create_petcareinfo():
     try:
         connection = get_connection()
@@ -40,7 +40,7 @@ def create_petcareinfo():
         return Response(f'Failed to create pet care info\n{e}', status=500)
     
 # Get Pet Care Info - GET
-@medicalrecord.route('/<int:info_ID>', methods=['GET'])
+@petcareinfo.route('/<int:info_ID>', methods=['GET'])
 def get_petcareinfo(info_ID):
     try:
         connection = get_connection()
@@ -54,7 +54,7 @@ def get_petcareinfo(info_ID):
         return Response(f'Failed to get pet care info\n{e}', status=500)
 
 # Update Pet Care Info - PUT
-@medicalrecord.route('/<int:info_ID>', methods=['PUT'])
+@petcareinfo.route('/<int:info_ID>', methods=['PUT'])
 def update_petcareinfo(info_ID):
     try:
         connection = get_connection()
@@ -78,7 +78,7 @@ def update_petcareinfo(info_ID):
         return Response(f'Failed to update pet care info\n{e}', status=500)
 
 # Delete Pet Care Info - DELETE
-@medicalrecord.route('/<int:info_ID>', methods=['DELETE'])
+@petcareinfo.route('/<int:info_ID>', methods=['DELETE'])
 def delete_petcareinfo(info_ID):
     try:
         connection = get_connection()
@@ -90,7 +90,7 @@ def delete_petcareinfo(info_ID):
         return Response(f'Failed to delete pet care info\n{e}', status=500)
 
 # Get All Pet Care Info - GET
-@medicalrecord.route('/all', methods=['GET'])
+@petcareinfo.route('/all', methods=['GET'])
 def get_all_petcareinfo():
     try:
         connection = get_connection()
