@@ -4,7 +4,7 @@ from database import get_connection
 shelter = Blueprint('shelter', __name__, url_prefix='/shelter')
 
 '''
-consider  the following mysql schemas
+consider the following mysql schemas
 
 CREATE TABLE IF NOT EXISTS Shelter(
     user_ID INT NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS User(
 # CRUD operations
 
 # Create Shelter - POST
-# Check if the shelter exists if not create a user and then create an shelter
+# Check if the shelter exists if not create a user and then create a shelter
 @shelter.route('/create', methods=['POST'])
 def create_shelter():
     try:
@@ -91,7 +91,7 @@ def get_shelter(user_ID):
     try:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute('SELECT * FROM Shelter WHERE user_ID = %s', (user_ID))
+        cursor.execute('SELECT * FROM Shelter WHERE user_ID = %s', user_ID)
         shelter = cursor.fetchone()
         if shelter:
             return jsonify(shelter)
@@ -119,20 +119,12 @@ def get_all_shelters():
 
 # Update Shelter - PUT
 # Shelters can only update their description and address
-# Updating their name, password and phone number should be from user's endpoint
+# Updating their name, password and phone number should be done from user's endpoint
 @shelter.route('/<int:user_id>/update', methods=['PUT'])
 def update_shelter(user_ID):
     try:
         connection = get_connection()
         cursor = connection.cursor()
-        data = request.get_json()
-        description = data['description']
-        street = data['street']
-        district = data['district']
-        apartment_no = data['apartment_no']
-        city = data['city']
-        zip_no = data['zip']
-        country = data['country']
 
         # check if the user exists
         cursor.execute('SELECT * FROM User WHERE user_ID = %s', (user_ID,))
@@ -145,6 +137,15 @@ def update_shelter(user_ID):
         shelter_result = cursor.fetchone()
         if not shelter_result:
             return Response(f'User with id {user_ID} does not have a shelter record', 404)
+
+        data = request.get_json()
+        description = data['description']
+        street = data['street']
+        district = data['district']
+        apartment_no = data['apartment_no']
+        city = data['city']
+        zip_no = data['zip']
+        country = data['country']
 
         # update the user
         cursor.execute('''
