@@ -145,10 +145,10 @@ def get_species_and_breeds():
 
             # If species not in result, add it
             if species_name not in result:
-                result[species_name] = {'breeds': {}}
+                result[species_name] = {}
 
             # Add breed and unadopted count under the species
-            result[species_name]['breeds'][breed_name] = unadopted_count
+            result[species_name][breed_name] = unadopted_count
 
         return jsonify(result)
 
