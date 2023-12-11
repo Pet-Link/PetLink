@@ -27,17 +27,6 @@ CREATE TABLE IF NOT EXISTS Pet(
     ON DELETE CASCADE,
     PRIMARY KEY (pet_ID)
 );
-CREATE TABLE IF NOT EXISTS User(
-    user_ID INT NOT NULL AUTO_INCREMENT,
-    password VARCHAR(255) NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    verification_code VARCHAR(4),
-    phone_number VARCHAR(20) NOT NULL,
-    e_mail VARCHAR(255) NOT NULL,
-    UNIQUE(e_mail),
-    UNIQUE(phone_number),
-    PRIMARY KEY (user_ID)
-);
 '''
 
 
@@ -60,11 +49,32 @@ def create_pet():
         name = data['name']
         vaccination_status = data['vaccination_status']
         house_trained_status = data['house_trained_status']
-        adoption_status = data['adoption_status']
         adoption_fee = data['adoption_fee']
+        adoption_status = 0
 
         shelter_ID = data.get('shelter_ID')  # Can be None
         adopter_ID = data.get('adopter_ID')  # Can be None
+
+        # Check if only one of shelter_ID or adopter_ID is non-null
+        # Since all pets are listed either by shelters to be adopted or by adopters after already being adopted
+        if (shelter_ID is None and adopter_ID is None) or (shelter_ID is not None and adopter_ID is not None):
+            return Response('Only one of shelter_ID or adopter_ID should be non-null.', status=400)
+
+        # Check if the given shelter ID is valid
+        if shelter_ID is not None:
+            cursor.execute('SELECT * FROM Shelter WHERE user_ID = %s', shelter_ID)
+            shelter = cursor.fetchone()
+            if not shelter:
+                return Response(f'Shelter with ID {shelter_ID} does not exist.', status=404)
+            adoption_status = 0
+
+        # Check if the given adopter ID is valid
+        if adopter_ID is not None:
+            cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID,))
+            adopter = cursor.fetchone()
+            if not adopter:
+                return Response(f'Adopter with ID {adopter_ID} does not exist.', status=404)
+            adoption_status = 1  # already adopted
 
         cursor.execute('INSERT INTO Pet (shelter_ID, adopter_ID, species, breed, age, neutered_status, sex, '
                        'description, name, vaccination_status, house_trained_status, adoption_status, adoption_fee) '
