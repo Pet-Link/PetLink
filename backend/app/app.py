@@ -8,7 +8,7 @@ from document import document
 from appointment import appointment
 from user import user
 from administrator import administrator
-from medicalrecod import medicalrecord
+from medicalrecord import medicalrecord
 from petcareinfo import petcareinfo
 from overseerecord import overseerecord
 from meetandgreet import meetandgreet

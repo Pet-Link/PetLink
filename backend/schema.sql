@@ -217,3 +217,10 @@ CREATE TABLE IF NOT EXISTS Meet_Greet(
     ON DELETE CASCADE,
     PRIMARY KEY (adopter_ID, pet_ID)
 );
+
+CREATE VIEW Administrator_with_Least_Applications AS
+SELECT administrator_ID, COUNT(*) AS num_rows
+FROM Apply_Adopt
+GROUP BY administrator_ID
+ORDER BY num_rows ASC
+LIMIT 1;
