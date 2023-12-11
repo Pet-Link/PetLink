@@ -25,7 +25,7 @@ def create_document():
         verification_status = VerificationStatus.PENDING.value
         user_ID = documentDetails['user_ID']
 
-        # Check if the user is exist
+        # Check if the user exists
         cursor.execute('SELECT * FROM User WHERE user_ID = %s', (user_ID))
         user = cursor.fetchone()
         if not user:
@@ -88,13 +88,13 @@ def update_document(document_ID):
         verification_status = documentDetails['verification_status']
         user_ID = documentDetails['user_ID']
 
-        # Check if the user is exist
+        # Check if the user exists
         cursor.execute('SELECT * FROM User WHERE user_ID = %s', (user_ID))
         user = cursor.fetchone()
         if not user:
             return Response(f"User with ID {user_ID} not found", status=400, mimetype='application/json')
 
-        # Check if the document is exist
+        # Check if the document exists
         cursor.execute('SELECT * FROM Document WHERE document_ID = %s', (document_ID))
         document = cursor.fetchone()
         if not document:
@@ -117,7 +117,7 @@ def approve_document(document_ID):
         # Fetch form data
         verification_status = VerificationStatus.APPROVED.value
 
-        # Check if the document is exist
+        # Check if the document exists
         cursor.execute('SELECT * FROM Document WHERE document_ID = %s', (document_ID))
         document = cursor.fetchone()
         if not document:
@@ -140,7 +140,7 @@ def reject_document(document_ID):
         # Fetch form data
         verification_status = VerificationStatus.REJECTED.value
 
-        # Check if the document is exist
+        # Check if the document exists
         cursor.execute('SELECT * FROM Document WHERE document_ID = %s', (document_ID))
         document = cursor.fetchone()
         if not document:
@@ -160,7 +160,7 @@ def delete_document(document_ID):
     connection = get_connection()
     cursor = connection.cursor()
     try:
-        # Check if the document is exist
+        # Check if the document exists
         cursor.execute('SELECT * FROM Document WHERE document_ID = %s', (document_ID))
         document = cursor.fetchone()
         if not document:

@@ -96,7 +96,7 @@ def get_all_replies(post_id):
     response.status_code = 200
     return response
 
-# Detele All replies of a post - DELETE
+# Delete All replies of a post - DELETE
 @post.route('/<int:post_id>/replies/delete', methods=['DELETE'])
 def delete_all_replies(post_id):
     connection = get_connection()

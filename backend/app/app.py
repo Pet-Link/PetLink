@@ -50,7 +50,7 @@ def login():
             session['username'] = account[1]
             return redirect(url_for('home'))
         else:
-            # Account doesnt exist or username/password incorrect
+            # Account does not exist or username/password is incorrect
             return render_template('login.html', msg='Incorrect username/password!')
     return render_template('login.html')
 

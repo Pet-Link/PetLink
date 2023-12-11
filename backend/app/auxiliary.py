@@ -13,7 +13,7 @@ def send_email(verification_code, e_mail):
     subject = 'Your PetLink Verification Code!'
     body = f"Your verification code is: {verification_code}"
 
-    # Setup the MIME
+    # Set up the MIME
     message = MIMEMultipart()
     message['From'] = sender_email
     message['To'] = receiver_email
