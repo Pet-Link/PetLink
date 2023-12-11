@@ -12,8 +12,9 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
-const pages = ['About Us', 'Adopt', 'Contact Us', 'Forum', 'Forum', 'List Your Pets', 'Add Your Pet'];
+const pages = ['About Us', 'Adopt', 'Contact Us', 'Forum'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
@@ -36,9 +37,13 @@ function ResponsiveAppBar() {
     };
 
     return (
-        <AppBar position="static">
+        <AppBar position="static"
+                sx={{
+                    bgcolor: 'white',
+                }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
+
                     <Typography
                         variant="h6"
                         noWrap
@@ -50,7 +55,7 @@ function ResponsiveAppBar() {
                             fontFamily: 'monospace',
                             fontWeight: 700,
                             letterSpacing: '.3rem',
-                            color: 'inherit',
+                            color: 'black',
                             textDecoration: 'none',
                         }}
                     >
@@ -64,7 +69,7 @@ function ResponsiveAppBar() {
                             aria-controls="menu-appbar"
                             aria-haspopup="true"
                             onClick={handleOpenNavMenu}
-                            color="inherit"
+                            color="primary"
                         >
                             <MenuIcon />
                         </IconButton>
@@ -93,6 +98,7 @@ function ResponsiveAppBar() {
                             ))}
                         </Menu>
                     </Box>
+
                     <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
                     <Typography
                         variant="h5"
@@ -106,7 +112,7 @@ function ResponsiveAppBar() {
                             fontFamily: 'monospace',
                             fontWeight: 700,
                             letterSpacing: '.3rem',
-                            color: 'inherit',
+                            color: 'primary',
                             textDecoration: 'none',
                         }}
                     >
@@ -117,12 +123,27 @@ function ResponsiveAppBar() {
                             <Button
                                 key={page}
                                 onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
+                                sx={{ my: 2, color: 'primary', display: 'block' }}
                             >
                                 {page}
                             </Button>
                         ))}
                     </Box>
+
+                    {/*meet and greet button*/}
+                    <Button
+                        variant="contained"
+                        color = "secondary"  // Change the color to red
+                        sx={{ marginRight: 2, textTransform: 'none' }}
+                        onClick={() => {
+                            // Handle click action
+                            // You can add your logic here
+                        }}
+                    >
+                        See My Meet&Greets
+                    </Button>
+
+                    <NotificationsActiveIcon color={"primary"} style={{ marginRight: 15 }}></NotificationsActiveIcon>
 
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
@@ -159,3 +180,5 @@ function ResponsiveAppBar() {
     );
 }
 export default ResponsiveAppBar;
+
+
