@@ -1,11 +1,17 @@
 import React from 'react';
-import Navbar from './pages/components/navbar';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import Login from './pages/login';
+import RegisterAdmin from './pages/administrator/registerAdmin';
+// ... import other pages as needed
 
 function App() {
   return (
-    <div className="App">
-      <Navbar />
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path="/" component={RegisterAdmin} />
+        {/* Define more routes as needed */}
+      </Switch>
+    </Router>
   );
 }
 
