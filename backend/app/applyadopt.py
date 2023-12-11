@@ -66,6 +66,10 @@ def create_applyadopt():
             return Response(f'Application for adopter ID {adopter_ID} and pet ID {pet_ID} already exists',
                             status=409)
 
+        # Check if adopter's balance is enough
+        if adopter[4] < pet[13]: # adopter's balance < pet's adoption fee
+            return Response('Adoption cannot be processed. Insufficient balance.', status=400)
+
         # Get the administrator with the least amount of applications
         cursor.execute('''
                         SELECT administrator_ID
@@ -197,6 +201,11 @@ def evaluate_applyadopt(adopter_ID, pet_ID):
             # If application is approved, update pet's adopter ID and set as adopted
             cursor.execute('UPDATE Pet SET adopter_ID = %s, adoption_status = 1 WHERE pet_ID = %s',
                            (adopter_ID, pet_ID))
+            connection.commit()
+
+            # Deduct pet's adoption fee from adopter's balance
+            cursor.execute('UPDATE Adopter SET balance = balance - (SELECT adoption_fee FROM Pet WHERE pet_ID = %s) WHERE user_ID = %s',
+                           (pet_ID, adopter_ID))
             connection.commit()
 
         # TODO: Notification

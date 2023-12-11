@@ -121,6 +121,74 @@ def get_all_pets():
         print(e)
         return Response(f'Pets could not be fetched with exception {e}', status=500)
 
+# Get all pets of an adopter - GET
+@pet.route('/adopter/<int:adopter_ID>', methods=['GET'])
+def get_adopter_pets(adopter_ID):
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        # Check if the adopter exists
+        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', adopter_ID)
+        adopter = cursor.fetchone()
+        if not adopter:
+            return Response(f'Adopter with ID {adopter_ID} does not exist', status=404)
+
+        # Get all pets of the adopter
+        cursor.execute('SELECT * FROM Pet WHERE adopter_ID = %s', adopter_ID)
+        pets = cursor.fetchall()
+
+        return jsonify(pets)
+
+    except Exception as e:
+        print(e)
+        return Response(f'Error fetching pets for adopter with ID {adopter_ID} with exception {e}', status=500)
+
+# Get all pets (adopted or unadopted) of a shelter - GET
+@pet.route('/shelter/<int:shelter_ID>', methods=['GET'])
+def get_shelter_pets(shelter_ID):
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        # Check if the shelter exists
+        cursor.execute('SELECT * FROM Shelter WHERE user_ID = %s', shelter_ID)
+        shelter = cursor.fetchone()
+        if not shelter:
+            return Response(f'Shelter with ID {shelter_ID} does not exist', status=404)
+
+        # Get all pets of the shelter
+        cursor.execute('SELECT * FROM Pet WHERE shelter_ID = %s', shelter_ID)
+        shelter_pets = cursor.fetchall()
+
+        return jsonify(shelter_pets)
+
+    except Exception as e:
+        print(e)
+        return Response(f'Error fetching pets for shelter with ID {shelter_ID} with exception {e}', status=500)
+
+# Get all unadopted pets of a shelter - GET
+@pet.route('/shelter/<int:shelter_ID>/unadopted', methods=['GET'])
+def get_unadopted_shelter_pets(shelter_ID):
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        # Check if the shelter exists
+        cursor.execute('SELECT * FROM Shelter WHERE user_ID = %s', shelter_ID)
+        shelter = cursor.fetchone()
+        if not shelter:
+            return Response(f'Shelter with ID {shelter_ID} does not exist', status=404)
+
+        # Get all unadopted pets of the shelter
+        cursor.execute('SELECT * FROM Pet WHERE shelter_ID = %s AND adoption_status = 0', shelter_ID)
+        unadopted_pets = cursor.fetchall()
+
+        return jsonify(unadopted_pets)
+
+    except Exception as e:
+        print(e)
+        return Response(f'Error fetching unadopted pets for shelter with ID {shelter_ID} with exception {e}', status=500)
 
 # Get distinct species, breeds, and counts of unadopted pets for each species for the main page - GET
 @pet.route('/species-breeds', methods=['GET'])
