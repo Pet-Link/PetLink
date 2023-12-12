@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Link, Grid } from '@mui/material';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
 const RegisterAdmin: React.FC = () => {
     const [fullName, setFullName] = useState('');
@@ -67,25 +68,26 @@ const RegisterAdmin: React.FC = () => {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            mt: 5, 
+            mt: 20, 
             mb: 5
         }}>
             <Typography sx={{mb:2}} fontSize={'30px'}>Administrator Registration</Typography>
-            <TextField sx={{mb:2}} type="text" label="Full Name" size="small" value={fullName} onChange={handleFullNameChange} />
-            <TextField sx={{mb:2}} type="email" label="Email" size="small" value={email} onChange={handleEmailChange} />
-            <TextField sx={{mb:2}} type="text" label="Employee ID" size="small" value={employeeId} onChange={handleEmployeeIdChange} />
-            <TextField sx={{mb:2}} type="tel" label="Phone Number" size="small" value={phoneNumber} onChange={handlePhoneNumberChange} />
-            <TextField sx={{mb:2}} type="password" label="Password" size="small" value={password} onChange={handlePasswordChange} />
-            <TextField sx={{mb:2}} type="password" label="Re-enter Password" size="small" value={reEnterPassword} onChange={handleReEnterPasswordChange} />
+            <TextField sx={{mb:2, width: '15vw'}} type="text" label="Full Name" size="small" value={fullName} onChange={handleFullNameChange} />
+            <TextField sx={{mb:2, width: '15vw'}} type="email" label="Email" size="small" value={email} onChange={handleEmailChange} />
+            <TextField sx={{mb:2, width: '15vw'}} type="text" label="Employee ID" size="small" value={employeeId} onChange={handleEmployeeIdChange} />
+            <TextField sx={{mb:2, width: '15vw'}} type="tel" label="Phone Number" size="small" value={phoneNumber} onChange={handlePhoneNumberChange} />
+            <TextField sx={{mb:2, width: '15vw'}} type="password" label="Password" size="small" value={password} onChange={handlePasswordChange} />
+            <TextField sx={{mb:2, width: '15vw'}} type="password" label="Re-enter Password" size="small" value={reEnterPassword} onChange={handleReEnterPasswordChange} />
             <Grid>
+                <Typography fontSize={'16px'}>Document For Verification</Typography>
                 <input name="fileInput" id="fileInput" style={{ display: 'none' }} type="file" onChange={handleFileSelection} />
                 <label htmlFor="fileInput">
-                  <Button variant="outlined" component="span" fullWidth color="primary">
+                  <Button sx={{mb:5}} variant="outlined" component="span" fullWidth color="success" startIcon={<InsertDriveFileIcon/>}>
                     {buttonText && buttonText !== '' ? buttonText : 'Choose File'}
                   </Button>
                 </label>
             </Grid>
-            <Button variant="contained" color="primary" onClick={handleRegister}>Register</Button>
+            <Button variant="outlined" color="success" onClick={handleRegister}>Register</Button>
             <Typography>
                 Already have an account? <Link href="/login">Login</Link>
             </Typography>
