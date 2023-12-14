@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS User(
 # Check if the adopter exists if not create a user and then create an adopter
 @adopter.route('/create', methods=['POST'])
 def create_adopter():
+    print("request.get_json()")
     try:
         connection = get_connection()
         cursor = connection.cursor()
@@ -55,10 +56,10 @@ def create_adopter():
         password = data['password']
 
         # Check if the user exists with an e_mail
-        cursor.execute('SELECT * FROM User WHERE e_mail = %s', e_mail)
+        cursor.execute('SELECT * FROM User WHERE e_mail = %s', (e_mail,))
         user1 = cursor.fetchone()
         # Check if the user exists with a phone number
-        cursor.execute('SELECT * FROM User WHERE phone_number = %s', phone_number)
+        cursor.execute('SELECT * FROM User WHERE phone_number = %s', (phone_number,))
         user2 = cursor.fetchone()
 
         if user1:
@@ -70,9 +71,9 @@ def create_adopter():
         cursor.execute('INSERT INTO User(password, name, phone_number, e_mail) VALUES (%s, %s, %s, %s)',
                        (password, name, phone_number, e_mail))
         connection.commit()
-        cursor.execute('SELECT user_ID FROM User WHERE e_mail = %s', e_mail)
+        cursor.execute('SELECT user_ID FROM User WHERE e_mail = %s', (e_mail,))
         user_ID = cursor.fetchone()[0]
-        cursor.execute('INSERT INTO Adopter (user_ID, balance) VALUES (%s)',
+        cursor.execute('INSERT INTO Adopter (user_ID, balance) VALUES (%s, %s)',
                        (user_ID, 0))
         connection.commit()
 
@@ -107,9 +108,18 @@ def get_all_adopters():
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM Adopter')
         adopters = cursor.fetchall()
+        # result = []
+        # # append the user information to the adopter
+        # for adopter in adopters:
+        #     cursor.execute('SELECT * FROM User WHERE user_ID = %s', (adopter[0],))
+        #     user = cursor.fetchone()
+        #     adopter = adopter + user
+        #     result.append(adopter)
+        # return the appended adopters
         if adopters:
             return jsonify(adopters)
-        return Response(f'No adopters exist', status=404)
+        else:
+            return Response(f'No adopters exist', status=404)
     except Exception as e:
         print(e)
         return Response(f'Adopters could not be fetched with exception {e}', status=500)

@@ -227,7 +227,7 @@ def reject_appointment():
         veterinarian_ID = appointmentDetails['veterinarian_ID']
 
         # Check if the adopter exists
-        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID))
+        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID,))
         adopter = cursor.fetchone()
         if not adopter:
             return Response(f"Adopter with ID {adopter_ID} not found", status=400, mimetype='application/json')

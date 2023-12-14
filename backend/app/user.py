@@ -1,12 +1,12 @@
 import random
 import string
 from flask import Blueprint, Response, app, request, jsonify, session
-from database import get_connection
-from backend.app.auxiliary import send_email
+from database import get_connection, db
+from auxiliary import send_email
 from flask_bcrypt import Bcrypt
 
 user = Blueprint('user', __name__, url_prefix='/user')
-bcrypt = Bcrypt(app)
+bcrypt = Bcrypt(db)
 
 # consider the following mysql schema for the crud operation methods (endpoints)
 '''
@@ -203,11 +203,14 @@ def check_verification_code(e_mail):
         cursor.execute('SELECT verification_code FROM User WHERE e_mail = %s', (e_mail,))
         verification_code_db = cursor.fetchone()
 
-        # check if the verification code is not null
-        if not verification_code_db:
+        # check if the verification code is null
+        if not verification_code_db[0]:
             return Response(f'Verification code for user with e-mail {e_mail} does not exist', 404)
-        elif verification_code_db != verification_code:
-            return Response(f'Verification code incorrect', 404)
+        
+        verification_code_db = int(verification_code_db[0])
+        verification_code = int(verification_code)
+        if verification_code_db != verification_code:
+            return Response(f'Verification code incorrect {verification_code_db}', 404)
 
         # update the verification code
         cursor.execute('UPDATE User SET verification_code = NULL WHERE e_mail = %s', (e_mail,))

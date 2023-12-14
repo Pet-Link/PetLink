@@ -62,7 +62,7 @@ def create_pet():
 
         # Check if the given shelter ID is valid
         if shelter_ID is not None:
-            cursor.execute('SELECT * FROM Shelter WHERE user_ID = %s', shelter_ID)
+            cursor.execute('SELECT * FROM Shelter WHERE user_ID = %s', (shelter_ID,))
             shelter = cursor.fetchone()
             if not shelter:
                 return Response(f'Shelter with ID {shelter_ID} does not exist.', status=404)
@@ -96,7 +96,7 @@ def get_pet(pet_ID):
     try:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute('SELECT * FROM Pet WHERE pet_ID = %s', pet_ID)
+        cursor.execute('SELECT * FROM Pet WHERE pet_ID = %s', (pet_ID,))
         pet = cursor.fetchone()
         if pet:
             return jsonify(pet)
@@ -129,7 +129,7 @@ def get_adopter_pets(adopter_ID):
         cursor = connection.cursor()
 
         # Check if the adopter exists
-        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', adopter_ID)
+        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID,))
         adopter = cursor.fetchone()
         if not adopter:
             return Response(f'Adopter with ID {adopter_ID} does not exist', status=404)
@@ -152,13 +152,13 @@ def get_shelter_pets(shelter_ID):
         cursor = connection.cursor()
 
         # Check if the shelter exists
-        cursor.execute('SELECT * FROM Shelter WHERE user_ID = %s', shelter_ID)
+        cursor.execute('SELECT * FROM Shelter WHERE user_ID = %s', (shelter_ID,))
         shelter = cursor.fetchone()
         if not shelter:
             return Response(f'Shelter with ID {shelter_ID} does not exist', status=404)
 
         # Get all pets of the shelter
-        cursor.execute('SELECT * FROM Pet WHERE shelter_ID = %s', shelter_ID)
+        cursor.execute('SELECT * FROM Pet WHERE shelter_ID = %s', (shelter_ID,))
         shelter_pets = cursor.fetchall()
 
         return jsonify(shelter_pets)
@@ -175,7 +175,7 @@ def get_unadopted_shelter_pets(shelter_ID):
         cursor = connection.cursor()
 
         # Check if the shelter exists
-        cursor.execute('SELECT * FROM Shelter WHERE user_ID = %s', shelter_ID)
+        cursor.execute('SELECT * FROM Shelter WHERE user_ID = %s', (shelter_ID,))
         shelter = cursor.fetchone()
         if not shelter:
             return Response(f'Shelter with ID {shelter_ID} does not exist', status=404)

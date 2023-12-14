@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS Adopter(
     profile_picture_path VARCHAR(300),
     species VARCHAR(50),
     breed VARCHAR(50),
-    adoption_age INT NOT NULL,
+    adoption_age INT,
     neuter_status VARCHAR(20),
     adoption_sex VARCHAR(10),
     FOREIGN KEY(user_ID) REFERENCES User(user_ID)

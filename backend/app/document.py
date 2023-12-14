@@ -89,13 +89,13 @@ def update_document(document_ID):
         user_ID = documentDetails['user_ID']
 
         # Check if the user exists
-        cursor.execute('SELECT * FROM User WHERE user_ID = %s', (user_ID))
+        cursor.execute('SELECT * FROM User WHERE user_ID = %s', (user_ID,))
         user = cursor.fetchone()
         if not user:
             return Response(f"User with ID {user_ID} not found", status=400, mimetype='application/json')
 
         # Check if the document exists
-        cursor.execute('SELECT * FROM Document WHERE document_ID = %s', (document_ID))
+        cursor.execute('SELECT * FROM Document WHERE document_ID = %s', (document_ID,))
         document = cursor.fetchone()
         if not document:
             return Response(f"Document with ID {document_ID} not found", status=400, mimetype='application/json')
@@ -118,7 +118,7 @@ def approve_document(document_ID):
         verification_status = VerificationStatus.APPROVED.value
 
         # Check if the document exists
-        cursor.execute('SELECT * FROM Document WHERE document_ID = %s', (document_ID))
+        cursor.execute('SELECT * FROM Document WHERE document_ID = %s', (document_ID,))
         document = cursor.fetchone()
         if not document:
             return Response(f"Document with ID {document_ID} not found", status=400, mimetype='application/json')
@@ -141,7 +141,7 @@ def reject_document(document_ID):
         verification_status = VerificationStatus.REJECTED.value
 
         # Check if the document exists
-        cursor.execute('SELECT * FROM Document WHERE document_ID = %s', (document_ID))
+        cursor.execute('SELECT * FROM Document WHERE document_ID = %s', (document_ID,))
         document = cursor.fetchone()
         if not document:
             return Response(f"Document with ID {document_ID} not found", status=400, mimetype='application/json')
@@ -161,7 +161,7 @@ def delete_document(document_ID):
     cursor = connection.cursor()
     try:
         # Check if the document exists
-        cursor.execute('SELECT * FROM Document WHERE document_ID = %s', (document_ID))
+        cursor.execute('SELECT * FROM Document WHERE document_ID = %s', (document_ID,))
         document = cursor.fetchone()
         if not document:
             return Response(f"Document with ID {document_ID} not found", status=400, mimetype='application/json')

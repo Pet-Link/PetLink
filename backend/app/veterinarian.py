@@ -59,10 +59,10 @@ def create_veterinarian():
         country = data['country']
 
         # Check if the user exists with an e_mail
-        cursor.execute('SELECT * FROM User WHERE e_mail = %s', e_mail)
+        cursor.execute('SELECT * FROM User WHERE e_mail = %s', (e_mail,))
         user1 = cursor.fetchone()
         # Check if the user exists with a phone number
-        cursor.execute('SELECT * FROM User WHERE phone_number = %s', phone_number)
+        cursor.execute('SELECT * FROM User WHERE phone_number = %s', (phone_number,))
         user2 = cursor.fetchone()
 
         if user1:
@@ -74,7 +74,7 @@ def create_veterinarian():
         cursor.execute('INSERT INTO User(password, name, phone_number, e_mail) VALUES (%s, %s, %s, %s)',
                        (password, name, phone_number, e_mail))
         connection.commit()
-        cursor.execute('SELECT user_ID FROM User WHERE e_mail = %s', e_mail)
+        cursor.execute('SELECT user_ID FROM User WHERE e_mail = %s', (e_mail,))
         user_ID = cursor.fetchone()[0]
         cursor.execute('INSERT INTO Veterinarian (user_ID, year_of_experience, speciality, street, district, '
                        'apartment_no, city, zip, country) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
@@ -94,7 +94,7 @@ def get_veterinarian(user_ID):
     try:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute('SELECT * FROM Veterinarian WHERE user_ID = %s', user_ID)
+        cursor.execute('SELECT * FROM Veterinarian WHERE user_ID = %s', (user_ID,))
         veterinarian = cursor.fetchone()
         if veterinarian:
             return jsonify(veterinarian)

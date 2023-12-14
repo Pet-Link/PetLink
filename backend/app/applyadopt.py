@@ -49,12 +49,12 @@ def create_applyadopt():
         approval_status = None
 
         # Check if the provided adopter ID and pet ID are valid
-        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', adopter_ID)
+        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID,))
         adopter = cursor.fetchone()
         if not adopter:
             return Response(f'Adopter with ID {adopter_ID} does not exist.', status=404)
 
-        cursor.execute('SELECT * FROM Pet WHERE pet_ID = %s', pet_ID)
+        cursor.execute('SELECT * FROM Pet WHERE pet_ID = %s', (pet_ID,))
         pet = cursor.fetchone()
         if not pet:
             return Response(f'Pet with ID {pet_ID} does not exist.', status=404)
@@ -139,7 +139,7 @@ def get_applyadopts_for_admin(administrator_ID):
         cursor = connection.cursor()
 
         # Check if the administrator exists
-        cursor.execute('SELECT * FROM Administrator WHERE user_ID = %s', administrator_ID)
+        cursor.execute('SELECT * FROM Administrator WHERE user_ID = %s', (administrator_ID,))
         administrator = cursor.fetchone()
         if not administrator:
             return Response(f'Administrator with ID {administrator_ID} does not exist', status=404)
@@ -164,7 +164,7 @@ def get_applyadopts_for_adopter(adopter_ID):
         cursor = connection.cursor()
 
         # Check if the adopter exists
-        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', adopter_ID)
+        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID,))
         adopter = cursor.fetchone()
         if not adopter:
             return Response(f'Adopter with ID {adopter_ID} does not exist', status=404)
