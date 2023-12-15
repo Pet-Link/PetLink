@@ -58,7 +58,7 @@ def create_pet():
         # Check if only one of shelter_ID or adopter_ID is non-null
         # Since all pets are listed either by shelters to be adopted or by adopters after already being adopted
         if (shelter_ID is None and adopter_ID is None) or (shelter_ID is not None and adopter_ID is not None):
-            return Response('Only one of shelter_ID or adopter_ID should be non-null.', status=400)
+            return Response(f'Only one of shelter_ID or adopter_ID should be non-null.', status=400)
 
         # Check if the given shelter ID is valid
         if shelter_ID is not None:

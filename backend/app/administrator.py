@@ -42,6 +42,10 @@ def create_administrator():
         name = data['name']
         employee_ID = data['employee_ID']
 
+        # check if employee ID is only in integer
+        if not employee_ID.isdigit():
+            return Response(f'Employee ID {employee_ID} is not in integer format', status=400)
+
         # Check if the user exists with an e_mail
         cursor.execute('SELECT * FROM User WHERE e_mail = %s', (e_mail,))
         user1 = cursor.fetchone()

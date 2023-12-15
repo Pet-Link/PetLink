@@ -17,13 +17,13 @@ def create_post():
     connection = get_connection()
     cursor = connection.cursor()
     # check if poster_id exists
-    cursor.execute('SELECT * FROM User WHERE ID = %s', (poster_id,))
+    cursor.execute('SELECT * FROM User WHERE user_ID = %s', (poster_id,))
     user = cursor.fetchone()
 
     if user is None:
         response = Response('User does not exist!', status=400, mimetype='application/json')
         return response
-    
+
     cursor.execute('INSERT INTO Post (title, content, post_date, poster_ID) VALUES (%s, %s, %s, %s)', (title, content, post_date, poster_id))
     connection.commit()
 
@@ -45,6 +45,26 @@ def get_post(post_id):
     response = jsonify(post)
     response.status_code = 200
     return response
+
+# NOTE: if you need uncomment this endpoint
+# # Read A Post with Replies - GET
+# @post.route('/<int:post_id>/replies', methods=['GET'])
+# def get_post_with_replies(post_id):
+#     connection = get_connection()
+#     cursor = connection.cursor()
+#     cursor.execute('SELECT * FROM Post WHERE post_ID = %s', (post_id,))
+#     post = cursor.fetchone()
+
+#     if post is None:
+#         response = Response('Post does not exist!', status=400, mimetype='application/json')
+#         return response
+
+#     cursor.execute('SELECT * FROM Reply WHERE post_ID = %s', (post_id,))
+#     replies = cursor.fetchall()
+
+#     response = jsonify({'post': post, 'replies': replies})
+#     response.status_code = 200
+#     return response
 
 # Read All Posts - GET
 @post.route('/all', methods=['GET'])
@@ -74,7 +94,7 @@ def update_post(post_id):
     return response
 
 # Delete Post - DELETE
-@post.route('/<int:post_id>/delete', methods=['DELETE'])
+@post.route('/<int:post_id>', methods=['DELETE'])
 def delete_post(post_id):
     connection = get_connection()
     cursor = connection.cursor()

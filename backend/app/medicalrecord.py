@@ -43,7 +43,7 @@ def create_medicalrecord():
         if not veterinarian:
             return Response(f'Veterinarian with user ID {veterinarian_ID} does not exist', status=409)
 
-        cursor.execute('INSERT INTO MedicalRecord VALUES (%s, %s, %s, %s)', (pet_ID, veterinarian_ID, date, operation))
+        cursor.execute('INSERT INTO MedicalRecord(pet_ID, veterinarian_ID, date, operation) VALUES (%s, %s, %s, %s)', (pet_ID, veterinarian_ID, date, operation))
         connection.commit()
         return Response(f'Medical record created!', status=201)
     except Exception as e:
@@ -87,7 +87,7 @@ def update_medicalrecord(record_ID):
         if not veterinarian:
             return Response(f'Veterinarian with user ID {veterinarian_ID} does not exist', status=409)
 
-        cursor.execute('UPDATE MedicalRecord SET pet_ID = %s, veterinarian_ID = %s, date = %s, operation = %s WHERE record_ID = %s', (pet_ID, veterinarian_ID, date, operation, record_ID))
+        cursor.execute('UPDATE MedicalRecord (pet_ID, veterinarian_ID, date, operation, record_ID) SET pet_ID = %s, veterinarian_ID = %s, date = %s, operation = %s WHERE record_ID = %s', (pet_ID, veterinarian_ID, date, operation, record_ID))
         connection.commit()
         return Response(f'Medical record updated!', status=200)
     except Exception as e:

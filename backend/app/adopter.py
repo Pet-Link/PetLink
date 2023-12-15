@@ -183,6 +183,12 @@ def update_adopter_balance(user_ID):
         data = request.get_json()
         top_up_amount = data['top_up_amount']
 
+        # Check if adopter with the given user ID exists
+        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (user_ID,))
+        adopter = cursor.fetchone()
+        if not adopter:
+            return Response(f'Adopter with user_ID {user_ID} does not exist', status=404)
+
         # Update the adopter's balance
         cursor.execute(
             '''

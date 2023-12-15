@@ -54,6 +54,7 @@ def create_shelter():
         city = data['city']
         zip_no = data['zip']
         country = data['country']
+        description = data['description']
 
         # Check if the user exists with an e_mail
         cursor.execute('SELECT * FROM User WHERE e_mail = %s', (e_mail,))
@@ -73,9 +74,9 @@ def create_shelter():
         connection.commit()
         cursor.execute('SELECT user_ID FROM User WHERE e_mail = %s', (e_mail,))
         user_ID = cursor.fetchone()[0]
-        cursor.execute('INSERT INTO Shelter (user_ID, street, district, apartment_no, city, zip, country) VALUES (%s, '
-                       '%s, %s, %s, %s, %s, %s)',
-                       (user_ID, street, district, apartment_no, city, zip_no, country))
+        cursor.execute('INSERT INTO Shelter (user_ID, street, district, apartment_no, city, zip, country, description) VALUES (%s, '
+                       '%s, %s, %s, %s, %s, %s, %s)',
+                       (user_ID, street, district, apartment_no, city, zip_no, country, description))
         connection.commit()
 
         # Return the response with a message

@@ -1,6 +1,7 @@
 from flask import Blueprint, Response, request, jsonify
 from database import get_connection
 import datetime
+import uuid
 
 reply = Blueprint('reply', __name__, url_prefix='/reply')
 
@@ -30,7 +31,10 @@ def create_reply():
         cursor = connection.cursor()
         data = request.get_json()
         post_ID = data['post_ID']
-        discriminator_ID = data['discriminator_ID']
+        # create a globally unique identifier for the discriminator_ID
+        discriminator_ID = uuid.uuid4().int 
+        # trunkate the discriminator_ID to fall into range ot int of mysql
+        discriminator_ID = discriminator_ID % 2147483647
         date = datetime.datetime.now()
         expert_verify_status = False
         content = data['content']
@@ -54,7 +58,7 @@ def create_reply():
         connection.commit()
         return Response(f'Reply created!', status=201)
     except Exception as e:
-        return Response(f'Failed to create reply\n{e}', status=500)
+        return Response(f'Failed to create reply\n{e}\n{discriminator_ID}', status=500)
     
 # Get a reply - GET
 @reply.route('/<int:post_ID>/<int:discriminator_ID>', methods=['GET'])
@@ -72,7 +76,7 @@ def get_reply(post_ID, discriminator_ID):
         return Response(f'Failed to get reply\n{e}', status=500)
     
 # Delete a reply - DELETE
-@reply.route('/<int:post_ID>/<int:discriminator_ID>/delete', methods=['DELETE'])
+@reply.route('/<int:post_ID>/<int:discriminator_ID>', methods=['DELETE'])
 def delete_reply(post_ID, discriminator_ID):
     try:
         connection = get_connection()

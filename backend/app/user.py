@@ -333,3 +333,23 @@ def login():
     except Exception as e:
         # return the error
         return Response(f'An error occurred {e}', 500)
+    
+# Get the documents of a user - GET
+@user.route('/<int:user_id>/document', methods=['GET'])
+def get_documents_of_user(user_id):
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+        # check if user exists
+        cursor.execute('SELECT * FROM User WHERE user_ID = %s', (user_id,))
+        result = cursor.fetchone()
+        if not result:
+            return Response(f'User with id {user_id} does not exist!', 404)
+
+        cursor.execute('SELECT * FROM Document WHERE user_ID = %s', (user_id,))
+        result = cursor.fetchall()
+
+        return jsonify(result)
+    except Exception as e:
+        # return the error
+        return Response(f'An error occurred {e}', 500)
