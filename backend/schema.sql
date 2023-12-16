@@ -219,8 +219,10 @@ CREATE TABLE IF NOT EXISTS Meet_Greet(
 );
 
 CREATE VIEW Administrator_with_Least_Applications AS
-SELECT administrator_ID, COUNT(*) AS num_rows
-FROM Apply_Adopt
-GROUP BY administrator_ID
+SELECT a.administrator_ID, COUNT(aa.administrator_ID) AS num_rows
+FROM Administrators a
+LEFT JOIN Apply_Adopt aa ON a.administrator_ID = aa.administrator_ID
+WHERE aa.approval_status IS NULL
+GROUP BY a.administrator_ID
 ORDER BY num_rows ASC
 LIMIT 1;
