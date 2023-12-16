@@ -113,7 +113,8 @@ def get_applyadopt(adopter_ID, pet_ID):
         application = cursor.fetchone()
         if not application:
             return Response(f'Application for adopter ID {adopter_ID} and pet ID {pet_ID} does not exist', status=404)
-
+        # convert the application to a dictionary with the keys
+        application = dict(zip([key[0] for key in cursor.description], application))
         return jsonify(application)
     except Exception as e:
         print(e)
@@ -129,6 +130,9 @@ def get_all_applyadopt():
         cursor.execute('SELECT * FROM Apply_Adopt')
         all_applyadopt = cursor.fetchall()
         if all_applyadopt:
+            # convert the applications to a dictionary with the keys
+            all_applyadopt = [dict(zip([key[0] for key in cursor.description], application)) for application in
+                              all_applyadopt]
             return jsonify(all_applyadopt)
         return Response(f'No adoption applications exist', status=404)
     except Exception as e:
@@ -153,7 +157,8 @@ def get_applyadopts_for_admin(administrator_ID):
         cursor.execute('SELECT * FROM Apply_Adopt WHERE administrator_ID = %s AND approval_status IS NULL',
                        administrator_ID)
         applyadopts = cursor.fetchall()
-
+        # convert the applications to a dictionary with the keys
+        applyadopts = [dict(zip([key[0] for key in cursor.description], application)) for application in applyadopts]
         return jsonify(applyadopts)
 
     except Exception as e:
@@ -178,6 +183,8 @@ def get_applyadopts_for_adopter(adopter_ID):
         cursor.execute('SELECT * FROM Apply_Adopt WHERE adopter_ID = %s', adopter_ID)
         applyadopts = cursor.fetchall()
 
+        # convert the applications to a dictionary with the keys
+        applyadopts = [dict(zip([key[0] for key in cursor.description], application)) for application in applyadopts]
         return jsonify(applyadopts)
 
     except Exception as e:

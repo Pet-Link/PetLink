@@ -64,6 +64,8 @@ def read_document(document_ID):
         if not document:
             return Response(f"Document with ID {document_ID} not found", status=400, mimetype='application/json')
         cursor.close()
+        # convert document to dictionary with keys
+        document = dict(zip([key[0] for key in cursor.description], document))
         return jsonify(document)
     except Exception as e:
         print(e)
@@ -78,6 +80,10 @@ def read_all_documents():
         cursor.execute('SELECT * FROM Document')
         documents = cursor.fetchall()
         cursor.close()
+        if not documents:
+            return Response(f"No documents found", status=400, mimetype='application/json')
+        # convert documents to dictionary with keys
+        documents = [dict(zip([key[0] for key in cursor.description], document)) for document in documents]
         return jsonify(documents)
     except Exception as e:
         print(e)

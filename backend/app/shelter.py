@@ -87,7 +87,6 @@ def create_shelter():
         # Return the response with a message
         return Response(f'Shelter with user_ID {user_ID} is created', status=201)
     except Exception as e:
-        print(e)
         return Response(f'Shelter could not be created with exception {e}', status=500)
 
 
@@ -100,6 +99,8 @@ def get_shelter(user_ID):
         cursor.execute('SELECT * FROM Shelter WHERE user_ID = %s', (user_ID,))
         shelter = cursor.fetchone()
         if shelter:
+            # convert shelter to dictionary with keys
+            shelter = dict(zip([key[0] for key in cursor.description], shelter))
             return jsonify(shelter)
         return Response(f'Shelter with user_ID {user_ID} does not exist', status=404)
     except Exception as e:
@@ -116,6 +117,8 @@ def get_all_shelters():
         cursor.execute('SELECT * FROM Shelter')
         shelters = cursor.fetchall()
         if shelters:
+            # convert shelters to dictionary with keys
+            shelters = [dict(zip([key[0] for key in cursor.description], shelter)) for shelter in shelters]
             return jsonify(shelters)
         return Response(f'No shelters exist', status=404)
     except Exception as e:

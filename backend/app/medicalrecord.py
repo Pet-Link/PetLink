@@ -137,6 +137,8 @@ def get_all_medicalrecord():
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM MedicalRecord')
         medicalrecord = cursor.fetchall()
+        # convert medical record to dictionary with keys
+        medicalrecord = [dict(zip([key[0] for key in cursor.description], medicalrecord)) for medicalrecord in medicalrecord]
         return jsonify(medicalrecord)
     except Exception as e:
         return Response(f'Failed to get medical record\n{e}', status=500)
@@ -149,6 +151,8 @@ def get_all_medicalrecord_pet(pet_ID):
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM MedicalRecord WHERE pet_ID = %s', (pet_ID,))
         medicalrecord = cursor.fetchall()
+        # convert medical record to dictionary with keys
+        medicalrecord = [dict(zip([key[0] for key in cursor.description], medicalrecord)) for medicalrecord in medicalrecord]
         return jsonify(medicalrecord)
     except Exception as e:
         return Response(f'Failed to get medical record\n{e}', status=500)
@@ -161,6 +165,8 @@ def get_all_medicalrecord_veterinarian(veterinarian_ID):
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM MedicalRecord WHERE veterinarian_ID = %s', (veterinarian_ID,))
         medicalrecord = cursor.fetchall()
+        # convert medical record to dictionary with keys
+        medicalrecord = [dict(zip([key[0] for key in cursor.description], medicalrecord)) for medicalrecord in medicalrecord]
         return jsonify(medicalrecord)
     except Exception as e:
         return Response(f'Failed to get medical record\n{e}', status=500)

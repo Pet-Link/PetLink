@@ -93,6 +93,8 @@ def get_administrator(user_ID):
         cursor.execute('SELECT * FROM Administrator WHERE user_ID = %s', (user_ID,))
         administrator = cursor.fetchone()
         if administrator:
+            # convert the administrator to a dictionary with the keys
+            administrator = dict(zip([key[0] for key in cursor.description], administrator))
             return jsonify(administrator)
         return Response(f'Administrator with user_ID {user_ID} does not exist', status=404)
     except Exception as e:
@@ -108,6 +110,8 @@ def get_administrator_with_employee_id(employee_ID):
         cursor.execute('SELECT * FROM Administrator WHERE employee_ID = %s', (employee_ID,))
         administrator = cursor.fetchone()
         if administrator:
+            # convert the administrator to a dictionary with the keys
+            administrator = dict(zip([key[0] for key in cursor.description], administrator))
             return jsonify(administrator)
         return Response(f'Administrator with employee_ID {employee_ID} does not exist', status=404)
     except Exception as e:
@@ -123,6 +127,8 @@ def get_all_administrators():
         cursor.execute('SELECT * FROM Administrator')
         administrators = cursor.fetchall()
         if administrators:
+            # convert the administrators to a dictionary with the keys
+            administrators = [dict(zip([key[0] for key in cursor.description], administrator)) for administrator in administrators]
             return jsonify(administrators)
         return Response(f'No administrators exist', status=404)
     except Exception as e:

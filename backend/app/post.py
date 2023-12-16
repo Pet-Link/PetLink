@@ -41,7 +41,8 @@ def get_post(post_id):
     if post is None:
         response = Response('Post does not exist!', status=400, mimetype='application/json')
         return response
-
+    # convert post into dictionary with keys
+    post = dict(zip([key[0] for key in cursor.description], post))
     response = jsonify(post)
     response.status_code = 200
     return response
@@ -73,7 +74,8 @@ def get_all_posts():
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM Post')
     posts = cursor.fetchall()
-
+    # convert posts into dictionary with keys
+    posts = [dict(zip([key[0] for key in cursor.description], post)) for post in posts]
     response = jsonify(posts)
     response.status_code = 200
     return response
@@ -111,7 +113,8 @@ def get_all_replies(post_id):
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM Reply WHERE post_ID = %s', (post_id,))
     replies = cursor.fetchall()
-
+    # convert replies into dictionary with keys
+    replies = [dict(zip([key[0] for key in cursor.description], reply)) for reply in replies]
     response = jsonify(replies)
     response.status_code = 200
     return response

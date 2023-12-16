@@ -49,6 +49,8 @@ def get_petcareinfo(info_ID):
         petcareinfo = cursor.fetchone()
         if not petcareinfo:
             return Response(f'Pet care info with info ID {info_ID} does not exist', status=404)
+        # convert petcareinfo to dictionary with keys
+        petcareinfo = dict(zip([key[0] for key in cursor.description], petcareinfo))
         return jsonify(petcareinfo)
     except Exception as e:
         return Response(f'Failed to get pet care info\n{e}', status=500)
@@ -99,6 +101,8 @@ def get_all_petcareinfo():
         petcareinfo = cursor.fetchall()
         if not petcareinfo:
             return Response(f'No pet care info exists', status=404)
+        # convert petcareinfo to dictionary with keys
+        petcareinfo = [dict(zip([key[0] for key in cursor.description], petcareinfo)) for petcareinfo in petcareinfo]
         return jsonify(petcareinfo)
     except Exception as e:
         return Response(f'Failed to get pet care info\n{e}', status=500)

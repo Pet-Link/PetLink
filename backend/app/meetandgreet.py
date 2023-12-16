@@ -56,6 +56,8 @@ def get_meetandgreet(adopter_ID, pet_ID):
         cursor.execute('SELECT * FROM Meet_Greet WHERE adopter_ID = %s AND pet_ID = %s', (adopter_ID, pet_ID))
         meetandgreet = cursor.fetchone()
         if meetandgreet:
+            # convert meetandgreet to dictionary with keys
+            meetandgreet = dict(zip([key[0] for key in cursor.description], meetandgreet))
             return jsonify(meetandgreet)
         else:
             return Response(f'Meet and greet with adopter ID {adopter_ID} and pet ID {pet_ID} does not exist', status=404)
@@ -108,6 +110,8 @@ def get_all_meetandgreets():
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM Meet_Greet')
         meetandgreets = cursor.fetchall()
+        # convert meetandgreets to list of dictionaries with keys
+        meetandgreets = [dict(zip([key[0] for key in cursor.description], meetandgreet)) for meetandgreet in meetandgreets]
         return jsonify(meetandgreets)
     except Exception as e:
         return Response(f'Failed to get all meet and greets\n{e}', status=500)
@@ -120,6 +124,8 @@ def get_all_meetandgreets_by_adopter(adopter_ID):
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM Meet_Greet WHERE adopter_ID = %s', (adopter_ID,))
         meetandgreets = cursor.fetchall()
+        # convert meetandgreets to list of dictionaries with keys
+        meetandgreets = [dict(zip([key[0] for key in cursor.description], meetandgreet)) for meetandgreet in meetandgreets]
         return jsonify(meetandgreets)
     except Exception as e:
         return Response(f'Failed to get all meet and greets\n{e}', status=500)
@@ -132,6 +138,8 @@ def get_all_meetandgreets_by_pet(pet_ID):
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM Meet_Greet WHERE pet_ID = %s', (pet_ID,))
         meetandgreets = cursor.fetchall()
+        # convert meetandgreets to list of dictionaries with keys
+        meetandgreets = [dict(zip([key[0] for key in cursor.description], meetandgreet)) for meetandgreet in meetandgreets]
         return jsonify(meetandgreets)
     except Exception as e:
         return Response(f'Failed to get all meet and greets\n{e}', status=500)
@@ -144,6 +152,8 @@ def get_all_meetandgreets_by_date(date):
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM Meet_Greet WHERE date = %s', (date,))
         meetandgreets = cursor.fetchall()
+        # convert meetandgreets to list of dictionaries with keys
+        meetandgreets = [dict(zip([key[0] for key in cursor.description], meetandgreet)) for meetandgreet in meetandgreets]
         return jsonify(meetandgreets)
     except Exception as e:
         return Response(f'Failed to get all meet and greets\n{e}', status=500)

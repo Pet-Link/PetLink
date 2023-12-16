@@ -14,8 +14,6 @@ CREATE TABLE IF NOT EXISTS Photo(
 );
 '''
 
-# TODO: look into this file
-
 # Create Photo - POST
 @photo.route('/create', methods=['POST'])
 def create_photo():

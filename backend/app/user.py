@@ -118,7 +118,8 @@ def read_user(user_id):
         cursor.execute('SELECT * FROM User WHERE user_ID = %s', (user_id,))
         result = cursor.fetchone()
 
-
+        # convert result to dictionary with keys
+        result = dict(zip([key[0] for key in cursor.description], result))
         return jsonify(result)
     except Exception as e:
         # return the error
@@ -133,6 +134,8 @@ def read_user_by_email(e_mail):
         cursor.execute('SELECT * FROM User WHERE e_mail = %s', (e_mail,))
         result = cursor.fetchone()
 
+        # convert result to dictionary with keys
+        result = dict(zip([key[0] for key in cursor.description], result))
         return jsonify(result)
     except Exception as e:
         # return the error
@@ -147,7 +150,8 @@ def read_user_by_phone_number(phone_number):
         cursor.execute('SELECT * FROM User WHERE phone_number = %s', (phone_number,))
         result = cursor.fetchone()
 
-
+        # convert result to dictionary with keys
+        result = dict(zip([key[0] for key in cursor.description], result))
         return jsonify(result)
     except Exception as e:
         # return the error
@@ -176,7 +180,8 @@ def create_verification_code(e_mail):
         # Send e-mail to the user with the verification code
         if not send_email(verification_code, e_mail):
             return Response(f'Verification code could not be sent to {e_mail}', 500)
-
+        # convert verification code to key:value pair
+        verification_code = {'verification_code': verification_code}
         # return the verification code
         return jsonify(verification_code)
     except Exception as e:
@@ -216,7 +221,6 @@ def check_verification_code(e_mail):
         cursor.execute('UPDATE User SET verification_code = NULL WHERE e_mail = %s', (e_mail,))
         connection.commit()
 
-
         # return the verification code
         return Response('Verification code correct', 200)
     except Exception as e:
@@ -242,7 +246,6 @@ def update_password(user_id):
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         cursor.execute('UPDATE User SET password = %s WHERE user_id = %s', (hashed_password, user_id))
         connection.commit()
-
 
         return Response('Password updated successfully', 200)
     except Exception as e:
@@ -354,7 +357,8 @@ def get_documents_of_user(user_id):
 
         cursor.execute('SELECT * FROM Document WHERE user_ID = %s', (user_id,))
         result = cursor.fetchall()
-
+        # convert result into dictionary with keys
+        result = [dict(zip([key[0] for key in cursor.description], document)) for document in result]
         return jsonify(result)
     except Exception as e:
         # return the error

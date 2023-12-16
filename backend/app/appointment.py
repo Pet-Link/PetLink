@@ -65,7 +65,8 @@ def read_appointment():
         appointment = cursor.fetchone()
         if not appointment:
             return Response(f"Appointment with adopter ID {adopter_ID} and veterinarian ID {veterinarian_ID} not found", status=400, mimetype='application/json')
-        
+        # convert appointment to dictionary with keys
+        appointment = dict(zip([column[0] for column in cursor.description], appointment))
         return jsonify(appointment)
     except Exception as e:
         print(e)
@@ -161,6 +162,8 @@ def get_all_appointments_for_veterinarian(veterinarian_ID):
 
         cursor.execute('SELECT * FROM Appointment WHERE veterinarian_ID = %s', (veterinarian_ID))
         appointments = cursor.fetchall()
+        # convert appointments to list of dictionaries with keys
+        appointments = [dict(zip([key[0] for key in cursor.description], appointment)) for appointment in appointments]
         return jsonify(appointments)
     except Exception as e:
         print(e)
@@ -180,6 +183,8 @@ def get_all_appointments_for_adopter(adopter_ID):
 
         cursor.execute('SELECT * FROM Appointment WHERE adopter_ID = %s', (adopter_ID))
         appointments = cursor.fetchall()
+        # convert appointments to list of dictionaries with keys
+        appointments = [dict(zip([key[0] for key in cursor.description], appointment)) for appointment in appointments]
         return jsonify(appointments)
     except Exception as e:
         print(e)

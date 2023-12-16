@@ -69,6 +69,8 @@ def get_reply(post_ID, discriminator_ID):
         cursor.execute('SELECT * FROM Reply WHERE post_ID = %s AND discriminator_ID = %s', (post_ID, discriminator_ID))
         reply = cursor.fetchone()
         if reply:
+            # convert reply to dictionary with keys
+            reply = dict(zip([key[0] for key in cursor.description], reply))
             return jsonify(reply)
         else:
             return Response(f'Reply with post ID {post_ID} and discriminator ID {discriminator_ID} does not exist', status=404)

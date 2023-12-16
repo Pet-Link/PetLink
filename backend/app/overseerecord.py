@@ -62,6 +62,8 @@ def get_overseerecord(record_ID):
         overseerecord = cursor.fetchone()
         if not overseerecord:
             return Response(f'Overseer record with record ID {record_ID} does not exist', status=404)
+        # convert overseerecord to dictionary with keys
+        overseerecord = dict(zip([key[0] for key in cursor.description], overseerecord))
         return jsonify(overseerecord)
     except Exception as e:
         return Response(f'Failed to get overseer record\n{e}', status=500)
@@ -109,6 +111,8 @@ def get_overseerecord_by_adopter(adopter_ID):
         overseerecords = cursor.fetchall()
         if not overseerecords:
             return Response(f'Overseer records with adopter ID {adopter_ID} do not exist', status=404)
+        # convert overseerecords to dictionary with keys
+        overseerecords = [dict(zip([key[0] for key in cursor.description], overseerecord)) for overseerecord in overseerecords]
         return jsonify(overseerecords)
     except Exception as e:
         return Response(f'Failed to get overseer records\n{e}', status=500)
@@ -123,6 +127,8 @@ def get_overseerecord_by_administrator(administrator_ID):
         overseerecords = cursor.fetchall()
         if not overseerecords:
             return Response(f'Overseer records with administrator ID {administrator_ID} do not exist', status=404)
+        # convert overseerecords to dictionary with keys
+        overseerecords = [dict(zip([key[0] for key in cursor.description], overseerecord)) for overseerecord in overseerecords]
         return jsonify(overseerecords)
     except Exception as e:
         return Response(f'Failed to get overseer records\n{e}', status=500)
@@ -149,6 +155,8 @@ def get_all_overseerecords():
         overseerecords = cursor.fetchall()
         if not overseerecords:
             return Response(f'Overseer records do not exist', status=404)
+        # convert overseerecords to dictionary with keys
+        overseerecords = [dict(zip([key[0] for key in cursor.description], overseerecord)) for overseerecord in overseerecords]
         return jsonify(overseerecords)
     except Exception as e:
         return Response(f'Failed to get overseer records\n{e}', status=500)
@@ -163,6 +171,8 @@ def get_all_overseerecords_by_verification_status(verification_status):
         overseerecords = cursor.fetchall()
         if not overseerecords:
             return Response(f'Overseer records with verification status {verification_status} do not exist', status=404)
+        # convert overseerecords to dictionary with keys
+        overseerecords = [dict(zip([key[0] for key in cursor.description], overseerecord)) for overseerecord in overseerecords]
         return jsonify(overseerecords)
     except Exception as e:
         return Response(f'Failed to get overseer records\n{e}', status=500)

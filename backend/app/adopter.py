@@ -94,10 +94,12 @@ def get_adopter(user_ID):
     try:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', user_ID)
+        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (user_ID,))
         adopter = cursor.fetchone()
         if not adopter:
             return Response(f'Adopter with user_ID {user_ID} does not exist', status=404)
+        # convert the adopter to a dictionary with the keys
+        adopter = dict(zip([key[0] for key in cursor.description], adopter))
         return jsonify(adopter)
     except Exception as e:
         print(e)
@@ -121,6 +123,8 @@ def get_all_adopters():
         #     result.append(adopter)
         # return the appended adopters
         if adopters:
+            # convert the adopters to a dictionary with the keys
+            adopters = [dict(zip([key[0] for key in cursor.description], adopter)) for adopter in adopters]
             return jsonify(adopters)
         else:
             return Response(f'No adopters exist', status=404)

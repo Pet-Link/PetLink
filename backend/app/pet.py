@@ -99,6 +99,8 @@ def get_pet(pet_ID):
         cursor.execute('SELECT * FROM Pet WHERE pet_ID = %s', (pet_ID,))
         pet = cursor.fetchone()
         if pet:
+            # convert pet to dictionary with keys
+            pet = dict(zip([key[0] for key in cursor.description], pet))
             return jsonify(pet)
         return Response(f'Pet with pet_ID {pet_ID} does not exist', status=404)
     except Exception as e:
@@ -115,6 +117,8 @@ def get_all_pets():
         cursor.execute('SELECT * FROM Pet')
         pets = cursor.fetchall()
         if pets:
+            # convert pets to dictionary with keys
+            pets = [dict(zip([key[0] for key in cursor.description], pet)) for pet in pets]
             return jsonify(pets)
         return Response(f'No pets exist', status=404)
     except Exception as e:
@@ -138,6 +142,8 @@ def get_adopter_pets(adopter_ID):
         cursor.execute('SELECT * FROM Pet WHERE adopter_ID = %s', adopter_ID)
         pets = cursor.fetchall()
 
+        # convert pets to dictionary with keys
+        pets = [dict(zip([key[0] for key in cursor.description], pet)) for pet in pets]
         return jsonify(pets)
 
     except Exception as e:
@@ -160,7 +166,8 @@ def get_shelter_pets(shelter_ID):
         # Get all pets of the shelter
         cursor.execute('SELECT * FROM Pet WHERE shelter_ID = %s', (shelter_ID,))
         shelter_pets = cursor.fetchall()
-
+        # convert pets to dictionary with keys
+        shelter_pets = [dict(zip([key[0] for key in cursor.description], pet)) for pet in shelter_pets]
         return jsonify(shelter_pets)
 
     except Exception as e:
@@ -183,7 +190,8 @@ def get_unadopted_shelter_pets(shelter_ID):
         # Get all unadopted pets of the shelter
         cursor.execute('SELECT * FROM Pet WHERE shelter_ID = %s AND adoption_status = 0', shelter_ID)
         unadopted_pets = cursor.fetchall()
-
+        # convert pets to dictionary with keys
+        unadopted_pets = [dict(zip([key[0] for key in cursor.description], pet)) for pet in unadopted_pets]
         return jsonify(unadopted_pets)
 
     except Exception as e:
@@ -217,7 +225,7 @@ def get_species_and_breeds():
 
             # Add breed and unadopted count under the species
             result[species_name][breed_name] = unadopted_count
-
+        
         return jsonify(result)
 
     except Exception as e:
