@@ -14,6 +14,8 @@ import {
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { useNavigate } from 'react-router-dom';
+import { AuthenticationService } from '../services/authenticationService';
+import * as toastr from 'toastr';
 
 export default function Login() {
     const navigate = useNavigate();
@@ -38,6 +40,15 @@ export default function Login() {
         console.log(email);
         console.log(password);
         console.log(registrationType);
+        AuthenticationService.login(email, password).then(
+            function(result) {
+            console.log(result.ok);
+            if (result.ok === true) {
+                toastr.success('Login has been successful.');
+                navigate('/register-adopter');
+            }
+        }
+        );
     };
 
     return ( 

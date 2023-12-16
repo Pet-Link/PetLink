@@ -1,34 +1,13 @@
-import { environment } from 'src/environment';
+import { environment } from '../environment';
 
 export class AuthenticationService {
-  private baseUrl: string;
+  private static baseUrl: string = environment.apiUrl;
 
-  constructor() {
-    this.baseUrl = environment.apiUrl;
-  }
-
-  async login( body: object): Promise<any> {
-    try {
-      const response = await fetch(`${this.baseUrl}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Request failed with status: ${response.status}`);
-      }
-
-      const response = await this.postData('login', body);
-      return response;
-    } catch (error) {
-      console.error('Error posting data:', error);
-      throw error;
-    }
-
+  static login(e_mail: string, password: string) {
+    return fetch(`${AuthenticationService.baseUrl}/user/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ e_mail, password }),
+    });
   }
 }
-
-export default ApiService;

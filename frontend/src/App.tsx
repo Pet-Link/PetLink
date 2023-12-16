@@ -4,6 +4,8 @@ import RegisterAdmin from './pages/administrator/registerAdmin';
 import RegisterAdopter from './pages/adopter/registerAdopter';
 import RegisterVet from './pages/vet/registerVet';
 import Router from './router/router';
+import 'toastr/build/toastr.min.css';
+
 // ... import other pages as needed
 
 function App() {
