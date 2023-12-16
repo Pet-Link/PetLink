@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS Adopter(
     profile_picture_path VARCHAR(300),
     species VARCHAR(50),
     breed VARCHAR(50),
-    adoption_age INT NOT NULL,
+    adoption_age INT,
     neuter_status VARCHAR(20),
     adoption_sex VARCHAR(10),
     FOREIGN KEY(user_ID) REFERENCES User(user_ID)
@@ -217,3 +217,10 @@ CREATE TABLE IF NOT EXISTS Meet_Greet(
     ON DELETE CASCADE,
     PRIMARY KEY (adopter_ID, pet_ID)
 );
+
+CREATE VIEW Administrator_with_Least_Applications AS
+SELECT administrator_ID, COUNT(*) AS num_rows
+FROM Apply_Adopt
+GROUP BY administrator_ID
+ORDER BY num_rows ASC
+LIMIT 1;

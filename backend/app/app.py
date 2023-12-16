@@ -7,15 +7,37 @@ from post import post
 from document import document
 from appointment import appointment
 from user import user
+from adopter import adopter
+from applyadopt import applyadopt
 from administrator import administrator
+from medicalrecord import medicalrecord
+from petcareinfo import petcareinfo
+from pet import pet
+from overseerecord import overseerecord
+from meetandgreet import meetandgreet
+from shelter import shelter
+from veterinarian import veterinarian
+from photo import photo
+from reply import reply
 
 CORS(db)
 
 db.register_blueprint(post)
+db.register_blueprint(applyadopt)
 db.register_blueprint(document)
+db.register_blueprint(veterinarian)
+db.register_blueprint(shelter)
+db.register_blueprint(adopter)
 db.register_blueprint(appointment)
+db.register_blueprint(pet)
+db.register_blueprint(overseerecord)
 db.register_blueprint(user)
+db.register_blueprint(petcareinfo)
+db.register_blueprint(reply)
+db.register_blueprint(photo)
+db.register_blueprint(meetandgreet)
 db.register_blueprint(administrator)
+db.register_blueprint(medicalrecord)
 
 # Initialize Flask app
 @db.route('/')
@@ -38,7 +60,7 @@ def login():
             session['username'] = account[1]
             return redirect(url_for('home'))
         else:
-            # Account doesnt exist or username/password incorrect
+            # Account does not exist or username/password is incorrect
             return render_template('login.html', msg='Incorrect username/password!')
     return render_template('login.html')
 
