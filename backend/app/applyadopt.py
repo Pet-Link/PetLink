@@ -68,10 +68,10 @@ def create_applyadopt():
         # Check if adopter's balance is enough
         if adopter[4] < pet[13]: # adopter's balance < pet's adoption fee
             return Response('Adoption cannot be processed. Insufficient balance.', status=400)
-        #TODO: look into this view the view tries to get admins before inserting causing null error
+        
         # Get the administrator with the least amount of applications
         cursor.execute('''
-                        SELECT administrator_ID
+                        SELECT user_ID
                         FROM Administrator_with_Least_Applications
                         ''')
         admin_result = cursor.fetchone()
