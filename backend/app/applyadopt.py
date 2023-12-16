@@ -58,6 +58,12 @@ def create_applyadopt():
         if not pet:
             return Response(f'Pet with ID {pet_ID} does not exist.', status=404)
 
+        # Check if the pet is already adopted
+        cursor.execute('SELECT * FROM Pet WHERE pet_ID = %s AND adoption_status = 1', (pet_ID,))
+        pet = cursor.fetchone()
+        if pet:
+            return Response(f'Pet with ID {pet_ID} is already adopted.', status=404)
+
         # Check if the application already exists
         cursor.execute('SELECT * FROM Apply_Adopt WHERE adopter_ID = %s AND pet_ID = %s', (adopter_ID, pet_ID))
         existing_application = cursor.fetchone()
@@ -66,7 +72,7 @@ def create_applyadopt():
                             status=409)
 
         # Check if adopter's balance is enough
-        if adopter[4] < pet[13]: # adopter's balance < pet's adoption fee
+        if adopter[4] < pet[13]:  # adopter's balance < pet's adoption fee
             return Response('Adoption cannot be processed. Insufficient balance.', status=400)
         
         # Get the administrator with the least amount of applications
