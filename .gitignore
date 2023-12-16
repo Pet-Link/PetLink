@@ -1,6 +1,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,macos,flask
 #
-
+node_modules
 .DS_Store
 */.DS_Store
 */.env
@@ -303,5 +303,3 @@ poetry.toml
 
 # LSP config files
 pyrightconfig.json
-
-# End of https://www.toptal.com/developers/gitignore/api/python,macos,flask
