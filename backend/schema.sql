@@ -219,7 +219,7 @@ CREATE TABLE IF NOT EXISTS Meet_Greet(
 );
 
 CREATE VIEW Administrator_with_Least_Applications AS
-SELECT a.user_ID, COUNT(a.user_ID) AS num_rows
+SELECT a.user_ID, COALESCE(COUNT(DISTINCT aa.adopter_ID, aa.pet_ID), 0) AS num_rows
 FROM Administrator a
 LEFT JOIN Apply_Adopt as aa ON a.user_ID = aa.administrator_ID
 WHERE aa.approval_status IS NULL
