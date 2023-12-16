@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS petlink CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE petlink;
+
 CREATE TABLE IF NOT EXISTS User(
     user_ID INT NOT NULL AUTO_INCREMENT,
     password VARCHAR(255) NOT NULL,
@@ -14,7 +17,7 @@ CREATE TABLE IF NOT EXISTS Post(
     post_ID INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
-    post_date DATE NOT NULL,
+    post_date DATETIME NOT NULL,
     poster_ID INT NOT NULL,
     FOREIGN KEY(poster_ID) REFERENCES User(user_ID)
     ON DELETE CASCADE,
@@ -24,7 +27,7 @@ CREATE TABLE IF NOT EXISTS Post(
 CREATE TABLE IF NOT EXISTS Reply(
     post_ID INT NOT NULL,
     discriminator_ID INT NOT NULL,
-    date DATE NOT NULL,
+    date DATETIME NOT NULL,
     expert_verify_status BOOLEAN,
     content TEXT NOT NULL,
     replier_ID INT NOT NULL,
@@ -65,6 +68,7 @@ CREATE TABLE IF NOT EXISTS Administrator(
     employee_ID INT NOT NULL,
     FOREIGN KEY(user_ID) REFERENCES User(user_ID)
     ON DELETE CASCADE,
+    UNIQUE(employee_ID),
     PRIMARY KEY (user_ID)
 );
 
@@ -77,7 +81,7 @@ CREATE TABLE IF NOT EXISTS Adopter(
     profile_picture_path VARCHAR(300),
     species VARCHAR(50),
     breed VARCHAR(50),
-    adoption_age INT NOT NULL,
+    adoption_age INT,
     neuter_status VARCHAR(20),
     adoption_sex VARCHAR(10),
     FOREIGN KEY(user_ID) REFERENCES User(user_ID)
@@ -146,7 +150,7 @@ CREATE TABLE IF NOT EXISTS MedicalRecord(
     record_ID INT NOT NULL AUTO_INCREMENT,
     pet_ID INT NOT NULL,
     veterinarian_ID INT NOT NULL,
-    date DATE NOT NULL,
+    date DATETIME NOT NULL,
     operation TEXT,
     FOREIGN KEY(pet_ID) REFERENCES Pet(pet_ID)
     ON DELETE CASCADE,
@@ -159,7 +163,7 @@ CREATE TABLE IF NOT EXISTS OverseeRecord(
     record_ID INT NOT NULL AUTO_INCREMENT,
     administrator_ID INT NOT NULL,
     adopter_ID INT NOT NULL,
-    date DATE NOT NULL,
+    date DATETIME NOT NULL,
     details TEXT,
     verification_status BOOLEAN,
     FOREIGN KEY(administrator_ID) REFERENCES Administrator(user_ID)
@@ -169,10 +173,11 @@ CREATE TABLE IF NOT EXISTS OverseeRecord(
     PRIMARY KEY (record_ID)
 );
 
+
 CREATE TABLE IF NOT EXISTS Appointment(
     adopter_ID INT NOT NULL,
     veterinarian_ID INT NOT NULL,
-    date DATE NOT NULL,
+    date DATETIME NOT NULL,
     approval_status BOOLEAN,
     details TEXT,
     FOREIGN KEY(adopter_ID) REFERENCES Adopter(user_ID)
@@ -186,7 +191,7 @@ CREATE TABLE IF NOT EXISTS Apply_Adopt(
     adopter_ID INT NOT NULL,
     pet_ID INT NOT NULL,
     administrator_ID INT,
-    date DATE NOT NULL,
+    date DATETIME NOT NULL,
     pet_ownership BOOLEAN,
     pet_care_experience INT,
     housing_situation TEXT NOT NULL,
@@ -205,10 +210,19 @@ CREATE TABLE IF NOT EXISTS Apply_Adopt(
 CREATE TABLE IF NOT EXISTS Meet_Greet(
     adopter_ID INT NOT NULL,
     pet_ID INT NOT NULL,
-    date DATE NOT NULL,
+    date DATETIME NOT NULL,
     FOREIGN KEY(adopter_ID) REFERENCES Adopter(user_ID)
     ON DELETE CASCADE,
     FOREIGN KEY(pet_ID) REFERENCES Pet(pet_ID)
     ON DELETE CASCADE,
     PRIMARY KEY (adopter_ID, pet_ID)
 );
+
+CREATE VIEW Administrator_with_Least_Applications AS
+SELECT a.user_ID, COALESCE(COUNT(DISTINCT aa.adopter_ID, aa.pet_ID), 0) AS num_rows
+FROM Administrator a
+LEFT JOIN Apply_Adopt as aa ON a.user_ID = aa.administrator_ID
+WHERE aa.approval_status IS NULL
+GROUP BY a.user_ID
+ORDER BY num_rows ASC
+LIMIT 1;

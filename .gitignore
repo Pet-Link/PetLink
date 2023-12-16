@@ -1,12 +1,24 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,macos,flask
-# Edit at https://www.toptal.com/developers/gitignore?templates=python,macos,flask
-node_modules/
+#
+node_modules
+.DS_Store
+*/.DS_Store
+*/.env
+*/.env.*
+*/.venv
+*/.venv/
+
 ### Flask ###
 instance/*
 !instance/.gitignore
 .webassets-cache
 .env
 
+node_modules
+.idea
+node_modules/.package-lock.json
+
+package-lock.json
 ### Flask.Python Stack ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -291,5 +303,3 @@ poetry.toml
 
 # LSP config files
 pyrightconfig.json
-
-# End of https://www.toptal.com/developers/gitignore/api/python,macos,flask

@@ -1,27 +1,56 @@
 import re  
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
-import mysql.connector
+from flask_cors import CORS
+from database import db, get_connection
+from post import post
+from document import document
+from appointment import appointment
+from user import user
+from adopter import adopter
+from applyadopt import applyadopt
+from administrator import administrator
+from medicalrecord import medicalrecord
+from petcareinfo import petcareinfo
+from pet import pet
+from overseerecord import overseerecord
+from meetandgreet import meetandgreet
+from shelter import shelter
+from veterinarian import veterinarian
+from photo import photo
+from reply import reply
 
-app = Flask(__name__) 
+CORS(db)
 
-app.secret_key = 'abcdefgh'
+db.register_blueprint(post)
+db.register_blueprint(applyadopt)
+db.register_blueprint(document)
+db.register_blueprint(veterinarian)
+db.register_blueprint(shelter)
+db.register_blueprint(adopter)
+db.register_blueprint(appointment)
+db.register_blueprint(pet)
+db.register_blueprint(overseerecord)
+db.register_blueprint(user)
+db.register_blueprint(petcareinfo)
+db.register_blueprint(reply)
+db.register_blueprint(photo)
+db.register_blueprint(meetandgreet)
+db.register_blueprint(administrator)
+db.register_blueprint(medicalrecord)
 
-connection = mysql.connector.connect(host='db',
-                                         database='petlink',
-                                         user='root',
-                                         password='password')
-
-@app.route('/')
+# Initialize Flask app
+@db.route('/')
 
 # login endpoint for REST API
-@app.route('/login', methods=['GET', 'POST'])
+@db.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         # Fetch form data
         userDetails = request.form
-        username = userDetails['username']
+        username = userDetails['username']  
         password = userDetails['password']
+        connection = get_connection()
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
         account = cursor.fetchone()
@@ -31,10 +60,10 @@ def login():
             session['username'] = account[1]
             return redirect(url_for('home'))
         else:
-            # Account doesnt exist or username/password incorrect
+            # Account does not exist or username/password is incorrect
             return render_template('login.html', msg='Incorrect username/password!')
     return render_template('login.html')
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    db.run(debug=True, host='0.0.0.0', port=port)
