@@ -305,8 +305,9 @@ def login():
         password = body['password']
 
         # Check whether the user with the given email exists and whether the password is correct
-        cursor.execute("SELECT * FROM User WHERE email=?", email)
+        cursor.execute("SELECT * FROM User WHERE e_mail=%s", (email,))
         result = cursor.fetchone()
+
         if not result or not bcrypt.check_password_hash(result[1], password):
             return Response('Invalid email or password', 409)
 
@@ -317,10 +318,10 @@ def login():
             "WHEN EXISTS (SELECT 1 FROM Shelter WHERE Shelter.user_id = User.user_id) THEN 'Shelter'" ,
             "WHEN EXISTS (SELECT 1 FROM Administrator WHERE Administrator.user_id = User.user_id) THEN 'Administrator'",
             "WHEN EXISTS (SELECT 1 FROM Veterinarian WHERE Veterinarian.user_id = User.user_id) THEN 'Veterinarian'",
-            "ELSE 'unknown' END AS user_type FROM User WHERE User.user_id = ?"
+            "ELSE 'unknown' END AS user_type FROM User WHERE User.user_id = %s"
         ))
         cursor.execute(
-            query, user_id
+            query, (user_id,)
         )
         result = cursor.fetchone()
         user_role = result[0]
@@ -329,10 +330,15 @@ def login():
         session['user_id'] = user_id
         session['user_role'] = user_role
 
-        return Response(session, 200)
+        # return user role and user id
+        return_message = jsonify({
+            'user_id': user_id,
+            'user_role': user_role
+        })
+        return Response(return_message.data, 200, content_type='application/json')
     except Exception as e:
         # return the error
-        return Response(f'An error occurred {e}', 500)
+        return Response(f'An error occurred {e}\n{password}', 500)
     
 # Get the documents of a user - GET
 @user.route('/<int:user_id>/document', methods=['GET'])

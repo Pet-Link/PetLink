@@ -1,7 +1,9 @@
 from flask import Blueprint, Response, request, jsonify
-from database import get_connection
+from database import get_connection, db
+from flask_bcrypt import Bcrypt
 
 administrator = Blueprint('administrator', __name__, url_prefix='/administrator')
+bcrypt = Bcrypt(db)
 
 '''
 consider the following mysql schemas
@@ -63,9 +65,12 @@ def create_administrator():
         if admin:
             return Response(f'Administrator with employee ID {employee_ID} already exists', status=409)
 
+        # hash the password
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
         # Create a user
         cursor.execute('INSERT INTO User(password, name, phone_number, e_mail) VALUES (%s, %s, %s, %s)',
-                           (password, name, phone_number, e_mail))
+                           (hashed_password, name, phone_number, e_mail))
         connection.commit()
         cursor.execute('SELECT user_ID FROM User WHERE e_mail = %s', (data['e_mail'],))
         user_ID = cursor.fetchone()[0]
