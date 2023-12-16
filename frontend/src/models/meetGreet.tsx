@@ -3,3 +3,5 @@ type meetGreetModel = {
     pet_ID: number;
     date: Date;
 };
+
+export default meetGreetModel;

@@ -6,3 +6,5 @@ type overseeRecordModel = {
     details: string;
     verification_status: boolean;
 };
+
+export default overseeRecordModel;

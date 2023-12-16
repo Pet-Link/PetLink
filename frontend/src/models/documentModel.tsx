@@ -5,3 +5,5 @@ type documentModel = {
     verification_status: string;
     user_ID: number;
 };
+
+export default documentModel;

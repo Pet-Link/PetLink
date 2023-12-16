@@ -112,7 +112,7 @@ def get_all_meetandgreets():
     except Exception as e:
         return Response(f'Failed to get all meet and greets\n{e}', status=500)
     
-# Gett All Meet and Greets by Adopter ID - GET
+# Get All Meet and Greets by Adopter ID - GET
 @meetandgreet.route('/adopter/<int:adopter_ID>', methods=['GET'])
 def get_all_meetandgreets_by_adopter(adopter_ID):
     try:

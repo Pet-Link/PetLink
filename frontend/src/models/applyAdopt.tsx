@@ -10,3 +10,5 @@ type applyAdoptModel = {
     approval_status: boolean;
     admin_remarks: string;
 };
+
+export default applyAdoptModel;

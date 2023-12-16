@@ -8,3 +8,5 @@ type shelterModel = {
     zip: string;
     country: string;
 };
+
+export default shelterModel;

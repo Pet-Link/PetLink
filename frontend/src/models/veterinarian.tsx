@@ -9,3 +9,5 @@ type veterinarianModel = {
     zip: string;
     country: string;
 };
+
+export default veterinarianModel;

@@ -5,3 +5,5 @@ type postModel = {
     post_date: Date; 
     poster_ID: number;
 };
+
+export default postModel;

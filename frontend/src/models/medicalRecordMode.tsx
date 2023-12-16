@@ -5,3 +5,5 @@ type medicalRecordModel = {
     date: Date;
     operation: string;
 };
+
+export default medicalRecordModel;

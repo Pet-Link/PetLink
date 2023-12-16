@@ -14,3 +14,5 @@ type petModel = {
     adoption_status: boolean;
     adoption_fee: bigint;
 };
+
+export default petModel;

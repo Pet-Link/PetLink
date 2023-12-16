@@ -4,3 +4,5 @@ type petCareInfoModel = {
     title: string;
     administrator_ID: number;
 };
+
+export default petCareInfoModel;

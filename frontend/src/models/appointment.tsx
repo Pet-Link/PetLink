@@ -5,3 +5,5 @@ type appointmentModel = {
     approval_status: boolean;
     details: string;
 };
+
+export default appointmentModel;

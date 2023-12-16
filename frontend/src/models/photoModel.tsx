@@ -3,3 +3,5 @@ type photoModel = {
     pet_ID: number;
     photo_path: string;
 };
+
+export default photoModel;

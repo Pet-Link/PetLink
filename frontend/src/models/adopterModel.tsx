@@ -11,3 +11,5 @@ type adopterModel = {
     neuter_status: string;
     adoption_sex: string;
 };
+
+export default adopterModel;

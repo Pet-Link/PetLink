@@ -6,3 +6,5 @@ type replyModel = {
     content: string;
     replier_ID: number;
 };
+
+export default replyModel;

@@ -6,3 +6,5 @@ type userModel = {
     phone_number: string;
     e_mail: string;
 };
+
+export default userModel;
