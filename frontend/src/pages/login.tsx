@@ -37,16 +37,15 @@ export default function Login() {
 
     const handleLogin = () => {
         // Handle login logic here 
-        console.log(email);
-        console.log(password);
-        console.log(registrationType);
         AuthenticationService.login(email, password).then(
             function(result) {
             console.log(result.ok);
-            if (result.ok === true) {
-                toastr.success('Login has been successful.');
-                navigate('/register-adopter');
-            }
+            result.json().then((data) => {
+                if (result.ok === true) {
+                    toastr.success('Login has been successful.');
+                    navigate(`/${data.user_role}/home`);
+                }
+            });
         }
         );
     };

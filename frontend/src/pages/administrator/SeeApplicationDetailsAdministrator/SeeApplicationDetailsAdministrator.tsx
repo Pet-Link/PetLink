@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import {Typography, Grid, FormControl, RadioGroup, FormControlLabel, Radio} from '@mui/material';
 //TODO
 //Application bilgileri çekilecek
-const AdoptionApplicationPage = () => {
+const SeeAdoptionApplicationPage = () => {
     const inputStyle = {marginBottom: '20px', alignItems: 'center'};
 
     return (
@@ -210,4 +210,4 @@ const AdoptionApplicationPage = () => {
     );
 };
 
-export default AdoptionApplicationPage;
+export default SeeAdoptionApplicationPage;

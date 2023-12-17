@@ -17,7 +17,7 @@ import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 const pages = ['About Us', 'Adopt', 'Contact Us', 'Forum', 'List Your Pets', 'Add Your Pet'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-function ResponsiveAppBar() {
+function ResponsiveAppBarAdopter() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -179,6 +179,6 @@ function ResponsiveAppBar() {
         </AppBar>
     );
 }
-export default ResponsiveAppBar;
+export default ResponsiveAppBarAdopter;
 
 
