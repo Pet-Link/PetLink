@@ -11,7 +11,7 @@ import HomeAdministrator from '../pages/administrator/HomeAdministrator/HomeAdmi
 import HomeShelter from '../pages/shelter/HomeShelter/HomeShelter';
 import SeeAdoptionApplicationPage from '../pages/administrator/SeeApplicationDetailsAdministrator/SeeApplicationDetailsAdministrator';
 import AdoptionApplicationPage from '../pages/adopter/ApplicationFormAdopter/ApplicationFormAdopter';
-import { AuthContainer } from '../auth/AuthContainer';
+import { PermissionContainer } from '../auth/PermissionContainer';
 
 const Router: React.FC = () => {
     return <RouterProvider router={router}/>;
@@ -23,20 +23,20 @@ const router = createBrowserRouter([
     { path: '/register-adopter', element: <RegisterAdopter /> },
     { path: '/register-veterinarian', element: <RegisterVet /> },
     { path: '/register-shelter', element: <RegisterShelter /> },
-    { path: '/administrator',
+    { path: '/Administrator',
       element: (
-        <AuthContainer>
+        <PermissionContainer roles='Administrator'>
           <ResponsiveAppBar />
           <Outlet />
-        </AuthContainer>
+        </PermissionContainer>
       ),
       children: [
         { path: 'home', 
           element: ( 
-          <AuthContainer>
+          <PermissionContainer roles='Administrator'>
             <HomeAdministrator />
             <Outlet />
-          </AuthContainer> ),
+          </PermissionContainer> ),
         },
         { path: 'see-application', element: <SeeAdoptionApplicationPage /> },
         // add routes here
@@ -44,18 +44,18 @@ const router = createBrowserRouter([
     },
     { path: '/adopter', 
       element: (
-        <AuthContainer>
+        <PermissionContainer roles='Adopter'>
           <ResponsiveAppBarAdopter />
           <Outlet />
-        </AuthContainer>
+        </PermissionContainer>
       ),
       children: [
         { path: 'home', 
           element: ( 
-          <AuthContainer>
+          <PermissionContainer roles='Adopter'>
             <HomeAdopter />
             <Outlet />
-          </AuthContainer> ),
+          </PermissionContainer> ),
         },
         { path: 'see-application', element: <AdoptionApplicationPage /> },
         // add routes here
@@ -63,17 +63,17 @@ const router = createBrowserRouter([
     },
     { path: '/shelter',
       element: ( 
-        <AuthContainer>
+        <PermissionContainer roles='Shelter'>
           <Outlet />
-        </AuthContainer> ),
+        </PermissionContainer> ),
       children: [
         { path: 'home', 
           element: ( 
-            <AuthContainer>
+            <PermissionContainer roles='Shelter'>
               <ResponsiveAppBar />
               <HomeShelter />
               <Outlet />
-            </AuthContainer> ), 
+            </PermissionContainer> ), 
         }
       ]
     },

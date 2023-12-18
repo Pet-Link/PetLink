@@ -16,6 +16,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import { useNavigate } from 'react-router-dom';
 import { AuthenticationService } from '../services/authenticationService';
 import * as toastr from 'toastr';
+import { useUserStore } from '../auth/Store';
 
 export default function Login() {
     const navigate = useNavigate();
@@ -43,6 +44,7 @@ export default function Login() {
             result.json().then((data) => {
                 if (result.ok === true) {
                     toastr.success('Login has been successful.');
+                    useUserStore.getState().setUserType(data.user_role); // Set the user type in the Zustand store
                     navigate(`/${data.user_role}/home`);
                 }
             });

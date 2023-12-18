@@ -2,11 +2,13 @@ import React from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import {Typography, Grid, FormControl, RadioGroup, FormControlLabel, Radio} from '@mui/material';
+import { useUserStore } from '../../../auth/Store';
 //TODO
 //Application bilgileri çekilecek
 const SeeAdoptionApplicationPage = () => {
     const inputStyle = {marginBottom: '20px', alignItems: 'center'};
-
+    const userType = useUserStore.getState();
+    console.log(userType);
     return (
         <Grid container spacing={2} style={{maxWidth: '700px', margin: 'auto', marginTop: '35px', textAlign: 'center'}}>
             <Grid item xs={12}>
