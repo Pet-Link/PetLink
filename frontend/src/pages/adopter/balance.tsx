@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { TextField, Button, InputAdornment, Typography, Grid } from '@mui/material';
 import AttachMoney from '@mui/icons-material/AttachMoney';
+import toastr from "toastr";
+import {AdopterService} from "../../services/adopterService";
+import {useNavigate} from "react-router-dom";
 
 const Balance = () => {
+    const navigate = useNavigate();
     const [nameOnCard, setNameOnCard] = useState('');
     const [creditCardNumber, setCreditCardNumber] = useState('');
     const [expireDate, setExpireDate] = useState('');
@@ -30,7 +34,72 @@ const Balance = () => {
     };
 
     const handlePayButtonClick = () => {
-        // Handle pay button click logic here
+        // Validate inputs before proceeding
+        if (!nameOnCard.trim()) {
+            toastr.error('Please enter the name on the card.');
+            return;
+        }
+
+        if (!creditCardNumber.trim() || creditCardNumber.length !== 16 || !/^\d+$/.test(creditCardNumber)) {
+            toastr.error('Invalid card number. It should be 16 digits.');
+            return;
+        }
+
+        if (!expireDate.trim() || !/^\d{2}\/\d{2}$/.test(expireDate)) {
+            toastr.error('Invalid expiration date. Use MM/YY format.');
+            return;
+        }
+
+        // Check if expiration date is not in the past
+        const [monthStr, yearStr] = expireDate.split('/');
+        const expMonth = parseInt(monthStr, 10);
+        const expYear = parseInt(yearStr, 10);
+        const expDate = new Date(expYear + 2000, expMonth - 1);
+        const currentDate = new Date();
+
+        if (isNaN(expMonth) || expMonth < 1 || expMonth > 12) {
+            toastr.error('Invalid expiration month. It should be between 01 and 12.');
+            return;
+        }
+
+        if (expDate < currentDate) {
+            toastr.error('Your card has expired.');
+            return;
+        }
+
+        if (!cvv.trim() || cvv.length < 3 || cvv.length > 4 || !/^\d+$/.test(cvv)) {
+            toastr.error('Invalid CVV. It should be 3 or 4 digits.');
+            return;
+        }
+
+        const numericTopUpAmount = parseFloat(topUpAmount);
+        if (!topUpAmount.trim() || isNaN(numericTopUpAmount) || numericTopUpAmount <= 0) {
+            toastr.error('Please enter a valid top-up amount.');
+            return;
+        }
+        AdopterService.addBalance(topUpAmount).then(
+            function(result) {
+                if (result.ok) {
+                    result.text().then((text) => {
+                        try {
+                            toastr.success('Balance is updated.');
+                            navigate(`/${localStorage.getItem('user_role')}/home`);
+                        } catch (error) {
+                            console.error('Invalid JSON:', text);
+                        }
+                    });
+                } else {
+                    console.log(result);
+                    result.text().then((text) => {
+                        try {
+                            toastr.error("An internal error occurred while updating balance.");
+                        } catch (error) {
+                            console.error('Invalid JSON:', text);
+                        }
+                    });
+                }
+            }
+        );
     };
 
     return (
@@ -54,7 +123,7 @@ const Balance = () => {
                 onChange={handleCreditCardNumberChange}
             />
             <TextField sx={{mb:2, width: '20vw'}} 
-                label="Expire Date"
+                label="Expire Date (MM/YY)"
                 value={expireDate}
                 onChange={handleExpireDateChange}
             />
