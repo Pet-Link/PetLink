@@ -4,6 +4,8 @@ import { create } from 'zustand';
 interface UserState {
     userType: string;
     setUserType: (uType: string) => void;
+    // userID: string;
+    // setUserID: (uID: string) => void;
 }
   
 // Create the store using Zustand

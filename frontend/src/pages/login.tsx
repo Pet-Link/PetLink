@@ -45,6 +45,7 @@ export default function Login() {
                 if (result.ok === true) {
                     toastr.success('Login has been successful.');
                     useUserStore.getState().setUserType(data.user_role); // Set the user type in the Zustand store
+                    // set the user id in the Zustand store
                     navigate(`/${data.user_role}/home`);
                 }
             });

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Typography, TextField, Select, MenuItem, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Button, Grid, Stack, FormGroup, Checkbox } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { PetService } from '../../services/petService';
+import toastr from 'toastr';
 
 const EnterAnimalDetailsPage = () => {
     const [name, setName] = useState('');
@@ -67,7 +69,7 @@ const EnterAnimalDetailsPage = () => {
     };
 
     const handleSubmit = () => {
-        // Handle form submission
+        // TODO: complete the submit logic
     };
 
     return (
