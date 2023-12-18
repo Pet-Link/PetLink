@@ -37,19 +37,32 @@ export default function Login() {
     };
 
     const handleLogin = () => {
-        // Handle login logic here 
         AuthenticationService.login(email, password).then(
             function(result) {
-            console.log(result.ok);
-            result.json().then((data) => {
-                if (result.ok === true) {
-                    toastr.success('Login has been successful.');
-                    useUserStore.getState().setUserType(data.user_role); // Set the user type in the Zustand store
-                    // set the user id in the Zustand store
-                    navigate(`/${data.user_role}/home`);
+                if (result.ok) {
+                    result.text().then((text) => {
+                        try {
+                            const data = JSON.parse(text);
+                            toastr.success('Login has been successful.');
+                            useUserStore.getState().setUserType(data.user_role);
+                            localStorage.setItem('user_id', data.user_id);
+                            localStorage.setItem('user_role', data.user_role);
+                            navigate(`/${data.user_role}/home`);
+                        } catch (error) {
+                            console.error('Invalid JSON:', text);
+                        }
+                    });
+                } else {
+                    console.log(result);
+                    result.text().then((text) => {
+                        try {
+                            toastr.error(text);
+                        } catch (error) {
+                            console.error('Invalid JSON:', text);
+                        }
+                    });
                 }
-            });
-        }
+            }
         );
     };
 
