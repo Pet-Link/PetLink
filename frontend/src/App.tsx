@@ -1,11 +1,14 @@
 import React from 'react';
-import Navbar from './pages/components/navbar';
+import Login from './pages/login';
+import RegisterAdmin from './pages/administrator/registerAdmin';
+import RegisterAdopter from './pages/adopter/registerAdopter';
+import RegisterVet from './pages/vet/registerVet';
+import Router from './router/router';
+// ... import other pages as needed
 
 function App() {
   return (
-    <div className="App">
-      <Navbar />
-    </div>
+    <Router/>
   );
 }
 
