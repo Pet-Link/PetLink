@@ -12,6 +12,9 @@ import HomeShelter from '../pages/shelter/HomeShelter/HomeShelter';
 import SeeAdoptionApplicationPage from '../pages/administrator/SeeApplicationDetailsAdministrator/SeeApplicationDetailsAdministrator';
 import AdoptionApplicationPage from '../pages/adopter/ApplicationFormAdopter/ApplicationFormAdopter';
 import { PermissionContainer } from '../auth/PermissionContainer';
+import EnterAnimalDetailsPage from '../pages/shelter/enterAnimal';
+import Balance from '../pages/adopter/balance';
+import ViewApplications from '../pages/administrator/viewApplications';
 
 const Router: React.FC = () => {
     return <RouterProvider router={router}/>;
@@ -38,7 +41,8 @@ const router = createBrowserRouter([
             <Outlet />
           </PermissionContainer> ),
         },
-        { path: 'see-application', element: <SeeAdoptionApplicationPage /> },
+        { path: 'view-applications', element: <ViewApplications />},
+        { path: 'see-application-detail', element: <SeeAdoptionApplicationPage /> },
         // add routes here
       ],
     },
@@ -58,6 +62,7 @@ const router = createBrowserRouter([
           </PermissionContainer> ),
         },
         { path: 'see-application', element: <AdoptionApplicationPage /> },
+        { path: 'payment', element: <Balance />}
         // add routes here
       ]
     },
@@ -74,6 +79,10 @@ const router = createBrowserRouter([
               <HomeShelter />
               <Outlet />
             </PermissionContainer> ), 
+        },
+        {
+          path: 'enter-animal',
+          element: <EnterAnimalDetailsPage />,
         }
       ]
     },
