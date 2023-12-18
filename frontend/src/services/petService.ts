@@ -24,7 +24,7 @@ export class PetService {
     var vaccination_status = pet.vaccination_status;
     var house_trained_status = pet.house_trained_status;
     var adoption_fee = pet.adoption_fee;
-    return fetch(`${PetService.baseUrl}/pet/create`, {
+    return fetch(`${PetService.baseUrl}/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ species, breed, age, neutered_status, sex, description, name, vaccination_status, house_trained_status, adoption_fee, shelter_ID }),

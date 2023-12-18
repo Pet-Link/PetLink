@@ -4,6 +4,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { PetService } from '../../services/petService';
 import toastr from 'toastr';
+import petModel from '../../models/petModel';
 
 const EnterAnimalDetailsPage = () => {
     const [name, setName] = useState('');
@@ -16,17 +17,24 @@ const EnterAnimalDetailsPage = () => {
     const [details, setDetails] = useState('');
     const [buttonText, setButtonText] = useState('Choose Photo');
     const [photo, setPhoto] = useState<File | null>(null);
+    const [species, setSpecies] = useState('');
+    const [vaccination_status, setVaccinationStatus] = useState(false);
+    const [neutered_status, setNeuteredStatus] = useState(false);
 
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
     };
 
-    const handleBreedChange = (event: SelectChangeEvent) => {
-        setBreed(event.target.value as string);
+    const handleBreedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setBreed(event.target.value);
     };
 
-    const handleAgeChange = (event: SelectChangeEvent) => {
-        setAge(event.target.value as string);
+    const handleSpeciesChange = (event: SelectChangeEvent) => {
+        setSpecies(event.target.value as string);
+    };
+
+    const handleAgeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setAge(event.target.value);
     };
 
     const handleSexChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,6 +44,14 @@ const EnterAnimalDetailsPage = () => {
     const handleMedicalHistoryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setMedicalHistory(event.target.value);
     };
+
+    const handleVaccinationStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setVaccinationStatus(!vaccination_status);
+    };
+
+    const handleNeuteredStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setNeuteredStatus(!neutered_status);
+    }
 
     const handleHouseTrainedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setHouseTrained(event.target.value);
@@ -69,7 +85,40 @@ const EnterAnimalDetailsPage = () => {
     };
 
     const handleSubmit = () => {
-        // TODO: complete the submit logic
+        const pet: petModel = {
+            species: species,
+            name: name,
+            breed: breed,
+            age: age,
+            // if neutered_status is true set to 1, else 0
+            neutered_status: neutered_status,
+            // if vaccination_status is true set to 1, else 0
+            vaccination_status: vaccination_status,
+            shelter_ID: parseInt(localStorage.getItem('user_id') || '0'),
+            sex: sex,
+            description: details,
+            house_trained_status: houseTrained === 'yes' ? true : false,
+            adoption_fee: adoptionFee === '' ? 0 : parseInt(adoptionFee),
+        }
+        PetService.addPet(pet).then((response) => {
+            if (response.ok) {
+                toastr.success('Successfully added animal');
+                // if (photo) {
+                //     const formData = new FormData();
+                //     formData.append('file', photo);
+                //     PetService.addPhoto(response.data.pet_ID, formData).then((response) => {
+                //         if (response.status === 201) {
+                //             toastr.success('Successfully added photo');
+                //         } else {
+                //             toastr.error('Failed to add photo');
+                //         }
+                //     });
+                // }
+            } else {
+                toastr.error('Failed to add animal');
+            }
+        }
+        );
     };
 
     return (
@@ -89,15 +138,17 @@ const EnterAnimalDetailsPage = () => {
                         <FormLabel>Breed</FormLabel>
                         <TextField
                             label="Enter breed"
+                            value={breed}
+                            onChange={handleBreedChange}
                             fullWidth
                         />
                     </FormControl>
 
                     <FormControl>
                         <FormLabel>Species</FormLabel>
-                        <Select value={breed} onChange={handleBreedChange}>
-                            <MenuItem value="breed1">Dog</MenuItem>
-                            <MenuItem value="breed2">Cat</MenuItem>
+                        <Select value={species} onChange={handleSpeciesChange}>
+                            <MenuItem value="dog">Dog</MenuItem>
+                            <MenuItem value="cat">Cat</MenuItem>
                         </Select>
                     </FormControl>
 
@@ -107,6 +158,8 @@ const EnterAnimalDetailsPage = () => {
                         <FormLabel>Age</FormLabel>
                         <TextField
                             label="Enter a number"
+                            value={age}
+                            onChange={handleAgeChange}
                             fullWidth
                             type="number"
                         />
@@ -114,7 +167,7 @@ const EnterAnimalDetailsPage = () => {
 
                     <FormControl component="fieldset">
                         <FormLabel>Sex</FormLabel>
-                        <RadioGroup value={sex} onChange={handleSexChange}>
+                        <RadioGroup value={sex} onChange={handleSexChange} >
                             <FormControlLabel value="female" control={<Radio color='secondary'/>} label="Female" />
                             <FormControlLabel value="male" control={<Radio color='secondary'/>} label="Male" />
                         </RadioGroup>
@@ -124,11 +177,11 @@ const EnterAnimalDetailsPage = () => {
                         <FormLabel>Medical History</FormLabel>
                         <FormGroup>
                             <FormControlLabel
-                                control={<Checkbox color='secondary' onChange={handleMedicalHistoryChange} name="allVaccinations" />}
+                                control={<Checkbox color='secondary' onChange={handleVaccinationStatus} name="allVaccinations" />}
                                 label="All vaccinations up to date"
                             />
                             <FormControlLabel
-                                control={<Checkbox color='secondary' onChange={handleMedicalHistoryChange} name="spayedNeutered" />}
+                                control={<Checkbox color='secondary' onChange={handleNeuteredStatus} name="spayedNeutered" />}
                                 label="Spayed / Neutered"
                             />
                         </FormGroup>
@@ -143,7 +196,7 @@ const EnterAnimalDetailsPage = () => {
                     </FormControl>
                 </Stack>
                 <Stack spacing={2} direction="column">
-                    <TextField label="Add Details" value={details} multiline rows={4}/>
+                    <TextField label="Add Details" value={details} onChange={handleDetailsChange} multiline rows={4}/>
 
                     <TextField label="Adoption Fee" value={adoptionFee} onChange={handleAdoptionFeeChange} />
 
