@@ -85,6 +85,46 @@ const EnterAnimalDetailsPage = () => {
     };
 
     const handleSubmit = () => {
+        // check if age is a number
+        if (isNaN(parseInt(age))) {
+            toastr.error('Age must be a number');
+            return;
+        }
+        // check if adoption fee is a number
+        if (isNaN(parseInt(adoptionFee))) {
+            toastr.error('Adoption fee must be a number');
+            return;
+        }
+        // check if sex field is empty string
+        if (sex === '') {
+            toastr.error('Sex must be selected');
+            return;
+        }
+        // check if species field is empty string
+        if (species === '') {
+            toastr.error('Species must be selected');
+            return;
+        }
+        // check if name field is empty string
+        if (name === '') {
+            toastr.error('Name must be entered');
+            return;
+        }
+        // check if breed field is empty string
+        if (breed === '') {
+            toastr.error('Breed must be entered');
+            return;
+        }
+        // check if house trained field is empty string
+        if (houseTrained === '') {
+            toastr.error('House trained must be selected');
+            return;
+        }
+        // check if details field is empty string
+        if (details === '') {
+            toastr.error('Details must be entered');
+            return;
+        }
         const pet: petModel = {
             species: species,
             name: name,
