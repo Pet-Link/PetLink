@@ -66,6 +66,16 @@ export default function Login() {
         );
     };
 
+    const handleRegisterType = () => {
+        if (!registrationType) {
+            // Display an error if no registration type is selected
+            toastr.error('Please select a registration type.');
+        } else {
+            // Navigate to the appropriate registration page if a type is selected
+            navigate(`register-${registrationType}`);
+        }
+    };
+
     return ( 
         <Grid
         container
@@ -110,7 +120,11 @@ export default function Login() {
                         sx={{ mb: 2 }}
                         size="small"
                     />
-                    <FormControl sx={{ width: '12vw', mb:2 }} size="small">
+                    <Link sx={{ mt: 2, mb:1, textDecoration: 'none' }} href="/forgot" variant="body2">
+                    Forgot password?
+                    </Link>
+                    <Button variant="contained" color='primary' onClick={handleLogin} sx={{ mb: 6} }>Login</Button>
+                    <FormControl sx={{ width: '12vw', mb:1 }} size="small">
                         <InputLabel>Register as</InputLabel>
                         <Select
                         value={registrationType}
@@ -121,12 +135,9 @@ export default function Login() {
                         <MenuItem value="shelter">Shelter</MenuItem>
                         <MenuItem value="administrator">Administrator</MenuItem>
                         </Select>
-                        <Button sx={{mt: 2}} variant='contained' onClick={() => navigate(`register-${registrationType}`)}>Register</Button>
+                        <Button sx={{mt: 2}} variant='contained' onClick={handleRegisterType}>Register</Button>
                     </FormControl>
-                    <Link sx={{ mt: 2, mb:1, textDecoration: 'none' }} href="/forgot" variant="body2">
-                    Forgot password?
-                    </Link>
-                    <Button variant="contained" color='primary' onClick={handleLogin}>Login</Button>
+                    
                 </Grid>
             </Paper>
         </Grid>
