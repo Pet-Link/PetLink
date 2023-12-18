@@ -237,13 +237,13 @@ def delete_applyadopt(adopter_ID, pet_ID):
         cursor = connection.cursor()
 
         # Check if the application exists
-        cursor.execute('SELECT * FROM Apply_Adopt WHERE adopter_ID = %s AND pet_ID = %s', (adopter_ID, pet_ID))
+        cursor.execute('SELECT * FROM Apply_Adopt WHERE adopter_ID = %s AND pet_ID = %s', (adopter_ID, pet_ID,))
         application = cursor.fetchone()
         if not application:
             return Response(f'Application for adopter ID {adopter_ID} and pet ID {pet_ID} does not exist', status=404)
 
         # Delete the application
-        cursor.execute('DELETE FROM Apply_Adopt WHERE adopter_ID = %s AND pet_ID = %s', (adopter_ID, pet_ID))
+        cursor.execute('DELETE FROM Apply_Adopt WHERE adopter_ID = %s AND pet_ID = %s', (adopter_ID, pet_ID,))
         connection.commit()
 
         return Response(f'Application for adopter ID {adopter_ID} and pet ID {pet_ID} deleted successfully', status=200)
