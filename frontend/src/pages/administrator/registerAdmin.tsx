@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Link, Grid } from '@mui/material';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import { AuthenticationService } from '../../services/authenticationService';
+import toastr from 'toastr';
 
 const RegisterAdmin: React.FC = () => {
     const [fullName, setFullName] = useState('');
@@ -58,7 +60,25 @@ const RegisterAdmin: React.FC = () => {
     };
 
     const handleRegister = () => {
-        // Perform registration logic here
+        if (password !== reEnterPassword) {
+            toastr.error('Passwords do not match!');
+            return;
+        }
+        // check if the phone number contains only digits
+        if (phoneNumber.match(/\D/)) {
+            toastr.error('Phone number should contain only digits!');
+            return;
+        }
+        AuthenticationService.registerAdministrator(fullName, email, password, phoneNumber, employeeId).then((response) => {
+            if (response.ok){
+                toastr.success('Successfully registered!');
+            } else {
+                response.text().then((text) => {
+                    toastr.error(text);
+                });
+            }
+        }
+        );
     };
 
     return (
@@ -89,7 +109,7 @@ const RegisterAdmin: React.FC = () => {
             </Grid>
             <Button variant="outlined" color="success" onClick={handleRegister}>Register</Button>
             <Typography>
-                Already have an account? <Link href="/login">Login</Link>
+                Already have an account? <Link href="/">Login</Link>
             </Typography>
         </Grid>
     );

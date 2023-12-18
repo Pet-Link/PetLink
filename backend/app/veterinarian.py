@@ -90,7 +90,7 @@ def create_veterinarian():
         return Response(f'Veterinarian with user_ID {user_ID} is created', status=201)
     except Exception as e:
         print(e)
-        return Response(f'Veterinarian could not be created with exception {e}', status=500)
+        return Response(f'Veterinarian could not be created, {e}', status=500)
 
 
 # Get Veterinarian with the user id - GET

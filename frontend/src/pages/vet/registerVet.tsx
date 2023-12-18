@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Link, Grid, Stack } from '@mui/material';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import { AuthenticationService } from '../../services/authenticationService';
+import toastr from 'toastr';
 
 const RegisterVet: React.FC = () => {
     const [fullName, setFullName] = useState('');
@@ -96,7 +98,35 @@ const RegisterVet: React.FC = () => {
     };
 
     const handleRegister = () => {
-        // Perform registration logic here
+        if (password !== reEnterPassword) {
+            toastr.error('Passwords do not match!');
+            return;
+        }
+        // check if yearsExperience contains only digits
+        if (isNaN(Number(yearsExperience))) {
+            toastr.error('Years of experience must contain only digits!');
+            return;
+        }
+        // check if the phone number contains only digits
+        if (phoneNumber.match(/\D/)) {
+            toastr.error('Phone number should contain only digits!');
+            return;
+        }
+        // check if the zip code is a valid one
+        if (isNaN(Number(zipCode))) {
+            toastr.error('Zip code must contain only digits!');
+            return;
+        }
+        AuthenticationService.registerVeterinarian(fullName, email, password, phoneNumber, yearsExperience, specialization, street, district, city, country, buildingNo, zipCode)
+            .then(response => {
+                if (response.ok) {
+                    toastr.success("Vet successfully registered!");
+                } else {                
+                    response.text().then((text) => {
+                    toastr.error(text);
+                });
+                }
+            });
     };
 
     return (
@@ -152,7 +182,7 @@ const RegisterVet: React.FC = () => {
             </Grid>
             <Button variant="outlined" color="success" onClick={handleRegister}>Register</Button>
             <Typography>
-                Already have an account? <Link href="/login">Login</Link>
+                Already have an account? <Link href="/">Login</Link>
             </Typography>
         </Grid>
     );

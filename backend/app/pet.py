@@ -87,7 +87,7 @@ def create_pet():
         return Response(f'Pet {name} is created', status=201)
     except Exception as e:
         print(e)
-        return Response(f'Pet could not be created with exception {e}', status=500)
+        return Response(f'Pet could not be created, {e}', status=500)
 
 
 # Get Pet with the pet ID - GET

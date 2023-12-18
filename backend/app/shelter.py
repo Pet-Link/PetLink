@@ -87,7 +87,7 @@ def create_shelter():
         # Return the response with a message
         return Response(f'Shelter with user_ID {user_ID} is created', status=201)
     except Exception as e:
-        return Response(f'Shelter could not be created with exception {e}', status=500)
+        return Response(f'Shelter could not be created, {e}', status=500)
 
 
 # Get Shelter with the user id - GET

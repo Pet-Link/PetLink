@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Container,
     Typography,
@@ -16,10 +16,13 @@ import Modal from '@mui/material/Modal';
 //import './styles.css';
 import MenuItem from "@mui/material/MenuItem"; // Import your CSS file
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import { PetService } from '../../../services/petService';
+import petModel from '../../../models/petModel';
 
 const HomeAdopter = () => {
 
     const [open, setOpen] = useState(false);
+    const [petData, setPetData] = useState<petModel[]>([]);
 
     const handleOpen = () => {
         setOpen(true);
@@ -38,22 +41,31 @@ const HomeAdopter = () => {
         setSpecies(event.target.value as string);
         setAge(event.target.value as string);
     };
-        const animalData = [
-            { type: 'dog', number: 1, breed: 'Huskies' ,count: '15'},
-            { type: 'dog', number: 2, breed: 'Labrador Retriever' ,count: '30'},
-            { type: 'dog', number: 3, breed: 'Golden Retriever' ,count: '50'},
-            { type: 'dog', number: 4, breed: 'Bulldog',count: '45' },
-            { type: 'cat', number: 1, breed: 'Siamese' ,count: '35'},
-            { type: 'cat', number: 2, breed: 'Persian' ,count: '3'},
-            { type: 'cat', number: 3, breed: 'Van' ,count: '5'},
-            { type: 'cat', number: 4, breed: 'Persian',count: '95' },
-            // Add more animal data as needed
-        ];
+        const animalData: petModel[] = [];
 
     type AnimalType = 'dog' | 'cat';
 
+    const refresh_list = () => {
+        PetService.getPets().then((res) => {
+            setPetData([]);
+            res.json().then((data) => {
+                data.forEach((pet: petModel) => {
+                    petData.push(pet);
+                    setPetData(petData);
+                }
+                );
+            }
+            );
+        }
+        );
+        // disable the button after click and make it non-clickable
+        const refreshButton = document.getElementById("refresh_button") as HTMLButtonElement;
+        refreshButton.disabled = true;
+        refreshButton.style.backgroundColor = "grey";
+    };
+    
     const filterAnimalsByType = (type: AnimalType) => {
-        return animalData.filter((animal) => animal.type === type);
+        return petData.filter((animal) => animal.species === type);
     };
 
     const style = {
@@ -237,6 +249,9 @@ const HomeAdopter = () => {
                 <Grid item xs={12} sm={6}>
                     {/* Search Bar */}
                     <TextField label="Search animals..." variant="outlined" fullWidth />
+                    <Button id='refresh_button' variant="contained" onClick={refresh_list} fullWidth sx={{ backgroundColor: '#FF0000', color: 'white' }}>
+                            Refresh
+                    </Button>
                 </Grid>
             </Grid>
 
@@ -246,18 +261,18 @@ const HomeAdopter = () => {
                 {/* Dogs */}
                 <Grid item container alignItems="center" spacing={2}>
                     {filterAnimalsByType('dog').map((dog) => (
-                        <Grid item key={`dog-${dog.breed}`} xs={6} sm={3}>
+                        <Grid item key={`dog-${dog.species}`} xs={6} sm={3}>
                             <Card>
                                 <CardContent>
                                     <img
-                                        src={`./HomePageAnimals/dog-${dog.number}.png`}
-                                        alt={`Dog ${dog.number}`}
+                                        src={`./HomePageAnimals/dog-${dog.pet_ID}.png`}
+                                        alt={`Dog ID: ${dog.pet_ID}`}
                                         style={{ width: '100%', height: 'auto', marginBottom: 8 }}
                                     />
                                     <Typography variant="h6" style={{fontWeight: 'bold'}}>
                                         {`${dog.breed}`}
                                         <br />
-                                        {`${dog.count}`}
+                                        {`${dog.age}`}
                                     </Typography>
                                 </CardContent>
                             </Card>
@@ -268,18 +283,18 @@ const HomeAdopter = () => {
                 {/* Cats */}
                 <Grid item container spacing={2} alignItems="center">
                     {filterAnimalsByType('cat').map((cat) => (
-                        <Grid item key={`cat-${cat.breed}`} xs={6} sm={3}>
+                        <Grid item key={`cat-${cat.species}`} xs={6} sm={3}>
                             <Card>
                                 <CardContent>
                                     <img
-                                        src={`./HomePageAnimals/cat-${cat.number}.png`}
-                                        alt={`Cat ${cat.number}`}
+                                        src={`./HomePageAnimals/cat-${cat.pet_ID}.png`}
+                                        alt={`Cat ${cat.age}`}
                                         style={{ width: '100%', height: 'auto', marginBottom: 8 }}
                                     />
                                     <Typography variant="h6" style={{fontWeight: 'bold' , marginBottom: 0 }}>
                                         {`${cat.breed}`}
                                         <br />
-                                        {`${cat.count}`}
+                                        {`${cat.age}`}
                                     </Typography>
                                 </CardContent>
                             </Card>

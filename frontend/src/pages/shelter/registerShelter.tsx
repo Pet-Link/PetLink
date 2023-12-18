@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Link, Grid, Stack } from '@mui/material';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import toastr from 'toastr';
+import { AuthenticationService } from '../../services/authenticationService';
 
 const RegisterShelter: React.FC = () => {
-    const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
@@ -18,6 +19,7 @@ const RegisterShelter: React.FC = () => {
     const [buildingNo, setBuildingNo] = useState('');
     const [zipCode, setZipCode] = useState('');
     const [shelterName, setShelterName] = useState('');
+    const [description, setDescription] = useState('');
     
 
     const handleFileSelection = (event: React.ChangeEvent<HTMLInputElement> ) => {
@@ -31,6 +33,10 @@ const RegisterShelter: React.FC = () => {
             setButtonText('Choose File');
           }
     };
+
+    const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setDescription(event.target.value);
+    }
 
     const handleShelterNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setShelterName(event.target.value);
@@ -85,7 +91,27 @@ const RegisterShelter: React.FC = () => {
     };
 
     const handleRegister = () => {
-        // Perform registration logic here
+        if (password !== reEnterPassword) {
+            toastr.error('Passwords do not match!');
+            return;
+        }
+        // check if the phone number contains only digits
+        if (phoneNumber.match(/\D/)) {
+            toastr.error('Phone number should contain only digits!');
+            return;
+        }
+        // check if the zip code is a valid one
+        if (isNaN(Number(zipCode))) {
+            toastr.error('Zip code must contain only digits!');
+            return;
+        }
+        AuthenticationService.registerShelter(shelterName, email, password, phoneNumber, street, district, city, country, buildingNo, zipCode, description)
+            .then((response) => {
+                toastr.success('Shelter registered successfully');
+            })
+            .catch((error) => {
+                toastr.error(error.response.data.message);
+            });
     };
 
     return (
@@ -126,6 +152,7 @@ const RegisterShelter: React.FC = () => {
                 <TextField sx={{mb:2}} type="tel" label="Phone Number" size="small" value={phoneNumber} onChange={handlePhoneNumberChange} />
                 <TextField sx={{mb:2}} type="password" label="Password" size="small" value={password} onChange={handlePasswordChange} />
                 <TextField sx={{mb:2}} type="password" label="Re-enter Password" size="small" value={reEnterPassword} onChange={handleReEnterPasswordChange} />
+                <TextField sx={{mb:2}} type="text" label="Description" size="small" value={description} onChange={handleDescriptionChange} />
             </Grid>
             </Stack>
             <Grid>
@@ -139,7 +166,7 @@ const RegisterShelter: React.FC = () => {
             </Grid>
             <Button variant="outlined" color="success" onClick={handleRegister}>Register</Button>
             <Typography>
-                Already have an account? <Link href="/login">Login</Link>
+                Already have an account? <Link href="/">Login</Link>
             </Typography>
         </Grid>
     );
