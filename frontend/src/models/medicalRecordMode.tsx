@@ -1,3 +1,4 @@
+import React from 'react';
 type medicalRecordModel = {
     record_ID: number;
     pet_ID: number;

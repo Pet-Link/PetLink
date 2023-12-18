@@ -1,3 +1,4 @@
+import React from 'react';
 type appointmentModel = {
     adopter_ID: number;
     veterinarian_ID: number;

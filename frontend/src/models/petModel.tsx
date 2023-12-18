@@ -1,3 +1,4 @@
+import React from 'react';
 type petModel = {
     pet_ID: number;
     shelter_ID: number;

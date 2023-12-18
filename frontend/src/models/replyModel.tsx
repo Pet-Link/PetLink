@@ -1,3 +1,4 @@
+import React from 'react';
 type replyModel = {
     post_ID: number;
     discriminator_ID: number;
