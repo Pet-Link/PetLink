@@ -96,11 +96,11 @@ const EnterAnimalDetailsPage = () => {
 
                     <FormControl>
                         <FormLabel>Age</FormLabel>
-                        <Select value={age} onChange={handleAgeChange}>
-                            <MenuItem value="age1">Age 1</MenuItem>
-                            <MenuItem value="age2">Age 2</MenuItem>
-                            <MenuItem value="age3">Age 3</MenuItem>
-                        </Select>
+                        <TextField
+                            label="Enter a number"
+                            fullWidth
+                            type="number"
+                        />
                     </FormControl>
 
                     <FormControl component="fieldset">
