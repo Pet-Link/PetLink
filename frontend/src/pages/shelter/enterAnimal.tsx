@@ -87,12 +87,21 @@ const EnterAnimalDetailsPage = () => {
                     <TextField label="Name" value={name} onChange={handleNameChange} />
                     <FormControl>
                         <FormLabel>Breed</FormLabel>
+                        <TextField
+                            label="Enter breed"
+                            fullWidth
+                        />
+                    </FormControl>
+
+                    <FormControl>
+                        <FormLabel>Species</FormLabel>
                         <Select value={breed} onChange={handleBreedChange}>
-                            <MenuItem value="breed1">Breed 1</MenuItem>
-                            <MenuItem value="breed2">Breed 2</MenuItem>
-                            <MenuItem value="breed3">Breed 3</MenuItem>
+                            <MenuItem value="breed1">Dog</MenuItem>
+                            <MenuItem value="breed2">Cat</MenuItem>
                         </Select>
                     </FormControl>
+
+
 
                     <FormControl>
                         <FormLabel>Age</FormLabel>
