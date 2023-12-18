@@ -13,21 +13,22 @@ export class PetService {
   }
 
   static addPet(pet: petModel) {
-    var species = pet.species;
-    var breed = pet.breed;
-    var age = pet.age;
-    var neutered_status = pet.neutered_status;
-    var shelter_ID = pet.shelter_ID;
-    var sex = pet.sex;
-    var description = pet.description;
-    var name = pet.name;
-    var vaccination_status = pet.vaccination_status;
-    var house_trained_status = pet.house_trained_status;
-    var adoption_fee = pet.adoption_fee;
+    // var species = pet.species;
+    // var breed = pet.breed;
+    // var age = pet.age;
+    // var neutered_status = pet.neutered_status;
+    // var shelter_ID = pet.shelter_ID;
+    // var sex = pet.sex;
+    // var description = pet.description;
+    // var name = pet.name;
+    // var vaccination_status = pet.vaccination_status;
+    // var house_trained_status = pet.house_trained_status;
+    // var adoption_fee = pet.adoption_fee;
+    console.log(JSON.stringify(pet));
     return fetch(`${PetService.baseUrl}/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ species, breed, age, neutered_status, sex, description, name, vaccination_status, house_trained_status, adoption_fee, shelter_ID }),
+      body: JSON.stringify(pet),
     });
   }
 
