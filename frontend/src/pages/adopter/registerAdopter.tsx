@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Link, Grid } from '@mui/material';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
 const RegisterAdopter: React.FC = () => {
     const [fullName, setFullName] = useState('');

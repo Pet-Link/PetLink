@@ -1,3 +1,4 @@
+import React from 'react';
 type shelterModel = {
     user_ID: number;
     description: string;

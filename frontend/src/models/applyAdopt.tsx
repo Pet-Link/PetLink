@@ -1,3 +1,4 @@
+import React from 'react';
 type applyAdoptModel = {
     adopter_ID: number;
     pet_ID: number;

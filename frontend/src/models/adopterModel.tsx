@@ -1,3 +1,4 @@
+import React from 'react';
 type adopterModel = {
     user_ID: number;
     description: string;
