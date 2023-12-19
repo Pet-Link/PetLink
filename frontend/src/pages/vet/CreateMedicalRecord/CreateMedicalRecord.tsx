@@ -23,11 +23,24 @@ import { useNavigate } from 'react-router';
 const LogMedicalRecord: React.FC = () => {
     const navigate = useNavigate();
     const [medicalRecords, setMedicalRecords] = useState<medicalRecordModel[]>([]);
+
+    // NOTE: this is the format that MySQL expects
+    const formatDateToMySQL = (date: Date) => {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
+    
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    };
+    
     const [medicalRecord, setMedicalRecord] = useState<medicalRecordModel>({
         record_ID: 0,
         pet_ID: 0,
         veterinarian_ID: 0,
-        date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        date: formatDateToMySQL(new Date()),
         operation: '',
         pet_name: '', // pet name can be added to the table
     });
@@ -66,7 +79,7 @@ const LogMedicalRecord: React.FC = () => {
         if (vet_id != null) {
             medicalRecord.veterinarian_ID = parseInt(vet_id);
         }
-        medicalRecord.date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        medicalRecord.date = formatDateToMySQL(new Date());
 
         VeterinarianService.createMedicalRecord(medicalRecord).then((response) => {
             if (response.ok) {

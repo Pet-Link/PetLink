@@ -1,5 +1,6 @@
 from flask import Blueprint, Response, request, jsonify
 from database import get_connection
+from auxiliary import send_email_mes
 
 appointment = Blueprint('appointment', __name__, url_prefix='/appointment')
 
@@ -105,9 +106,22 @@ def update_appointment():
         veterinarian = cursor.fetchone()
         if not veterinarian:
             return Response(f"Veterinarian with ID {veterinarian_ID} not found", status=400, mimetype='application/json')
+        
+        # get the name of the veterinarian
+        cursor.execute('SELECT name FROM User WHERE user_ID = %s', (veterinarian_ID,))
+        veterinarian_name = cursor.fetchone()
+        veterinarian_name = veterinarian_name[0]
+
+        # get the email of the adopter
+        cursor.execute('SELECT e_mail FROM User WHERE user_ID = %s', (adopter_ID,))
+        adopter_email = cursor.fetchone()
+        adopter_email = adopter_email[0]
 
         cursor.execute('UPDATE Appointment SET date = %s, approval_status = %s, details = %s WHERE adopter_ID = %s AND veterinarian_ID = %s', (date, approval_status, details, adopter_ID, veterinarian_ID))
         connection.commit()
+        
+        e_mail_mes = f"Your veterinarian appointment with veterinarian {veterinarian_name}, has been rescheduled to the new date: {date}. Please check your appointments for more details."
+        send_email_mes(e_mail_mes, 'Appointment', adopter_email)
         return Response('Appointment updated', status=200, mimetype='application/json')
     except Exception as e:
         print(e)
