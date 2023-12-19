@@ -76,6 +76,13 @@ export default function Login() {
         }
     };
 
+    // Function to handle key press in the password field
+    const handleKeyPress = (event: React.KeyboardEvent) => {
+        if (event.key === 'Enter') {
+            handleLogin();
+        }
+    };
+
     return ( 
         <Grid
         container
@@ -117,6 +124,7 @@ export default function Login() {
                         type="password"
                         value={password}
                         onChange={handlePasswordChange}
+                        onKeyPress={handleKeyPress} // Add this line
                         sx={{ mb: 2 }}
                         size="small"
                     />

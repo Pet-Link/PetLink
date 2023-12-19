@@ -13,11 +13,13 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import { useNavigate } from 'react-router';
 
 const pages = ['About Us', 'Adopt', 'Forum'];
 const settings = ['Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
+    const navigate = useNavigate();
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -43,6 +45,7 @@ function ResponsiveAppBar() {
                 }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
+                    <a onClick={() => navigate('/administrator/home')}>
                         <Typography
                             variant="h6"
                             noWrap
@@ -55,10 +58,12 @@ function ResponsiveAppBar() {
                                 letterSpacing: '.3rem',
                                 color: 'black',
                                 textDecoration: 'none',
+                                userSelect: 'none', // Make the component non-selectable
                             }}
                         >
                             PetLink
                         </Typography>
+                    </a>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"

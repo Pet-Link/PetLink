@@ -6,9 +6,11 @@ import {
 } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import { useNavigate } from 'react-router';
 //import './styles.css';
 
 const HomeAdministrator = () => {
+    const navigate = useNavigate();
 
     return (
         <Box m={2} pt={3}>
@@ -38,8 +40,7 @@ const HomeAdministrator = () => {
                         },
                     }}
                     onClick={() => {
-                        // Handle click action
-                        // You can add your logic here
+                        navigate('/administrator/view-applications');
                     }}
                 >
                     View Applications

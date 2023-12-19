@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Grid, Button } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Grid, Button, IconButton } from '@mui/material';
 import { adoptionApplicationService } from '../../services/adoptionApplicationService';
 import { useNavigate } from 'react-router-dom';
 import applyAdoptModel from '../../models/applyAdoptModel';
 import toastr from 'toastr';
+import HomeIcon from '@mui/icons-material/Home';
 
 const ViewApplications: React.FC = () => {
 
@@ -32,6 +33,10 @@ const ViewApplications: React.FC = () => {
         navigate('/administrator/see-application-detail', { state: { adopter_ID: adopter_ID, pet_ID: pet_ID } });
     }
 
+    const goBackHome = () => {
+        navigate('/administrator/home');
+    }
+
     return (
         <Grid sx={{ 
             display: 'flex',
@@ -41,7 +46,9 @@ const ViewApplications: React.FC = () => {
             mt: 20, 
             mb: 5
         }}>
-            <Typography variant="h4" sx={{ mb: 4 }}>List of Applications</Typography>
+                    <Typography variant="h4" gutterBottom>
+                        Manage Appointments
+                    </Typography>
             <TableContainer component={Paper} sx={{ maxWidth: '80%', margin: 'auto' }}>
                 <Table sx={{minWidth: 500}} aria-label="applications table">
                     <TableHead>
