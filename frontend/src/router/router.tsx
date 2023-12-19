@@ -20,6 +20,8 @@ import ManageAppointmentsVet from '../pages/vet/ManageAppointmentsVet/ManageAppo
 import LogMedicalRecord from '../pages/vet/CreateMedicalRecord/CreateMedicalRecord';
 import CreatePet from '../pages/adopter/createPet';
 import PetDetailsPage from '../pages/adopter/AnimalDetails/DetailOfPetToAdoptAdopter';
+import ViewMeetAndGreets from '../pages/adopter/ViewMeetAndGreets';
+import SearchVets from '../pages/adopter/SearchVets';
 
 const Router: React.FC = () => {
     return <RouterProvider router={router}/>;
@@ -69,7 +71,9 @@ const router = createBrowserRouter([
         { path: 'see-application', element: <AdoptionApplicationPage /> },
         { path: 'payment', element: <Balance />},
         { path: 'create-pet', element: <CreatePet />},
-        { path: 'pet-details', element: <PetDetailsPage />}
+        { path: 'pet-details', element: <PetDetailsPage />},
+        { path: 'view-meet-and-greets', element: <ViewMeetAndGreets />},
+        { path: 'search-vets', element: <SearchVets />}
         // add routes here
       ]
     },
