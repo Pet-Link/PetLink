@@ -91,12 +91,18 @@ def create_pet():
 
 
 # Get Pet with the pet ID - GET
-@pet.route('/pet_id/<int:pet_ID>', methods=['GET'])
+@pet.route('/<int:pet_ID>', methods=['GET'])
 def get_pet(pet_ID):
     try:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute('SELECT * FROM Pet WHERE pet_ID = %s', (pet_ID,))
+        cursor.execute("""
+                       SELECT Pet.*, User.name as shelter_name
+                       FROM Pet 
+                       JOIN User ON User.user_ID = Pet.shelter_ID
+                       WHERE pet_ID = %s
+                       
+                       """, (pet_ID,))
         pet = cursor.fetchone()
         if pet:
             # convert pet to dictionary with keys

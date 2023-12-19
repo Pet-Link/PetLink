@@ -8,8 +8,8 @@ export class PetService {
     return fetch(`${PetService.baseUrl}/all`);
   }
 
-  static getPetById(id: string) {
-    return fetch(`${PetService.baseUrl}/pet_id/${id}`);
+  static getPetById(pet_ID: number) {
+    return fetch(`${PetService.baseUrl}/${pet_ID}`);
   }
 
   static addPet(pet: petModel) {

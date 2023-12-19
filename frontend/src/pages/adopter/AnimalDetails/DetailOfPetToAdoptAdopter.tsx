@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -6,9 +7,40 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers';
 import Grid from '@mui/material/Grid';
 import { Typography } from '@mui/material';
+import petModel from '../../../models/petModel';
+import { PetService } from '../../../services/petService';
 
 const PetDetailsPage = () => {
     const inputStyle = { marginBottom: '10px' };
+    const navigate = useNavigate();
+    const [pet, setPet] = useState<petModel>();
+    const [petName, setPetName] = useState("");
+    const [shelterName, setShelterName] = useState("");
+
+    const pet_ID = 4; // TODO
+
+    const fetchPet = async () => {
+        try {
+            const response = await PetService.getPetById(pet_ID);
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+            const data: petModel = await response.json();
+            setPet(data);
+            setPetName(data.name);
+            setShelterName(data.shelter_name || "");
+        } catch (error) {
+            console.error("There was an error fetching the applications:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchPet();
+    }, []);
+    
+    const handleApply = () => {
+        navigate('/adopter/see-application', { state: {pet_ID: pet_ID, petName: petName, shelterName: shelterName}});
+    };
 
     return (
         <Grid container spacing={2} style={{ marginTop:"50px", display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -29,7 +61,7 @@ const PetDetailsPage = () => {
                 <TextField
                     label="Shelter"
                     fullWidth
-                    value="Happy Homes"
+                    value={pet?.shelter_name || 'unknown'}
                     InputProps={{ readOnly: true }}
                     style={inputStyle}
                 />
@@ -38,7 +70,7 @@ const PetDetailsPage = () => {
                 <TextField
                     label="Name"
                     fullWidth
-                    value="Luna"
+                    value={pet?.name || 'unknown'}
                     InputProps={{ readOnly: true }}
                     style={inputStyle}
                 />
@@ -47,7 +79,7 @@ const PetDetailsPage = () => {
                 <TextField
                     label="Breed - Species"
                     fullWidth
-                    value="Labradoodle - Dog"
+                    value={`${pet?.breed || 'unknown'} - ${pet?.species || 'unknown'}`}
                     InputProps={{ readOnly: true }}
                     style={inputStyle}
                 />
@@ -56,7 +88,7 @@ const PetDetailsPage = () => {
                 <TextField
                     label="Age"
                     fullWidth
-                    value="1 years old"
+                    value={`${pet?.age || 'unknown'} years old`}
                     InputProps={{ readOnly: true }}
                     style={inputStyle}
                 />
@@ -65,16 +97,16 @@ const PetDetailsPage = () => {
                 <TextField
                     label="Sex"
                     fullWidth
-                    value="Female"
+                    value={pet?.sex || 'unknown'}
                     InputProps={{ readOnly: true }}
                     style={inputStyle}
                 />
 
                 {/* Neuter Status */}
                 <TextField
-                    label="Neuter Status"
+                    label="Neutered?"
                     fullWidth
-                    value="Neutered"
+                    value={pet?.neutered_status ? 'Yes' : pet?.neutered_status == false ? 'No' : 'Unknown'}
                     InputProps={{ readOnly: true }}
                     style={inputStyle}
                 />
@@ -83,7 +115,7 @@ const PetDetailsPage = () => {
                 <TextField
                     label="House Trained?"
                     fullWidth
-                    value="Yes"
+                    value={pet?.house_trained_status ? 'Yes' : pet?.house_trained_status == false ? 'No' : 'Unknown'}
                     InputProps={{ readOnly: true }}
                     style={inputStyle}
                 />
@@ -92,7 +124,7 @@ const PetDetailsPage = () => {
                 <TextField
                     label="Fully Vaccinated"
                     fullWidth
-                    value="Yes"
+                    value={pet?.vaccination_status ? 'Yes' : pet?.house_trained_status == false ? 'No' : 'Unknown'}
                     InputProps={{ readOnly: true }}
                     style={inputStyle}
                 />
@@ -101,7 +133,7 @@ const PetDetailsPage = () => {
                 <TextField
                     label="Adoption Fee"
                     fullWidth
-                    value="$300"
+                    value={pet?.adoption_fee || 'unknown'}
                     InputProps={{ readOnly: true }}
                     style={inputStyle}
                 />
@@ -112,7 +144,7 @@ const PetDetailsPage = () => {
                     multiline
                     rows={4}
                     fullWidth
-                    value="Luna is a very friendly dog. She loves little kids."
+                    value={pet?.description || ' '}
                     InputProps={{ readOnly: true }}
                     style={inputStyle}
                 />
@@ -136,7 +168,7 @@ const PetDetailsPage = () => {
 
                     {/* Apply For Adoption Button */}
                     <Grid item xs={12} style={{ marginTop: '10px' }}>
-                        <Button variant="contained" color="primary" sx={{height: 50, bgcolor: '#04C35C',}}>
+                        <Button variant="contained" color="primary" onClick={handleApply} sx={{height: 50, bgcolor: '#04C35C',}}>
                             Apply For Adoption
                         </Button>
                     </Grid>

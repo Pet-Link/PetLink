@@ -14,6 +14,7 @@ type petModel = {
     house_trained_status: boolean;
     adoption_status?: boolean;
     adoption_fee: number;
+    shelter_name: string | null;
 };
 
 export default petModel;
