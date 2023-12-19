@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
-const pages = ['About Us', 'Adopt', 'Contact Us', 'Forum'];
+const pages = ['About Us', 'Adopt', 'Forum'];
 const settings = ['Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
@@ -43,7 +43,6 @@ function ResponsiveAppBar() {
                 }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <a href='/administrator'>
                         <Typography
                             variant="h6"
                             noWrap
@@ -60,7 +59,6 @@ function ResponsiveAppBar() {
                         >
                             PetLink
                         </Typography>
-                    </a>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"

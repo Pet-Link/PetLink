@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 
-const pages = ['About Us', 'Adopt', 'Contact Us', 'Forum', 'List Your Pets', 'Add Your Pet'];
+const pages = ['About Us', 'Adopt', 'Forum', 'List Your Pets', 'Add Your Pet'];
 const settings = ['Dashboard', 'Logout'];
 
 function ResponsiveAppBarAdopter() {
