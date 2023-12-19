@@ -1,6 +1,6 @@
 import React from 'react';
 type petModel = {
-    pet_ID?: string;
+    pet_ID?: number;
     shelter_ID: number;
     adopter_ID?: number;
     species: string;

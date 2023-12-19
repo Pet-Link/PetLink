@@ -26,13 +26,13 @@ const PetDetailsPage = () => {
     const [petName, setPetName] = useState("");
     const [shelterName, setShelterName] = useState("");
     const [meetGreetDate, setMeetGreetDate] = useState<Date | null>(null);
-    
-    
+
     const fetchPet = async () => {
         try {
             const response = await PetService.getPetById(pet_ID);
             if (!response.ok) {
-                throw new Error('Network response was not ok.');
+                console.error("There was a network error while getting pets by ID.");
+                toastr.error("There was a network error.");
             }
             const data: petModel = await response.json();
             setPet(data);
@@ -40,6 +40,7 @@ const PetDetailsPage = () => {
             setShelterName(data.shelter_name || "");
         } catch (error) {
             console.error("There was an error fetching the applications:", error);
+            toastr.error("There was an internal error fetching the applications.");
         }
     };
 

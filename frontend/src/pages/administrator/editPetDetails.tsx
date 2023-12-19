@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography, TextField, Select, MenuItem, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Button, Grid, Stack, FormGroup, Checkbox, IconButton } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -8,7 +8,7 @@ import petModel from '../../models/petModel';
 import { useNavigate } from 'react-router';
 import HomeIcon from '@mui/icons-material/Home';
 
-const EnterAnimalDetailsPage = () => {
+const EditPetDetailsPage = () => {
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [breed, setBreed] = useState('');
@@ -22,6 +22,42 @@ const EnterAnimalDetailsPage = () => {
     const [species, setSpecies] = useState('');
     const [vaccination_status, setVaccinationStatus] = useState(false);
     const [neutered_status, setNeuteredStatus] = useState(false);
+    const [adoption_status, setAdoptionStatus] = useState(false);
+
+    const pet_ID = 2; // TODO like below
+    //const { pet_ID} = location.state || {};
+
+    const [pet, setPet] = useState<petModel>();
+    
+    const fetchPet = async () => {
+        try {
+            const response = await PetService.getPetById(pet_ID);
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+            const data: petModel = await response.json();
+            // set initial values
+            setPet(data);
+            setName(data.name);
+            setBreed(data.breed);
+            setAge(data.age);
+            setSex(data.sex);
+            setHouseTrained(data.house_trained_status == true ? "yes" : "no",);
+            setAdoptionFee(data.adoption_fee.toString());
+            setDetails(data.description);
+            setSpecies(data.species);
+            setVaccinationStatus(data.vaccination_status);
+            setNeuteredStatus(data.neutered_status);
+            setAdoptionStatus(data.adoption_status || false)
+
+        } catch (error) {
+            console.error("There was an error fetching the applications:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchPet();
+    }, []);
 
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
@@ -124,6 +160,7 @@ const EnterAnimalDetailsPage = () => {
             return;
         }
         const pet: petModel = {
+            pet_ID: pet_ID,
             species: species,
             name: name,
             breed: breed,
@@ -136,32 +173,34 @@ const EnterAnimalDetailsPage = () => {
             sex: sex,
             description: details,
             house_trained_status: houseTrained === 'yes' ? true : false,
-            adoption_fee: adoptionFee === '' ? 0 : parseFloat(adoptionFee),
+            adoption_fee: parseFloat(adoptionFee),
             shelter_name: null, // this is not checked
+            adoption_status: adoption_status,
         }
-        PetService.addPet(pet).then((response) => {
+        PetService.updatePet(pet).then((response) => {
             if (response.ok) {
-                toastr.success('Successfully added pet');
-                // if (photo) {
-                //     const formData = new FormData();
-                //     formData.append('file', photo);
-                //     PetService.addPhoto(response.data.pet_ID, formData).then((response) => {
-                //         if (response.status === 201) {
-                //             toastr.success('Successfully added photo');
-                //         } else {
-                //             toastr.error('Failed to add photo');
-                //         }
-                //     });
-                // }
+                toastr.success('Successfully edited pet');
             } else {
-                toastr.error('Failed to add pet');
+                toastr.error('Failed to edit pet');
+            }
+        }
+        );
+    };
+
+    const handleDelete = () => {
+        PetService.deletePet(pet_ID).then((response) => {
+            if (response.ok) {
+                toastr.success('Successfully deleted pet');
+                navigate('/administrator/home');
+            } else {
+                toastr.error('Failed to delete pet');
             }
         }
         );
     };
     
     const goBackHome = () => {
-        navigate('/shelter/home');
+        navigate('/administrator/home');
     }
 
     return (
@@ -174,16 +213,22 @@ const EnterAnimalDetailsPage = () => {
             mb: 5
         }}>
                     <Typography variant="h4" gutterBottom>
-                        Add New Pet
+                        Edit Pet
                     </Typography>
 
             <Stack spacing={20} justifyContent="center" alignItems="flex-start" direction="row">
                 <Stack spacing={2} direction="column">
-                    <TextField label="Name" value={name} onChange={handleNameChange} />
+                    <FormControl>
+                        <FormLabel>Name</FormLabel>
+                        <TextField
+                            value={name}
+                            onChange={handleNameChange}
+                            fullWidth
+                        />
+                    </FormControl>
                     <FormControl>
                         <FormLabel>Breed</FormLabel>
                         <TextField
-                            label="Enter breed"
                             value={breed}
                             onChange={handleBreedChange}
                             fullWidth
@@ -198,12 +243,9 @@ const EnterAnimalDetailsPage = () => {
                         </Select>
                     </FormControl>
 
-
-
                     <FormControl>
                         <FormLabel>Age</FormLabel>
                         <TextField
-                            label="Enter a number"
                             value={age}
                             onChange={handleAgeChange}
                             fullWidth
@@ -242,7 +284,7 @@ const EnterAnimalDetailsPage = () => {
                     </FormControl>
                 </Stack>
                 <Stack spacing={2} direction="column">
-                    <TextField label="Add Details" value={details} onChange={handleDetailsChange} multiline rows={4}/>
+                    <TextField label="Details" value={details} onChange={handleDetailsChange} multiline rows={4}/>
 
                     <TextField label="Adoption Fee" value={adoptionFee} onChange={handleAdoptionFeeChange} />
 
@@ -256,7 +298,8 @@ const EnterAnimalDetailsPage = () => {
                         </label>
                     </Grid>
 
-                    <Button variant="contained" color="secondary" onClick={handleSubmit}>Submit</Button>
+                    <Button variant="contained" color="secondary" onClick={handleSubmit}>Submit Edit</Button>
+                    <Button variant="contained" color="primary" onClick={handleDelete} sx={{bgcolor: '#C30404'}}>Delete Pet</Button>
                     <Button onClick={goBackHome} variant='contained' color='primary'>
                         Go to Dashboard
                     </Button>
@@ -266,4 +309,4 @@ const EnterAnimalDetailsPage = () => {
     );
 };
 
-export default EnterAnimalDetailsPage;
+export default EditPetDetailsPage;

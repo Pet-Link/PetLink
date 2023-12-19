@@ -20,6 +20,7 @@ import ManageAppointmentsVet from '../pages/vet/ManageAppointmentsVet/ManageAppo
 import LogMedicalRecord from '../pages/vet/CreateMedicalRecord/CreateMedicalRecord';
 import CreatePet from '../pages/adopter/createPet';
 import PetDetailsPage from '../pages/adopter/AnimalDetails/DetailOfPetToAdoptAdopter';
+import EditPetDetailsPage from '../pages/administrator/editPetDetails';
 import ViewMeetAndGreets from '../pages/adopter/ViewMeetAndGreets';
 import SearchVets from '../pages/adopter/SearchVets';
 
@@ -50,6 +51,7 @@ const router = createBrowserRouter([
         },
         { path: 'view-applications', element: <ViewApplications />},
         { path: 'see-application-detail', element: <SeeAdoptionApplicationPage /> },
+        { path: 'edit-pet-details', element: <EditPetDetailsPage /> },
         // add routes here
       ],
     },

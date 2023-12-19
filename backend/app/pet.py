@@ -279,7 +279,7 @@ def update_pet(pet_ID):
 
 
 # Delete Pet with the pet ID - DELETE
-@pet.route('/pet_id/<int:pet_ID>', methods=['DELETE'])
+@pet.route('/<int:pet_ID>/delete', methods=['DELETE'])
 def delete_pet(pet_ID):
     try:
         connection = get_connection()

@@ -13,17 +13,6 @@ export class PetService {
   }
 
   static addPet(pet: petModel) {
-    // var species = pet.species;
-    // var breed = pet.breed;
-    // var age = pet.age;
-    // var neutered_status = pet.neutered_status;
-    // var shelter_ID = pet.shelter_ID;
-    // var sex = pet.sex;
-    // var description = pet.description;
-    // var name = pet.name;
-    // var vaccination_status = pet.vaccination_status;
-    // var house_trained_status = pet.house_trained_status;
-    // var adoption_fee = pet.adoption_fee;
     console.log(JSON.stringify(pet));
     return fetch(`${PetService.baseUrl}/create`, {
       method: 'POST',
@@ -32,16 +21,16 @@ export class PetService {
     });
   }
 
-  static updatePet(pet: any) {
-    return fetch(`${PetService.baseUrl}/pet/${pet.id}`, {
+  static updatePet(pet: petModel) {
+    return fetch(`${PetService.baseUrl}/${pet.pet_ID}/update`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(pet),
     });
   }
 
-  static deletePet(id: string) {
-    return fetch(`${PetService.baseUrl}/pet/${id}`, {
+  static deletePet(pet_ID: number) {
+    return fetch(`${PetService.baseUrl}/${pet_ID}/delete`, {
       method: 'DELETE',
     });
   }
