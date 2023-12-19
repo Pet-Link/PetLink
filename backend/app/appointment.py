@@ -95,13 +95,13 @@ def update_appointment():
         pet_ID = appointmentDetails['pet_ID'] # cannot be updated
 
         # Check if the adopter exists
-        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID))
+        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID,))
         adopter = cursor.fetchone()
         if not adopter:
             return Response(f"Adopter with ID {adopter_ID} not found", status=400, mimetype='application/json')
 
         # Check if the veterinarian exists
-        cursor.execute('SELECT * FROM Veterinarian WHERE user_ID = %s', (veterinarian_ID))
+        cursor.execute('SELECT * FROM Veterinarian WHERE user_ID = %s', (veterinarian_ID,))
         veterinarian = cursor.fetchone()
         if not veterinarian:
             return Response(f"Veterinarian with ID {veterinarian_ID} not found", status=400, mimetype='application/json')
@@ -125,13 +125,13 @@ def delete_appointment():
         veterinarian_ID = appointmentDetails['veterinarian_ID']
 
         # Check if the adopter exists
-        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID))
+        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID,))
         adopter = cursor.fetchone()
         if not adopter:
             return Response(f"Adopter with ID {adopter_ID} not found", status=400, mimetype='application/json')
 
         # Check if the veterinarian exists
-        cursor.execute('SELECT * FROM Veterinarian WHERE user_ID = %s', (veterinarian_ID))
+        cursor.execute('SELECT * FROM Veterinarian WHERE user_ID = %s', (veterinarian_ID,))
         veterinarian = cursor.fetchone()
         if not veterinarian:
             return Response(f"Veterinarian with ID {veterinarian_ID} not found", status=400, mimetype='application/json')
