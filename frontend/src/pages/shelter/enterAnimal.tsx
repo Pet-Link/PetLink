@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { Typography, TextField, Select, MenuItem, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Button, Grid, Stack, FormGroup, Checkbox } from '@mui/material';
+import { Typography, TextField, Select, MenuItem, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Button, Grid, Stack, FormGroup, Checkbox, IconButton } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { PetService } from '../../services/petService';
 import toastr from 'toastr';
 import petModel from '../../models/petModel';
+import { useNavigate } from 'react-router';
+import HomeIcon from '@mui/icons-material/Home';
 
 const EnterAnimalDetailsPage = () => {
+    const navigate = useNavigate();
     const [name, setName] = useState('');
     const [breed, setBreed] = useState('');
     const [age, setAge] = useState('');
@@ -160,6 +163,10 @@ const EnterAnimalDetailsPage = () => {
         }
         );
     };
+    
+    const goBackHome = () => {
+        navigate('/shelter/home');
+    }
 
     return (
         <Grid sx={{ 
@@ -170,7 +177,10 @@ const EnterAnimalDetailsPage = () => {
             mt: 20, 
             mb: 5
         }}>
-            <Typography sx={{mb:10}} variant="h4">Enter the Details of the Animal</Typography>
+                    <Typography variant="h4" gutterBottom>
+                        Add New Animal
+                    </Typography>
+
             <Stack spacing={20} justifyContent="center" alignItems="flex-start" direction="row">
                 <Stack spacing={2} direction="column">
                     <TextField label="Name" value={name} onChange={handleNameChange} />
@@ -251,6 +261,9 @@ const EnterAnimalDetailsPage = () => {
                     </Grid>
 
                     <Button variant="contained" color="secondary" onClick={handleSubmit}>Submit</Button>
+                    <Button onClick={goBackHome} variant='contained' color='primary'>
+                        Go to Dashboard
+                    </Button>
                 </Stack>
             </Stack>
         </Grid>
