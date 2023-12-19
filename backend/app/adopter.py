@@ -89,7 +89,7 @@ def create_adopter():
 
 
 # Get adopter with the user id - GET
-@adopter.route('/user_id/<int:user_ID>', methods=['GET'])
+@adopter.route('/<int:user_ID>', methods=['GET'])
 def get_adopter(user_ID):
     try:
         connection = get_connection()

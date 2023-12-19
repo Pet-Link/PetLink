@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -6,6 +6,8 @@ import { Typography, Grid, FormControl, RadioGroup, FormControlLabel, Radio } fr
 import { adoptionApplicationService } from '../../../services/adoptionApplicationService';
 import toastr from 'toastr';
 import applyAdoptModel from '../../../models/applyAdoptModel';
+import adopterModel from '../../../models/adopterModel';
+import { AdopterService } from '../../../services/adopterService';
 
 const AdoptionApplicationPage = () => {
     const inputStyle = { marginBottom: '20px', alignItems: 'center'};
@@ -19,6 +21,26 @@ const AdoptionApplicationPage = () => {
     const [petCareExperience, setPetCareExperience] = useState('');
     const [housingSituation, setHousingSituation] = useState('');
     const [adoptionReason, setAdoptionReason] = useState('');
+
+    const [adopter, setAdopter] = useState<adopterModel>();
+
+    const fetchApplications = async () => {
+        try {
+            const response = await AdopterService.getAdopter(parseInt(localStorage.getItem('user_ID') || '0'));
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+            const data: adopterModel = await response.json();
+            setAdopter(data);
+        } catch (error) {
+            console.error("There was an error fetching the applications:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchApplications();
+    }, []);
+
 
     const handleAgeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setAge(event.target.value);
@@ -235,7 +257,9 @@ const AdoptionApplicationPage = () => {
                         <Typography variant="h6" gutterBottom>
                             Your Balance:
                         </Typography>
-                        <Typography variant="body1">$230</Typography>
+                        <Typography variant="body1">
+                            ${adopter ? adopter.balance.toString() : 'Loading...'}
+                        </Typography>
                     </Grid>
 
                     {/* Information Text */}
