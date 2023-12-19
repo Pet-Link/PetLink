@@ -28,6 +28,7 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { PetService } from '../../../services/petService';
 import petModel from '../../../models/petModel';
 import { useNavigate } from 'react-router';
+import toastr from 'toastr';
 
 const HomeAdopter = () => {
     const navigate = useNavigate();
