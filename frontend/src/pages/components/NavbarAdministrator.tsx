@@ -38,6 +38,13 @@ function ResponsiveAppBar() {
         setAnchorElUser(null);
     };
 
+    const handleLogout = () => {
+        // Clear authentication data
+        localStorage.removeItem('user_ID');
+        localStorage.removeItem('user_role');
+        navigate('/');
+    };
+
     return (
         <AppBar position="static"
                 sx={{
@@ -170,7 +177,7 @@ function ResponsiveAppBar() {
                             onClose={handleCloseUserMenu}
                         >
                             {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                <MenuItem key={setting} onClick={() => setting === 'Logout' ? handleLogout() : handleCloseUserMenu()}>
                                     <Typography textAlign="center">{setting}</Typography>
                                 </MenuItem>
                             ))}

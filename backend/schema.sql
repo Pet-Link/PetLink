@@ -229,3 +229,59 @@ WHERE aa.approval_status IS NULL
 GROUP BY a.user_ID
 ORDER BY num_rows ASC
 LIMIT 1;
+
+CREATE VIEW User_Posts_And_Replies AS
+SELECT 
+    u.name AS UserName,
+    p.title AS PostTitle,
+    p.content AS PostContent,
+    r.content AS ReplyContent,
+    r.date AS ReplyDate
+FROM User u
+INNER JOIN Post p ON u.user_ID = p.poster_ID
+LEFT JOIN Reply r ON p.post_ID = r.post_ID;
+
+CREATE VIEW Shelter_Pets AS
+SELECT 
+    sh.description AS ShelterDescription,
+    pt.name AS PetName,
+    pt.species,
+    pt.breed,
+    pt.age,
+    pt.neutered_status
+FROM Shelter sh
+INNER JOIN Pet pt ON sh.user_ID = pt.shelter_ID;
+
+CREATE VIEW User_Pet_Medical_Records AS
+SELECT 
+    u.name AS UserName,
+    pt.name AS PetName,
+    mr.date AS RecordDate,
+    mr.operation AS MedicalOperation
+FROM User u
+INNER JOIN Pet pt ON u.user_ID = pt.adopter_ID
+INNER JOIN MedicalRecord mr ON pt.pet_ID = mr.pet_ID;
+
+CREATE VIEW PetCare_Info_By_Admin AS
+SELECT 
+    u.name AS AdminName,
+    pci.title AS InfoTitle,
+    pci.content AS InfoContent
+FROM Administrator ad JOIN User u
+INNER JOIN PetCareInfo pci ON u.user_ID = pci.administrator_ID;
+
+DELIMITER $$
+
+CREATE TRIGGER After_Reply_Insertion
+AFTER INSERT ON Reply
+FOR EACH ROW
+BEGIN
+    IF EXISTS (SELECT * FROM Veterinarian WHERE user_ID = NEW.replier_ID) THEN
+        UPDATE Reply
+        SET expert_verify_status = TRUE
+        WHERE post_ID = NEW.post_ID AND replier_ID = NEW.replier_ID;
+    END IF;
+END$$
+
+DELIMITER ;
+
