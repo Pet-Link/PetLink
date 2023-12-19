@@ -297,3 +297,18 @@ def delete_pet(pet_ID):
     except Exception as e:
         print(e)
         return Response(f'Pet with pet_ID {pet_ID} could not be deleted with exception {e}', status=500)
+    
+# get the shelter name of the pet
+@pet.route('/pet_id/<int:pet_ID>/shelter', methods=['GET'])
+def get_pet_shelter(pet_ID):
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute('SELECT shelter_name FROM Pet_Shelter_Details WHERE pet_ID = %s', (pet_ID,))
+        shelter_name = cursor.fetchone()
+        if not shelter_name:
+            return Response(f'Shelter for pet with id {pet_ID} does not exist', status=404)
+        return jsonify(shelter_name)
+    except Exception as e:
+        print(e)
+        return Response(f'Pet with pet_ID {pet_ID} could not be fetched with exception {e}', status=500)

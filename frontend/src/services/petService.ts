@@ -34,4 +34,8 @@ export class PetService {
       method: 'DELETE',
     });
   }
+
+  static getShelterName(pet_ID: string) {
+    return fetch(`${PetService.baseUrl}/pet_id/${pet_ID}/shelter`);
+  }
 }

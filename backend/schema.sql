@@ -285,3 +285,11 @@ END$$
 
 DELIMITER ;
 
+CREATE VIEW Pet_Shelter_Details AS
+SELECT 
+    pt.pet_ID,
+    pt.name AS name,
+    sh.user_ID AS user_ID,
+    us.name AS shelter_name
+FROM Pet pt
+LEFT JOIN (Shelter sh JOIN User us) ON pt.shelter_ID = sh.user_ID;

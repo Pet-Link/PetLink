@@ -19,8 +19,8 @@ const PetDetailsPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const pet_ID = 1; // TODO like below
-    //const { pet_ID} = location.state || {};
+    //const pet_ID = 1; // TODO like below
+    const { pet_ID} = location.state || {};
 
     const [pet, setPet] = useState<petModel>();
     const [petName, setPetName] = useState("");
