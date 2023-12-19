@@ -9,12 +9,14 @@ import ResponsiveAppBarAdopter from '../pages/components/NavbarAdopter';
 import HomeAdopter from '../pages/adopter/HomeAdopter/HomeAdopter';
 import HomeAdministrator from '../pages/administrator/HomeAdministrator/HomeAdministrator';
 import HomeShelter from '../pages/shelter/HomeShelter/HomeShelter';
+import HomeVet from '../pages/vet/HomeVet/HomeVet';
 import SeeAdoptionApplicationPage from '../pages/administrator/SeeApplicationDetailsAdministrator/SeeApplicationDetailsAdministrator';
 import AdoptionApplicationPage from '../pages/adopter/ApplicationFormAdopter/ApplicationFormAdopter';
 import { PermissionContainer } from '../auth/PermissionContainer';
 import EnterAnimalDetailsPage from '../pages/shelter/enterAnimal';
 import Balance from '../pages/adopter/balance';
 import ViewApplications from '../pages/administrator/viewApplications';
+import ManageAppointmentsVet from '../pages/vet/ManageAppointmentsVet/ManageAppointmentsVet';
 
 const Router: React.FC = () => {
     return <RouterProvider router={router}/>;
@@ -86,7 +88,28 @@ const router = createBrowserRouter([
         }
       ]
     },
-    { path: '/veterinarian',}
+    { path: '/veterinarian',
+      element: (
+        <PermissionContainer roles='Veterinarian'>
+          <Outlet />
+          </PermissionContainer>
+          ),
+        children: [
+          { path: 'home',
+            element: (
+              <PermissionContainer roles='Veterinarian'>
+                <ResponsiveAppBar />
+                <HomeVet />
+                <Outlet />
+              </PermissionContainer>
+            ),
+          },
+          {
+            path: 'see-appointments',
+            element: <ManageAppointmentsVet />,
+          }
+        ]
+    },
 ]);
 
 export default Router;

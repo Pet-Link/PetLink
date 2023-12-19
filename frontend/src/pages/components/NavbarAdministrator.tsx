@@ -15,7 +15,7 @@ import AdbIcon from '@mui/icons-material/Adb';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
 const pages = ['About Us', 'Adopt', 'Contact Us', 'Forum'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);

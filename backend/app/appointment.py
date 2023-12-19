@@ -15,22 +15,29 @@ def create_appointment():
         adopter_ID = appointmentDetails['adopter_ID']
         veterinarian_ID = appointmentDetails['veterinarian_ID']
         date = appointmentDetails['date'] # if you get an error consider the seconds of the datetime parameter (00:00:00)
-        approval_status = False
+        approval_status = None # default value
         details = appointmentDetails['details']
+        pet_ID = appointmentDetails['pet_ID']
 
         # Check if the adopter exists
-        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID))
+        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID,))
         adopter = cursor.fetchone()
         if not adopter:
             return Response(f"Adopter with ID {adopter_ID} not found", status=400, mimetype='application/json')
 
         # Check if the veterinarian exists
-        cursor.execute('SELECT * FROM Veterinarian WHERE user_ID = %s', (veterinarian_ID))
+        cursor.execute('SELECT * FROM Veterinarian WHERE user_ID = %s', (veterinarian_ID,))
         veterinarian = cursor.fetchone()
         if not veterinarian:
             return Response(f"Veterinarian with ID {veterinarian_ID} not found", status=400, mimetype='application/json')
+        
+        # Check if the pet exists
+        cursor.execute('SELECT * FROM Pet WHERE pet_ID = %s', (pet_ID,))
+        pet = cursor.fetchone()
+        if not pet:
+            return Response(f"Pet with ID {pet_ID} not found", status=400, mimetype='application/json')
 
-        cursor.execute('INSERT INTO Appointment(adopter_ID, veterinarian_ID, date, approval_status, details) VALUES (%s, %s, %s, %s, %s)', (adopter_ID, veterinarian_ID, date, approval_status, details))
+        cursor.execute('INSERT INTO Appointment(adopter_ID, veterinarian_ID, date, pet_ID, approval_status, details) VALUES (%s, %s, %s, %s, %s, %s)', (adopter_ID, veterinarian_ID, date, pet_ID, approval_status, details))
         connection.commit()
         
         return Response('Appointment created', status=200, mimetype='application/json')
@@ -85,6 +92,7 @@ def update_appointment():
         date = appointmentDetails['date']
         approval_status = appointmentDetails['approval_status'] # must be a boolean
         details = appointmentDetails['details']
+        pet_ID = appointmentDetails['pet_ID'] # cannot be updated
 
         # Check if the adopter exists
         cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID))
@@ -155,12 +163,12 @@ def get_all_appointments_for_veterinarian(veterinarian_ID):
     cursor = connection.cursor()
     try:
         # Check if the veterinarian exists
-        cursor.execute('SELECT * FROM Veterinarian WHERE user_ID = %s', (veterinarian_ID))
+        cursor.execute('SELECT * FROM Veterinarian WHERE user_ID = %s', (veterinarian_ID,))
         veterinarian = cursor.fetchone()
         if not veterinarian:
             return Response(f"Veterinarian with ID {veterinarian_ID} not found", status=400, mimetype='application/json')
 
-        cursor.execute('SELECT * FROM Appointment WHERE veterinarian_ID = %s', (veterinarian_ID))
+        cursor.execute('SELECT * FROM Appointment WHERE veterinarian_ID = %s', (veterinarian_ID,))
         appointments = cursor.fetchall()
         # convert appointments to list of dictionaries with keys
         appointments = [dict(zip([key[0] for key in cursor.description], appointment)) for appointment in appointments]
@@ -176,12 +184,12 @@ def get_all_appointments_for_adopter(adopter_ID):
     cursor = connection.cursor()
     try:
         # Check if the adopter exists
-        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID))
+        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID,))
         adopter = cursor.fetchone()
         if not adopter:
             return Response(f"Adopter with ID {adopter_ID} not found", status=400, mimetype='application/json')
 
-        cursor.execute('SELECT * FROM Appointment WHERE adopter_ID = %s', (adopter_ID))
+        cursor.execute('SELECT * FROM Appointment WHERE adopter_ID = %s', (adopter_ID,))
         appointments = cursor.fetchall()
         # convert appointments to list of dictionaries with keys
         appointments = [dict(zip([key[0] for key in cursor.description], appointment)) for appointment in appointments]
@@ -202,13 +210,13 @@ def approve_appointment():
         veterinarian_ID = appointmentDetails['veterinarian_ID']
 
         # Check if the adopter exists
-        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID))
+        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID,))
         adopter = cursor.fetchone()
         if not adopter:
             return Response(f"Adopter with ID {adopter_ID} not found", status=400, mimetype='application/json')
 
         # Check if the veterinarian exists
-        cursor.execute('SELECT * FROM Veterinarian WHERE user_ID = %s', (veterinarian_ID))
+        cursor.execute('SELECT * FROM Veterinarian WHERE user_ID = %s', (veterinarian_ID,))
         veterinarian = cursor.fetchone()
         if not veterinarian:
             return Response(f"Veterinarian with ID {veterinarian_ID} not found", status=400, mimetype='application/json')
@@ -238,7 +246,7 @@ def reject_appointment():
             return Response(f"Adopter with ID {adopter_ID} not found", status=400, mimetype='application/json')
 
         # Check if the veterinarian exists
-        cursor.execute('SELECT * FROM Veterinarian WHERE user_ID = %s', (veterinarian_ID))
+        cursor.execute('SELECT * FROM Veterinarian WHERE user_ID = %s', (veterinarian_ID,))
         veterinarian = cursor.fetchone()
         if not veterinarian:
             return Response(f"Veterinarian with ID {veterinarian_ID} not found", status=400, mimetype='application/json')

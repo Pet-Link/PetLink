@@ -50,7 +50,7 @@ const HomeShelter = () => {
             // Add more animal data as needed
         ];
 
-    type AnimalType = 'dog' | 'cat';
+type AnimalType = 'dog' | 'cat';
 
     const filterAnimalsByType = (type: AnimalType) => {
         return animalData.filter((animal) => animal.type === type);

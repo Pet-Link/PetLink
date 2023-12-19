@@ -178,11 +178,14 @@ CREATE TABLE IF NOT EXISTS Appointment(
     adopter_ID INT NOT NULL,
     veterinarian_ID INT NOT NULL,
     date DATETIME NOT NULL,
+    pet_ID INT NOT NULL,
     approval_status BOOLEAN,
     details TEXT,
     FOREIGN KEY(adopter_ID) REFERENCES Adopter(user_ID)
     ON DELETE CASCADE,
     FOREIGN KEY(veterinarian_ID) REFERENCES Veterinarian(user_ID)
+    ON DELETE CASCADE,
+    FOREIGN KEY(pet_ID) REFERENCES Pet(pet_ID)
     ON DELETE CASCADE,
     PRIMARY KEY (adopter_ID, veterinarian_ID)
 );

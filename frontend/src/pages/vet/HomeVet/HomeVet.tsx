@@ -6,9 +6,11 @@ import {
 } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import './styles.css';
+import { useNavigate } from 'react-router';
+//import './styles.css';
 
 const HomeVet = () => {
+    const navigate = useNavigate();
 
     return (
         <Box m={2} pt={3}>
@@ -40,8 +42,7 @@ const HomeVet = () => {
                         },
                     }}
                     onClick={() => {
-                        // Handle click action
-                        // You can add your logic here
+                        navigate('/veterinarian/see-appointments');
                     }}
                 >
                     See Appointments
