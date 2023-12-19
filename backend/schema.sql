@@ -230,6 +230,11 @@ GROUP BY a.user_ID
 ORDER BY num_rows ASC
 LIMIT 1;
 
+CREATE VIEW Pet_Shelter_Details_View AS
+SELECT Pet.*, User.name as shelter_name
+FROM Pet 
+JOIN User ON User.user_ID = Pet.shelter_ID;
+
 CREATE VIEW User_Posts_And_Replies AS
 SELECT 
     u.name AS UserName,
@@ -285,11 +290,3 @@ END$$
 
 DELIMITER ;
 
-CREATE VIEW Pet_Shelter_Details AS
-SELECT 
-    pt.pet_ID,
-    pt.name AS name,
-    sh.user_ID AS user_ID,
-    us.name AS shelter_name
-FROM Pet pt
-LEFT JOIN (Shelter sh JOIN User us) ON pt.shelter_ID = sh.user_ID;

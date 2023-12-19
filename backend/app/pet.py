@@ -97,11 +97,9 @@ def get_pet(pet_ID):
         connection = get_connection()
         cursor = connection.cursor()
         cursor.execute("""
-                       SELECT Pet.*, User.name as shelter_name
-                       FROM Pet 
-                       JOIN User ON User.user_ID = Pet.shelter_ID
+                       SELECT *
+                       FROM Pet_Shelter_Details_View
                        WHERE pet_ID = %s
-                       
                        """, (pet_ID,))
         pet = cursor.fetchone()
         if pet:
@@ -112,7 +110,6 @@ def get_pet(pet_ID):
     except Exception as e:
         print(e)
         return Response(f'Pet with pet_ID {pet_ID} could not be fetched with exception {e}', status=500)
-
 
 # Get all Pets - GET
 @pet.route('/all', methods=['GET'])
@@ -130,7 +127,28 @@ def get_all_pets():
     except Exception as e:
         print(e)
         return Response(f'Pets could not be fetched with exception {e}', status=500)
-
+    
+# Get all unadopted Pets with Shelter Names - GET
+@pet.route('/all-unadopted-shelter-names', methods=['GET'])
+def get_all_unadopted_pets_with_shelter():
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute("""
+                       SELECT *
+                       FROM Pet_Shelter_Details_View
+                       WHERE adoption_status = 0
+                       """)
+        pets = cursor.fetchall()
+        if pets:
+            # convert pets to dictionary with keys
+            pets = [dict(zip([key[0] for key in cursor.description], pet)) for pet in pets]
+            return jsonify(pets)
+        return Response(f'No pets exist', status=404)
+    except Exception as e:
+        print(e)
+        return Response(f'Pets could not be fetched with exception {e}', status=500)
+    
 # Get all pets of an adopter - GET
 @pet.route('/adopter/<int:adopter_ID>', methods=['GET'])
 def get_adopter_pets(adopter_ID):
@@ -259,6 +277,12 @@ def update_pet(pet_ID):
         house_trained_status = data['house_trained_status']
         adoption_status = data['adoption_status']
         adoption_fee = data['adoption_fee']
+        
+        # Check if pet exists
+        cursor.execute('SELECT * FROM Pet WHERE pet_ID = %s', (pet_ID,))
+        existing_pet = cursor.fetchone()
+        if not existing_pet:
+            return Response(f'Pet with ID {pet_ID} does not exist', status=404)
 
         cursor.execute('''
                         UPDATE Pet

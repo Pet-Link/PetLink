@@ -54,32 +54,24 @@ const HomeAdopter = () => {
 
     type AnimalType = 'dog' | 'cat';
 
-    const refresh_list = async () => {
+    const fetchPets = async () => {
         try {
-            const petsResponse = await PetService.getPets();
-            const petsData: petModel[] = await petsResponse.json();
-    
-            const updatedPetsData = await Promise.all(petsData.map(async (pet: petModel) => {
-                if (pet.pet_ID !== undefined) {
-                    const shelterResponse = await PetService.getShelterName(pet.pet_ID.toString());
-                    const shelterData = await shelterResponse.json();
-                    console.log(shelterData);
-                    pet.shelter_name = shelterData[0]; // Assuming the shelter name is the first element in the response
-                }
-                return pet;
-            }));
-    
-            setPetData(updatedPetsData);
+            const response = await PetService.getPetShelterDetails();
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+            const data: petModel[] = await response.json();
+            setPetData(data);
         } catch (error) {
-            console.error('Error occurred while refreshing pets list:', error);
+            console.error("There was an error fetching the pets:", error);
+            toastr.error("There was an internal error fetching the pets.");
         }
-    
-        // disable the button after click and make it non-clickable
-        const refreshButton = document.getElementById("refresh_button") as HTMLButtonElement;
-        refreshButton.disabled = true;
-        refreshButton.style.backgroundColor = "grey";
     };
-    
+
+    useEffect(() => {
+        fetchPets();
+    }, []);
+
 
     const handleDetails = (pet_ID: number) => {
         navigate('/adopter/pet-details', { state: { pet_ID: pet_ID } });
@@ -270,9 +262,6 @@ const HomeAdopter = () => {
                 <Grid item xs={12} sm={6}>
                     {/* Search Bar */}
                     <TextField label="Search animals..." variant="outlined" fullWidth />
-                    <Button id='refresh_button' variant="contained" onClick={refresh_list} fullWidth sx={{ backgroundColor: '#FF0000', color: 'white' }}>
-                            Refresh
-                    </Button>
                 </Grid>
             </Grid>
             <Grid container justifyContent="center" spacing={2} style={{ marginTop: 20 }}>

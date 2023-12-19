@@ -35,7 +35,7 @@ export class PetService {
     });
   }
 
-  static getShelterName(pet_ID: string) {
-    return fetch(`${PetService.baseUrl}/pet_id/${pet_ID}/shelter`);
+  static getPetShelterDetails() {
+    return fetch(`${PetService.baseUrl}/all-unadopted-shelter-names`);
   }
 }
