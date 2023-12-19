@@ -41,8 +41,12 @@ export class PetService {
   }
 
   static deletePet(id: string) {
-    return fetch(`${PetService.baseUrl}/pet/${id}`, {
+    return fetch(`${PetService.baseUrl}/${id}`, {
       method: 'DELETE',
     });
+  }
+
+  static getShelterName(pet_ID: string) {
+    return fetch(`${PetService.baseUrl}/pet_id/${pet_ID}/shelter`);
   }
 }

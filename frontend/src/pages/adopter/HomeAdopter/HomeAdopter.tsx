@@ -1,3 +1,12 @@
+import {
+    TableContainer,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    IconButton,
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import {
     Container,
@@ -18,9 +27,10 @@ import MenuItem from "@mui/material/MenuItem"; // Import your CSS file
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { PetService } from '../../../services/petService';
 import petModel from '../../../models/petModel';
+import { useNavigate } from 'react-router';
 
 const HomeAdopter = () => {
-
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [petData, setPetData] = useState<petModel[]>([]);
 
@@ -41,27 +51,38 @@ const HomeAdopter = () => {
         setSpecies(event.target.value as string);
         setAge(event.target.value as string);
     };
-        const animalData: petModel[] = [];
 
     type AnimalType = 'dog' | 'cat';
 
-    const refresh_list = () => {
-        PetService.getPets().then((res) => {
-            setPetData([]);
-            res.json().then((data) => {
-                data.forEach((pet: petModel) => {
-                    petData.push(pet);
-                    setPetData(petData);
+    const refresh_list = async () => {
+        try {
+            const petsResponse = await PetService.getPets();
+            const petsData: petModel[] = await petsResponse.json();
+    
+            const updatedPetsData = await Promise.all(petsData.map(async (pet: petModel) => {
+                if (pet.pet_ID !== undefined) {
+                    const shelterResponse = await PetService.getShelterName(pet.pet_ID.toString());
+                    const shelterData = await shelterResponse.json();
+                    console.log(shelterData);
+                    pet.shelter_name = shelterData[0]; // Assuming the shelter name is the first element in the response
                 }
-                );
-            }
-            );
+                return pet;
+            }));
+    
+            setPetData(updatedPetsData);
+        } catch (error) {
+            console.error('Error occurred while refreshing pets list:', error);
         }
-        );
+    
         // disable the button after click and make it non-clickable
         const refreshButton = document.getElementById("refresh_button") as HTMLButtonElement;
         refreshButton.disabled = true;
         refreshButton.style.backgroundColor = "grey";
+    };
+    
+
+    const handleDetails = (pet_ID: string) => {
+        navigate('/adopter/pet-details', { state: { pet_ID: pet_ID } });
     };
     
     const filterAnimalsByType = (type: AnimalType) => {
@@ -254,59 +275,52 @@ const HomeAdopter = () => {
                     </Button>
                 </Grid>
             </Grid>
-
-            {/* Pet Categories */}
-            {/* Pet Categories */}
             <Grid container justifyContent="center" spacing={2} style={{ marginTop: 20 }}>
-                {/* Dogs */}
-                <Grid item container alignItems="center" spacing={2}>
-                    {filterAnimalsByType('dog').map((dog) => (
-                        <Grid item key={`dog-${dog.species}`} xs={6} sm={3}>
-                            <Card>
-                                <CardContent>
-                                    <img
-                                        src={`./HomePageAnimals/dog-${dog.pet_ID}.png`}
-                                        alt={`Dog ID: ${dog.pet_ID}`}
-                                        style={{ width: '100%', height: 'auto', marginBottom: 8 }}
-                                    />
-                                    <Typography variant="h6" style={{fontWeight: 'bold'}}>
-                                        {`${dog.breed}`}
-                                        <br />
-                                        {`${dog.age}`}
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    ))}
-                </Grid>
-
-                {/* Cats */}
-                <Grid item container spacing={2} alignItems="center">
-                    {filterAnimalsByType('cat').map((cat) => (
-                        <Grid item key={`cat-${cat.species}`} xs={6} sm={3}>
-                            <Card>
-                                <CardContent>
-                                    <img
-                                        src={`./HomePageAnimals/cat-${cat.pet_ID}.png`}
-                                        alt={`Cat ${cat.age}`}
-                                        style={{ width: '100%', height: 'auto', marginBottom: 8 }}
-                                    />
-                                    <Typography variant="h6" style={{fontWeight: 'bold' , marginBottom: 0 }}>
-                                        {`${cat.breed}`}
-                                        <br />
-                                        {`${cat.age}`}
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    ))}
-                </Grid>
+                <TableContainer component={Box}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Pet Name</TableCell>
+                                <TableCell>Pet Breed</TableCell>
+                                <TableCell>Pet Species</TableCell>
+                                <TableCell>Sex</TableCell>
+                                <TableCell>Shelter Name</TableCell>
+                                <TableCell>Vaccination Status</TableCell>
+                                <TableCell>Neuter Status</TableCell>
+                                <TableCell></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {petData.map(pet => (
+                                <TableRow key={pet.adopter_ID}>
+                                    <TableCell>{pet.name}</TableCell>
+                                    <TableCell>{pet.breed}</TableCell>
+                                    <TableCell>{pet.species}</TableCell>
+                                    <TableCell>{pet.sex}</TableCell>
+                                    <TableCell>{pet.shelter_name}</TableCell>
+                                    {/* Assume time is not part of your model */}
+                                    <TableCell>{pet.vaccination_status ? 'Vaccinated' : 'Not Vaccinated'}</TableCell>
+                                    <TableCell>{pet.neutered_status ? 'Neutered' : 'Not Neutered'}</TableCell>
+                                    <TableCell>
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            style={{ backgroundColor: "green" }}
+                                            onClick={() => handleDetails(pet.pet_ID || '')}
+                                        >
+                                            Details
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
             </Grid>
-
-
         </Container>
         </Box>
     );
 };
+
 
 export default HomeAdopter;
