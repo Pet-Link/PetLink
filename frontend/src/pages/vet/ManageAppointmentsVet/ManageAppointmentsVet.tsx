@@ -11,6 +11,7 @@ import {
     TableRow,
     TableCell,
     TableBody,
+    IconButton,
 } from '@mui/material';
 import appointmentModel from "../../../models/appointment";
 import { VeterinarianService } from '../../../services/veterinarianService';
@@ -19,9 +20,12 @@ import { PetService } from '../../../services/petService';
 import petModel from '../../../models/petModel';
 import { UserService } from '../../../services/userService';
 import userModel from '../../../models/userModel';
+import { useNavigate } from 'react-router';
+import HomeIcon from '@mui/icons-material/Home';
 
 const ManageAppointmentsVet: React.FC = () => {
 
+    const navigate = useNavigate();
     const [appointments, setAppointments] = useState<appointmentModel[]>([
         // { adopter_ID: 1, veterinarian_ID: 1, date: new Date('2023-05-01'), approval_status: null, details: 'Appointment 1' },
         // { adopter_ID: 2, veterinarian_ID: 1, date: new Date('2023-05-02'), approval_status: null, details: 'Appointment 2' },
@@ -127,11 +131,25 @@ const ManageAppointmentsVet: React.FC = () => {
         setAppointments(updatedAppointments);
     };
 
+    // Function to handle the "Go Back Home" action
+    const goBackHome = () => {
+        navigate('/veterinarian/home');
+    };
+
     return (
         <Container>
-            <Typography variant="h4" align="center" gutterBottom>
-                Manage Appointments
-            </Typography>
+            <Grid container justifyContent="space-between" alignItems="center">
+                <Grid item>
+                    <Typography variant="h4" gutterBottom>
+                        Manage Appointments
+                    </Typography>
+                </Grid>
+                <Grid item>
+                    <IconButton onClick={goBackHome}>
+                        <HomeIcon />
+                    </IconButton>
+                </Grid>
+            </Grid>
             <Button variant="contained" color="primary" onClick={fetchAppointments}>
                 Fetch Appointments
             </Button>

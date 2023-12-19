@@ -5,6 +5,7 @@ type medicalRecordModel = {
     veterinarian_ID: number;
     date: string;
     operation: string;
+    pet_name?: string;
 };
 
 export default medicalRecordModel;

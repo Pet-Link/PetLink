@@ -11,12 +11,17 @@ import {
     TableRow,
     TableCell,
     TableBody,
+    IconButton,
 } from '@mui/material';
+import HomeIcon from '@mui/icons-material/Home';
 import medicalRecordModel from "../../../models/medicalRecordMode";
 import { VeterinarianService } from '../../../services/veterinarianService';
 import toastr from 'toastr';
+import { PetService } from '../../../services/petService';
+import { useNavigate } from 'react-router';
 
 const LogMedicalRecord: React.FC = () => {
+    const navigate = useNavigate();
     const [medicalRecords, setMedicalRecords] = useState<medicalRecordModel[]>([]);
     const [medicalRecord, setMedicalRecord] = useState<medicalRecordModel>({
         record_ID: 0,
@@ -24,6 +29,7 @@ const LogMedicalRecord: React.FC = () => {
         veterinarian_ID: 0,
         date: new Date().toISOString().slice(0, 19).replace('T', ' '),
         operation: '',
+        pet_name: '', // pet name can be added to the table
     });
 
     const fetchMedicalRecords = () => {
@@ -39,8 +45,7 @@ const LogMedicalRecord: React.FC = () => {
                 } else {
                     toastr.error('Error fetching medical records');
                 }
-            }
-            );
+            });
         } else {
             toastr.error('Please login first!');
         }
@@ -74,6 +79,7 @@ const LogMedicalRecord: React.FC = () => {
                     veterinarian_ID: 0,
                     date: new Date().toISOString().slice(0, 19).replace('T', ' '),
                     operation: '',
+                    pet_name: '',
                 });
             } else {
                 response.text().then((data) => {
@@ -84,11 +90,26 @@ const LogMedicalRecord: React.FC = () => {
         });
     };
 
+
+    // Function to handle the "Go Back Home" action
+    const goBackHome = () => {
+        navigate('/veterinarian/home');
+    };
+
     return (
         <Container>
-            <Typography variant="h4" align="center" gutterBottom>
-                Log Medical Record
-            </Typography>
+            <Grid container justifyContent="space-between" alignItems="center">
+                <Grid item>
+                    <Typography variant="h4" gutterBottom>
+                        Log Medical Record
+                    </Typography>
+                </Grid>
+                <Grid item>
+                    <IconButton onClick={goBackHome}>
+                        <HomeIcon />
+                    </IconButton>
+                </Grid>
+            </Grid>
             <Grid container justifyContent="center" spacing={2} style={{ marginTop: 20 }}>
                 <Grid item xs={12} sm={6}>
                     <TextField
