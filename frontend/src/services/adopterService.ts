@@ -1,5 +1,4 @@
 import { environment } from '../environment';
-import applyAdoptModel from '../models/applyAdopt';
 
 export class AdopterService {
     private static baseUrl: string = environment.apiUrl;

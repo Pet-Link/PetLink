@@ -1,34 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Grid, Button } from '@mui/material';
 import { adoptionApplicationService } from '../../services/adoptionApplicationService';
-
-interface Application {
-    admin_remarks: string | null;
-    administrator_ID: number;
-    adopter_ID: number;
-    adopter_name: string;
-    adoption_reason: string;
-    approval_status: number | null;
-    date: string; // You might want to convert this to a Date object when using it
-    housing_situation: string;
-    pet_ID: number;
-    pet_name: string;
-    pet_care_experience: number;
-    pet_ownership: number;
-    shelter_name: string;
-}
+import { useNavigate } from 'react-router-dom';
+import applyAdoptModel from '../../models/applyAdoptModel';
+import toastr from 'toastr';
 
 const ViewApplications: React.FC = () => {
 
-    const [applications, setApplications] = useState<Application[]>([]);
+    const [applications, setApplications] = useState<applyAdoptModel[]>([]);
+    const navigate = useNavigate();
 
     const fetchApplications = async () => {
         try {
-            const response = await adoptionApplicationService.seeAdminApplications();
+            const response = await adoptionApplicationService.getAdminApplications();
             if (!response.ok) {
                 throw new Error('Network response was not ok.');
             }
-            const data: Application[] = await response.json();
+            const data: applyAdoptModel[] = await response.json();
             setApplications(data);
         } catch (error) {
             console.error("There was an error fetching the applications:", error);
@@ -37,8 +25,12 @@ const ViewApplications: React.FC = () => {
 
     useEffect(() => {
         fetchApplications();
-    }, []); // The empty array as a second argument ensures this effect runs once on mount
+    }, []);
 
+
+    const handleSeeDetails = (adopter_ID: number, pet_ID: number) => {
+        navigate('/administrator/see-application-detail', { state: { adopter_ID: adopter_ID, pet_ID: pet_ID } });
+    }
 
     return (
         <Grid sx={{ 
@@ -56,8 +48,10 @@ const ViewApplications: React.FC = () => {
                         <TableRow>
                             <TableCell>Submission Date</TableCell>
                             <TableCell>Adopter</TableCell>
+                            <TableCell>Adopter ID</TableCell>
                             <TableCell>Shelter</TableCell>
                             <TableCell>Pet</TableCell>
+                            <TableCell>Pet ID</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell>Details</TableCell>
                         </TableRow>
@@ -67,13 +61,15 @@ const ViewApplications: React.FC = () => {
                             <TableRow key={index}>
                                 <TableCell>{application.date}</TableCell>
                                 <TableCell>{application.adopter_name}</TableCell>
+                                <TableCell>{application.adopter_ID}</TableCell>
                                 <TableCell>{application.shelter_name}</TableCell>
                                 <TableCell>{application.pet_name}</TableCell>
+                                <TableCell>{application.pet_ID}</TableCell>
                                 <TableCell>
                                     {application.approval_status === null ? 'Unevaluated' :
-                                    application.approval_status === 1 ? 'Approved' : 'Rejected'} 
+                                    application.approval_status === 1  ? 'Approved' : 'Rejected'} 
                                 </TableCell>
-                                <TableCell><Button color='secondary' variant='contained' size='small'>See Details</Button></TableCell>
+                                <TableCell><Button color='secondary' variant='contained' size='small' onClick={() => handleSeeDetails(application.adopter_ID, application.pet_ID)}>See Details</Button></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

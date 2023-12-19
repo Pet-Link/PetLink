@@ -1,14 +1,99 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import {Typography, Grid, FormControl, RadioGroup, FormControlLabel, Radio} from '@mui/material';
-import { useUserStore } from '../../../auth/Store';
-//TODO
-//Application bilgileri çekilecek
+import { useNavigate, useLocation } from 'react-router-dom';
+import { adoptionApplicationService } from '../../../services/adoptionApplicationService';
+import applyAdoptModel from '../../../models/applyAdoptModel';
+import toastr from 'toastr';
+
 const SeeAdoptionApplicationPage = () => {
     const inputStyle = {marginBottom: '20px', alignItems: 'center'};
-    const userType = useUserStore.getState();
-    console.log(userType);
+    
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { adopter_ID, pet_ID } = location.state || {};
+
+    const [application, setApplication] = useState<applyAdoptModel>();
+    const [admin_remarks, setAdminRemarks] = useState('');
+    
+
+    const fetchApplication = async () => {
+        try {
+            const response = await adoptionApplicationService.getApplication(adopter_ID, pet_ID);
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+            const data: applyAdoptModel = await response.json();
+            setApplication(data);
+            setAdminRemarks(data.admin_remarks || '');
+        } catch (error) {
+            console.error("There was an error fetching the application:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchApplication();
+    }, []);
+
+    
+    const handleAdminRemarksChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setAdminRemarks(event.target.value);
+    };
+    
+    const handleEvaluate = (approvalStatus: number) => {
+        if (!admin_remarks || admin_remarks.trim().length === 0) {
+            toastr.error('Admin remarks are required to evaluate an application.');
+            return; 
+        }
+
+        adoptionApplicationService.evaluateApplication(adopter_ID, pet_ID, approvalStatus, admin_remarks).then((response) => {
+            if (response.ok) {
+                response.text().then((text) => {
+                    try {
+                        toastr.success(text);
+                    } catch (error) {
+                        console.error('Invalid JSON:', text);
+                    }
+                });
+                navigate('/administrator/view-applications');
+            } else {
+                response.text().then((text) => {
+                    try {
+                        toastr.error('Failed to evaluate application.', text);
+                    } catch (error) {
+                        console.error('Invalid JSON:', text);
+                    }
+                });
+            }
+        }
+        );
+    }
+
+    const handleDelete = () => {
+        adoptionApplicationService.deleteApplication(adopter_ID, pet_ID).then((response) => {
+            if (response.ok) {
+                response.text().then((text) => {
+                    try {
+                        toastr.success(text);
+                    } catch (error) {
+                        console.error('Invalid JSON:', text);
+                    }
+                });
+                navigate('/administrator/view-applications');
+            } else {
+                response.text().then((text) => {
+                    try {
+                        toastr.error('Failed to delete application', text);
+                    } catch (error) {
+                        console.error('Invalid JSON:', text);
+                    }
+                });
+            }
+        }
+        );
+    }
+
     return (
         <Grid container spacing={2} style={{maxWidth: '700px', margin: 'auto', marginTop: '35px', textAlign: 'center'}}>
             <Grid item xs={12}>
@@ -45,7 +130,7 @@ const SeeAdoptionApplicationPage = () => {
                     Name
                 </Typography>
                 <TextField
-                    value="Kardelen Ceren"
+                    value={application?.adopter_name || ''}
                     InputProps={{readOnly: true}}
                     label="Name of the Adopter"
                     fullWidth
@@ -59,7 +144,7 @@ const SeeAdoptionApplicationPage = () => {
                     Application Date
                 </Typography>
                 <TextField
-                    value="06/06/2023"
+                    value={application?.date || ''}
                     InputProps={{readOnly: true}}
                     label="Application Date"
                     fullWidth
@@ -73,7 +158,7 @@ const SeeAdoptionApplicationPage = () => {
                     Mail
                 </Typography>
                 <TextField
-                    value="kardelenceren@testemail.com"
+                    value={application?.adopter_e_mail || ''}
                     InputProps={{readOnly: true}}
                     label="Mail of the adopter"
                     fullWidth
@@ -87,7 +172,7 @@ const SeeAdoptionApplicationPage = () => {
                     Age
                 </Typography>
                 <TextField
-                    value="30"
+                    value={application?.adopter_age || ''}
                     InputProps={{readOnly: true}}
                     label="Enter a number"
                     fullWidth
@@ -100,12 +185,12 @@ const SeeAdoptionApplicationPage = () => {
             <Grid item xs={12}>
 
                 <Typography variant="h6" gutterBottom>
-                    Gender
+                    Sex
                 </Typography>
                 <TextField
-                    label="Gender of the applicant"
+                    label="Sex of the applicant"
                     fullWidth
-                    value="Female"
+                    value={application?.adopter_sex || ''}
                     InputProps={{readOnly: true}}
                     style={inputStyle}
                 />
@@ -119,7 +204,7 @@ const SeeAdoptionApplicationPage = () => {
                 <TextField
                     label="Does the applicant have other pets?"
                     fullWidth
-                    value="Yes"
+                    value={application?.pet_ownership || ''}
                     InputProps={{readOnly: true}}
                     style={inputStyle}
                 />
@@ -128,33 +213,33 @@ const SeeAdoptionApplicationPage = () => {
             <Grid item xs={12}>
 
                 <Typography variant="h6" gutterBottom>
-                    For how many years have you been a pet owner?
+                    Years they have been a pet owner
                 </Typography>
                 <TextField
                     InputProps={{readOnly: true}}
                     label="Enter a number"
                     fullWidth
                     type="number"
-                    value="5"
+                    value={application?.pet_care_experience || ''}
                     style={inputStyle}
                 />
                 <Typography variant="h6" gutterBottom>
-                    Can you share your current housing situation?
+                    Current housing situation
                 </Typography>
                 <TextField
                     InputProps={{readOnly: true}}
                     multiline
                     rows={4}
                     fullWidth
-                    value={`Apartment, 2 adults 3 children, the dog will sleep in the garden.`}
+                    value={application?.housing_situation || ''}
                     style={inputStyle}
                 />
                 <Typography variant="h6" gutterBottom>
-                    Why do you want to adopt?
+                    Adoption Reason
                 </Typography>
                 <TextField
                     InputProps={{readOnly: true}}
-                    value="I love dogs! I am looking for a companion for me and for my 5 year old dog.  I will be the main caregiver."
+                    value={application?.adoption_reason || ''}
                     multiline
                     rows={4}
                     fullWidth
@@ -168,6 +253,8 @@ const SeeAdoptionApplicationPage = () => {
                     label="Please explain why you are accepting or declining this application. "
                     multiline
                     rows={4}
+                    value={admin_remarks}
+                    onChange={handleAdminRemarksChange}
                     fullWidth
                     style={inputStyle}
                 />
@@ -175,17 +262,17 @@ const SeeAdoptionApplicationPage = () => {
 
             {/* Submit Application Button */}
             <Grid item xs={12}>
-                <Button variant="contained" color="secondary" sx={{
+                <Button variant="contained" color="secondary" onClick={() => handleEvaluate(1)} sx={{
                     width: 200,
                     height: 50,
                     marginBottom: '20px',
                     alignItems: 'center',
                     marginTop: 3,
-                    bgcolor: '#04C35C'
+                    bgcolor: '#04C35C', 
                 }}>
-                    Accept Application
+                    Approve Application
                 </Button>
-                <Button variant="contained" color="secondary" sx={{
+                <Button variant="contained" color="secondary" onClick={() => handleEvaluate(0)} sx={{
                     marginLeft: 5,
                     width: 200,
                     height: 50,
@@ -196,7 +283,7 @@ const SeeAdoptionApplicationPage = () => {
                 }}>
                     Decline Application
                 </Button>
-                <Button variant="contained" color="secondary" sx={{
+                <Button variant="contained" color="secondary" onClick={handleDelete} sx={{
                     marginLeft: 5,
                     width: 200,
                     height: 50,

@@ -4,8 +4,8 @@ import Button from '@mui/material/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Typography, Grid, FormControl, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { adoptionApplicationService } from '../../../services/adoptionApplicationService';
-import applyAdoptModel from '../../../models/applyAdopt';
 import toastr from 'toastr';
+import applyAdoptModel from '../../../models/applyAdoptModel';
 
 const AdoptionApplicationPage = () => {
     const inputStyle = { marginBottom: '20px', alignItems: 'center'};
@@ -87,6 +87,18 @@ const AdoptionApplicationPage = () => {
             pet_care_experience: parseFloat(petCareExperience),
             housing_situation: housingSituation,
             adoption_reason: adoptionReason,
+
+            // below fields are not checked 
+            administrator_ID: null,
+            adopter_name: null,
+            approval_status: null,
+            admin_remarks: null,
+            date: null,
+            pet_name: null,
+            shelter_name: null,
+            adopter_age: null,
+            adopter_e_mail: null,
+            adopter_sex: null,
         }
         adoptionApplicationService.applyForAdoption(age, sex, application).then((response) => {
             if (response.ok) {

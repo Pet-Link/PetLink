@@ -3,7 +3,7 @@ import React from 'react';
 import HomeAdmin from './pages/administrator/HomeAdministrator/HomeAdministrator';
 import SeeApplicationDetails from './pages/administrator/SeeApplicationDetailsAdministrator/SeeApplicationDetailsAdministrator';
 import RegisterAdmin from './pages/administrator/registerAdmin';
-import viewApplications from './pages/administrator/viewApplications';
+import viewApplications from './pages/administrator/viewApplications'; 
 
 //Adopter imports
 import HomeAdopter from './pages/adopter/HomeAdopter/HomeAdopter';

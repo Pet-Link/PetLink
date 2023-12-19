@@ -108,8 +108,23 @@ def get_applyadopt(adopter_ID, pet_ID):
         connection = get_connection()
         cursor = connection.cursor()
 
-        # Check if the application exists
-        cursor.execute('SELECT * FROM Apply_Adopt WHERE adopter_ID = %s AND pet_ID = %s', (adopter_ID, pet_ID))
+        # Check if the application exists  
+        cursor.execute('''
+            SELECT aa.*, 
+                adopter_user.name AS adopter_name,
+                adopter_user.e_mail AS adopter_e_mail, 
+                adopter.age AS adopter_age,
+                adopter.sex AS adopter_sex,
+                p.name AS pet_name, 
+                shelter_user.name AS shelter_name
+            FROM Apply_Adopt aa
+            JOIN User adopter_user ON aa.adopter_ID = adopter_user.user_ID
+            JOIN Adopter adopter ON aa.adopter_ID = adopter.user_ID
+            JOIN Pet p ON aa.pet_ID = p.pet_ID
+            JOIN User shelter_user ON p.shelter_id = shelter_user.user_ID
+            WHERE aa.adopter_ID = %s AND aa.pet_ID = %s
+            ''', (adopter_ID, pet_ID))
+        
         application = cursor.fetchone()
         if not application:
             return Response(f'Application for adopter ID {adopter_ID} and pet ID {pet_ID} does not exist', status=404)
@@ -212,29 +227,52 @@ def evaluate_applyadopt(adopter_ID, pet_ID):
 
         approval_status = data['approval_status']
         admin_remarks = data.get('admin_remarks')
+        
+        # Check if the application was already evaluated
+        cursor.execute('SELECT approval_status FROM Apply_Adopt WHERE adopter_ID = %s AND pet_ID = %s', (adopter_ID, pet_ID))
+        existing_status = cursor.fetchone()
+        
+        if existing_status is not None and existing_status[0] is not None:
+            # Already evaluated, return a response
+            return Response(f'Application for adopter ID {adopter_ID} and pet ID {pet_ID} has already been evaluated.', status=400)
 
-        # Update the application evaluation
+        
+        if approval_status == 1:
+            # Check if the adopter's balance is enough
+            cursor.execute("""
+                           SELECT 
+                           (a.balance >= p.adoption_fee) AS is_balance_sufficient 
+                           FROM Adopter a
+                           JOIN Pet p ON a.user_ID = %s AND p.pet_ID = %s
+                            """,
+                           (adopter_ID, pet_ID))
+            
+            result = cursor.fetchone()
+            if not result or not result[0]:
+                return Response('Adoption cannot be processed. Insufficient balance.', status=400)
+
+            # If application is approved, update pet's adopter ID and set as adopted
+            cursor.execute('UPDATE Pet SET adopter_ID = %s, adoption_status = 1 WHERE pet_ID = %s',
+                           (adopter_ID, pet_ID))
+
+            # Deduct pet's adoption fee from adopter's balance
+            cursor.execute('UPDATE Adopter SET balance = balance - (SELECT adoption_fee FROM Pet WHERE pet_ID = %s) WHERE user_ID = %s',
+                           (pet_ID, adopter_ID))
+
+        
+         # Update the application evaluation
         cursor.execute(
             'UPDATE Apply_Adopt SET approval_status = %s, admin_remarks = %s WHERE adopter_ID = %s AND pet_ID = %s',
             (approval_status, admin_remarks, adopter_ID, pet_ID))
         connection.commit()
 
-        if approval_status == 1:
-            # If application is approved, update pet's adopter ID and set as adopted
-            cursor.execute('UPDATE Pet SET adopter_ID = %s, adoption_status = 1 WHERE pet_ID = %s',
-                           (adopter_ID, pet_ID))
-            connection.commit()
+        outcome = "approved" if approval_status == 1 else "declined"
 
-            # Deduct pet's adoption fee from adopter's balance
-            cursor.execute('UPDATE Adopter SET balance = balance - (SELECT adoption_fee FROM Pet WHERE pet_ID = %s) WHERE user_ID = %s',
-                           (pet_ID, adopter_ID))
-            connection.commit()
-
-        # TODO: Notification
-        return Response(f'Application for adopter ID {adopter_ID} and pet ID {pet_ID} evaluated successfully',
-                        status=200)
-
+        # Return the response with the appropriate message
+        return Response(f'Application for adopter ID {adopter_ID} and pet ID {pet_ID} {outcome} successfully', status=200)
+        
     except Exception as e:
+        connection.rollback()
         print(e)
         return Response(f'Error evaluating application for adoption with exception {e}', status=500)
 
