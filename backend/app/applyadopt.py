@@ -140,7 +140,7 @@ def get_all_applyadopt():
         return Response(f'Adoption applications could not be fetched with exception {e}', status=500)
 
 
-# Get unevaluated Apply_Adopt records for an administrator - GET
+# Get Apply_Adopt records for an administrator - GET
 @applyadopt.route('/admin/<int:administrator_ID>', methods=['GET'])
 def get_applyadopts_for_admin(administrator_ID):
     try:
@@ -153,9 +153,19 @@ def get_applyadopts_for_admin(administrator_ID):
         if not administrator:
             return Response(f'Administrator with ID {administrator_ID} does not exist', status=404)
 
-        # Get unevaluated (approval status null) Apply_Adopt records for the specified administrator
-        cursor.execute('SELECT * FROM Apply_Adopt WHERE administrator_ID = %s AND approval_status IS NULL',
-                       administrator_ID)
+        # Get Apply_Adopt records for the specified administrator
+        cursor.execute('''
+            SELECT aa.*, 
+                adopter_user.name AS adopter_name, 
+                p.name AS pet_name, 
+                shelter_user.name AS shelter_name
+            FROM Apply_Adopt aa
+            JOIN User adopter_user ON aa.adopter_ID = adopter_user.user_ID
+            JOIN Pet p ON aa.pet_ID = p.pet_ID
+            JOIN User shelter_user ON p.shelter_id = shelter_user.user_ID
+            WHERE aa.administrator_ID = %s 
+            ORDER BY aa.date DESC
+            ''', (administrator_ID,))
         applyadopts = cursor.fetchall()
         # convert the applications to a dictionary with the keys
         applyadopts = [dict(zip([key[0] for key in cursor.description], application)) for application in applyadopts]
@@ -180,7 +190,7 @@ def get_applyadopts_for_adopter(adopter_ID):
             return Response(f'Adopter with ID {adopter_ID} does not exist', status=404)
 
         # Get Apply_Adopt records for the specified adopter
-        cursor.execute('SELECT * FROM Apply_Adopt WHERE adopter_ID = %s', adopter_ID)
+        cursor.execute('SELECT * FROM Apply_Adopt WHERE adopter_ID = %s', (adopter_ID,))
         applyadopts = cursor.fetchall()
 
         # convert the applications to a dictionary with the keys
