@@ -79,7 +79,7 @@ const AdoptionApplicationPage = () => {
 
         const application: applyAdoptModel = {
             adopter_ID: parseInt(localStorage.getItem('user_ID') || '0'),
-            pet_ID: 1, // : pet_ID
+            pet_ID: 1, // : pet_ID // TODO: fix this
             // const handleAdoptPetClick = () => {
             // Navigate to the adoption page and pass the pet_id in the state
             // navigate('/your-destination-route', { state: { pet_ID, adoption_fee } });
