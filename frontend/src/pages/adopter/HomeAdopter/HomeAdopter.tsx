@@ -81,7 +81,7 @@ const HomeAdopter = () => {
     };
     
 
-    const handleDetails = (pet_ID: string) => {
+    const handleDetails = (pet_ID: number) => {
         navigate('/adopter/pet-details', { state: { pet_ID: pet_ID } });
     };
     
@@ -306,7 +306,7 @@ const HomeAdopter = () => {
                                             variant="contained"
                                             color="secondary"
                                             style={{ backgroundColor: "green" }}
-                                            onClick={() => handleDetails(pet.pet_ID || '')}
+                                            onClick={() => handleDetails(pet.pet_ID || 0)}
                                         >
                                             Details
                                         </Button>
