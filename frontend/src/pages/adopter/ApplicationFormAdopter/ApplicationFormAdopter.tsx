@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Typography, Grid, FormControl, RadioGroup, FormControlLabel, Radio } from '@mui/material';
-import { AdopterService } from '../../../services/adopterService';
+import { adoptionApplicationService } from '../../../services/adoptionApplicationService';
 import applyAdoptModel from '../../../models/applyAdopt';
 import toastr from 'toastr';
 
@@ -88,7 +88,7 @@ const AdoptionApplicationPage = () => {
             housing_situation: housingSituation,
             adoption_reason: adoptionReason,
         }
-        AdopterService.applyForAdoption(age, sex, application).then((response) => {
+        adoptionApplicationService.applyForAdoption(age, sex, application).then((response) => {
             if (response.ok) {
                 toastr.success('Successfully created an application.');
             } else {

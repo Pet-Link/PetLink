@@ -317,10 +317,10 @@ def login():
         user_id = result[0]
 
         query = ' '.join((
-            "SELECT CASE WHEN EXISTS (SELECT 1 FROM Adopter WHERE Adopter.user_id = User.user_id) THEN 'Adopter'",
-            "WHEN EXISTS (SELECT 1 FROM Shelter WHERE Shelter.user_id = User.user_id) THEN 'Shelter'" ,
-            "WHEN EXISTS (SELECT 1 FROM Administrator WHERE Administrator.user_id = User.user_id) THEN 'Administrator'",
-            "WHEN EXISTS (SELECT 1 FROM Veterinarian WHERE Veterinarian.user_id = User.user_id) THEN 'Veterinarian'",
+            "SELECT CASE WHEN EXISTS (SELECT 1 FROM Adopter WHERE Adopter.user_id = User.user_id) THEN 'adopter'",
+            "WHEN EXISTS (SELECT 1 FROM Shelter WHERE Shelter.user_id = User.user_id) THEN 'shelter'" ,
+            "WHEN EXISTS (SELECT 1 FROM Administrator WHERE Administrator.user_id = User.user_id) THEN 'administrator'",
+            "WHEN EXISTS (SELECT 1 FROM Veterinarian WHERE Veterinarian.user_id = User.user_id) THEN 'veterinarian'",
             "ELSE 'unknown' END AS user_type FROM User WHERE User.user_id = %s"
         ))
         cursor.execute(

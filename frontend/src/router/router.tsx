@@ -26,7 +26,7 @@ const router = createBrowserRouter([
     { path: '/register-adopter', element: <RegisterAdopter /> },
     { path: '/register-veterinarian', element: <RegisterVet /> },
     { path: '/register-shelter', element: <RegisterShelter /> },
-    { path: '/Administrator',
+    { path: '/administrator',
       element: (
         <PermissionContainer roles='Administrator'>
           <ResponsiveAppBar />
