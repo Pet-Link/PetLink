@@ -15,7 +15,8 @@ import AdbIcon from '@mui/icons-material/Adb';
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import { useNavigate } from 'react-router';
 
-const pages = ['About Us', 'Adopt', 'Forum', 'List Your Pets', 'Add Your Pet'];
+const pages = ['About Us', 'Adopt', 'Forum', 'Top-up', 'My Pets', 'Add a Pet'];
+const links = ["", "", "", "/adopter/payment", "", "/adopter/create-pet"]
 const settings = ['Dashboard', 'Logout'];
 
 function ResponsiveAppBarAdopter() {
@@ -52,25 +53,24 @@ function ResponsiveAppBarAdopter() {
                 }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                <a onClick={() => navigate('/adopter/home')}>
-                        <Typography
-                            variant="h6"
-                            noWrap
-                            component="a"
-                            sx={{
-                                mr: 2,
-                                display: { xs: 'none', md: 'flex' },
-                                fontFamily: 'monospace',
-                                fontWeight: 700,
-                                letterSpacing: '.3rem',
-                                color: 'black',
-                                textDecoration: 'none',
-                                userSelect: 'none', // Make the component non-selectable
-                            }}
-                        >
-                            PetLink
-                        </Typography>
-                    </a>
+                    <Typography
+                        variant="h6"
+                        noWrap
+                        component="a"
+                        onClick={() => navigate('/adopter/home')}
+                        sx={{
+                            mr: 2,
+                            display: { xs: 'none', md: 'flex' },
+                            fontFamily: 'monospace',
+                            fontWeight: 700,
+                            letterSpacing: '.3rem',
+                            color: 'black',
+                            textDecoration: 'none',
+                            userSelect: 'none', // Make the component non-selectable
+                        }}
+                    >
+                        PetLink
+                    </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
@@ -128,10 +128,10 @@ function ResponsiveAppBarAdopter() {
                         LOGO
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages.map((page) => (
+                        {pages.map((page, index) => (
                             <Button
                                 key={page}
-                                onClick={handleCloseNavMenu}
+                                onClick={() => navigate(links[index])}
                                 sx={{ my: 2, color: 'primary', display: 'block' }}
                             >
                                 {page}
