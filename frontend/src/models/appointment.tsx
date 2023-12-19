@@ -3,7 +3,7 @@ type appointmentModel = {
     adopter_ID: number;
     veterinarian_ID: number;
     date: Date;
-    approval_status: boolean;
+    approval_status: boolean | null;
     details: string;
 };
 
