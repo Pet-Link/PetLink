@@ -9,16 +9,25 @@ import Grid from '@mui/material/Grid';
 import { Typography } from '@mui/material';
 import petModel from '../../../models/petModel';
 import { PetService } from '../../../services/petService';
+import { meetGreetService } from '../../../services/meetGreetService';
+import meetGreetModel from '../../../models/meetGreet';
+import dayjs from 'dayjs';
+import toastr from 'toastr';
 
 const PetDetailsPage = () => {
     const inputStyle = { marginBottom: '10px' };
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const pet_ID = 1; // TODO like below
+    //const { pet_ID} = location.state || {};
+
     const [pet, setPet] = useState<petModel>();
     const [petName, setPetName] = useState("");
     const [shelterName, setShelterName] = useState("");
-
-    const pet_ID = 4; // TODO
-
+    const [meetGreetDate, setMeetGreetDate] = useState<Date | null>(null);
+    
+    
     const fetchPet = async () => {
         try {
             const response = await PetService.getPetById(pet_ID);
@@ -38,8 +47,59 @@ const PetDetailsPage = () => {
         fetchPet();
     }, []);
     
+    
     const handleApply = () => {
         navigate('/adopter/see-application', { state: {pet_ID: pet_ID, petName: petName, shelterName: shelterName}});
+    };
+
+
+
+    const handleMeetDateChange = (newDate: Date | null) => {
+        setMeetGreetDate(newDate);
+    };
+
+    const handleScheduleMeetGreet = async () => {
+        if (!meetGreetDate) {
+            toastr.error('Please select a date for the meet and greet.');
+            return;
+        }
+
+        // Check if the selected date is today or in the future
+        const today = dayjs().startOf('day');
+        if (dayjs(meetGreetDate).isBefore(today)) {
+            toastr.error('The selected date must be today or in the future.');
+            return;
+        }
+
+        const adopter_ID = parseInt(localStorage.getItem('user_ID') || '0');
+        const meetGreet: meetGreetModel = {
+            adopter_ID: adopter_ID,
+            pet_ID: pet_ID,
+            date: dayjs(meetGreetDate).format('YYYY-MM-DD')
+        }
+
+        try {
+            const response = await meetGreetService.createMeetGreet(meetGreet);
+            if (response.ok) {
+                response.text().then((text) => {
+                    try {
+                        toastr.success(text);
+                    } catch (error) {
+                        console.error('Invalid JSON:', text);
+                    }
+                });
+            } else {
+                response.text().then((text) => {
+                    try {
+                        toastr.error('Failed to schedule a meet and greet.', text);
+                    } catch (error) {
+                        console.error('Invalid JSON:', text);
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Error scheduling Meet and Greet:", error);
+        }
     };
 
     return (
@@ -158,10 +218,15 @@ const PetDetailsPage = () => {
                     {/* Calendar */}
                     <Grid item xs={12}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker />
+                             <DatePicker
+                                label="Schedule Meet & Greet"
+                                value={meetGreetDate}
+                                onChange={handleMeetDateChange}
+                                
+                            />
                         </LocalizationProvider>
 
-                        <Button variant="contained" color="secondary" style={{height: 50,marginLeft:15, marginTop:2.5}}>
+                        <Button variant="contained" color="secondary" onClick={handleScheduleMeetGreet} style={{height: 50,marginLeft:15, marginTop:2.5}}>
                             Arrange Meet&Greet
                         </Button>
                     </Grid>
