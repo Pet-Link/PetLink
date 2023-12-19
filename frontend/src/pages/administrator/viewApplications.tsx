@@ -47,7 +47,7 @@ const ViewApplications: React.FC = () => {
             mb: 5
         }}>
                     <Typography variant="h4" gutterBottom>
-                        Manage Appointments
+                        Manage Applications
                     </Typography>
             <TableContainer component={Paper} sx={{ maxWidth: '80%', margin: 'auto' }}>
                 <Table sx={{minWidth: 500}} aria-label="applications table">

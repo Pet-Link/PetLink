@@ -13,7 +13,7 @@ const AdoptionApplicationPage = () => {
     const inputStyle = { marginBottom: '20px', alignItems: 'center'};
     const navigate = useNavigate();
     const location = useLocation();
-    const { pet_ID } = location.state || {};
+    const { pet_ID, petName, shelterName} = location.state || {};
 
     const [age, setAge] = useState('');
     const [sex, setSex] = useState('');
@@ -101,16 +101,13 @@ const AdoptionApplicationPage = () => {
 
         const application: applyAdoptModel = {
             adopter_ID: parseInt(localStorage.getItem('user_ID') || '0'),
-            pet_ID: 1, // : pet_ID // TODO: fix this
-            // const handleAdoptPetClick = () => {
-            // Navigate to the adoption page and pass the pet_id in the state
-            // navigate('/your-destination-route', { state: { pet_ID, adoption_fee } });
+            pet_ID: pet_ID,
             pet_ownership: petOwnership === 'yes' ? true : false,
             pet_care_experience: parseFloat(petCareExperience),
             housing_situation: housingSituation,
             adoption_reason: adoptionReason,
 
-            // below fields are not checked 
+            // fields below are not checked 
             administrator_ID: null,
             adopter_name: null,
             approval_status: null,
@@ -142,7 +139,7 @@ const AdoptionApplicationPage = () => {
         <Grid container spacing={2} style={{ maxWidth: '700px', margin: 'auto', marginTop: '35px', textAlign: 'center' }}>
             <Grid item xs={12}>
                 <Typography variant="h4" align="center" gutterBottom>
-                    You are adopting: Luna from Happy Homes shelter
+                    You are adopting: {petName} from {shelterName || "a"} shelter
                 </Typography>
                 <img
                     src={`./HomePageAnimals/dog-1.png`}

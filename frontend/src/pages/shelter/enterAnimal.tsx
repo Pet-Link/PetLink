@@ -142,6 +142,7 @@ const EnterAnimalDetailsPage = () => {
             description: details,
             house_trained_status: houseTrained === 'yes' ? true : false,
             adoption_fee: adoptionFee === '' ? 0 : parseInt(adoptionFee),
+            shelter_name: null, // this is not checked
         }
         PetService.addPet(pet).then((response) => {
             if (response.ok) {

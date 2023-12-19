@@ -131,6 +131,25 @@ const ManageAppointmentsVet: React.FC = () => {
         setAppointments(updatedAppointments);
     };
 
+    const handleDelete = (adopter_ID: number) => {
+        // get the veterinarian_ID from localStorage
+        const veterinarian_ID = localStorage.getItem('user_ID');
+        if (veterinarian_ID != null) {
+            VeterinarianService.deleteApointment(veterinarian_ID, adopter_ID.toString())
+                .then(response => {
+                    if (response.ok) {
+                        toastr.success("Appointment deleted successfully!");
+                        fetchAppointments();
+                    } else {
+                        toastr.error("Error deleting appointment!");
+                    }
+                })
+                .catch(error => {
+                    toastr.error("Error deleting appointment!");
+                });
+        }
+    };
+
     // Function to handle the "Go Back Home" action
     const goBackHome = () => {
         navigate('/veterinarian/home');
@@ -166,6 +185,7 @@ const ManageAppointmentsVet: React.FC = () => {
                                 <TableCell>Time</TableCell>
                                 <TableCell>Status</TableCell>
                                 <TableCell>Actions</TableCell>
+                                <TableCell></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -204,6 +224,16 @@ const ManageAppointmentsVet: React.FC = () => {
                                                 </Button>
                                             </>
                                         )}
+                                    </TableCell>
+                                    <TableCell>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        style={{ backgroundColor: "red" }}
+                                        onClick={() => handleDelete(appointment.adopter_ID)}
+                                    >
+                                        Delete
+                                    </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}

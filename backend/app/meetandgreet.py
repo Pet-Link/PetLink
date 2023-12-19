@@ -40,6 +40,13 @@ def create_meetandgreet():
 
         if not pet:
             return Response(f'Pet with ID {pet_ID} does not exist', status=409)
+        
+        # Check if a meet and greet already exists
+        cursor.execute('SELECT * FROM Meet_Greet WHERE adopter_ID = %s AND pet_ID = %s', (adopter_ID, pet_ID))
+        existing_meet_greet = cursor.fetchone()
+        if existing_meet_greet:
+            return Response(f'A meet and greet already exists for this adopter and pet.', status=409)
+
 
         cursor.execute('INSERT INTO Meet_Greet VALUES (%s, %s, %s)', (adopter_ID, pet_ID, date))
         connection.commit()
