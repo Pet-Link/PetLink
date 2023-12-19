@@ -45,7 +45,7 @@ export default function Login() {
                             const data = JSON.parse(text);
                             toastr.success('Login has been successful.');
                             useUserStore.getState().setUserType(data.user_role);
-                            localStorage.setItem('user_id', data.user_id);
+                            localStorage.setItem('user_ID', data.user_id);
                             localStorage.setItem('user_role', data.user_role);
                             navigate(`/${data.user_role}/home`);
                         } catch (error) {

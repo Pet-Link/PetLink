@@ -60,8 +60,8 @@ def create_applyadopt():
 
         # Check if the pet is already adopted
         cursor.execute('SELECT * FROM Pet WHERE pet_ID = %s AND adoption_status = 1', (pet_ID,))
-        pet = cursor.fetchone()
-        if pet:
+        adopted_pet = cursor.fetchone()
+        if adopted_pet:
             return Response(f'Pet with ID {pet_ID} is already adopted.', status=404)
 
         # Check if the application already exists
@@ -82,7 +82,7 @@ def create_applyadopt():
                         ''')
         admin_result = cursor.fetchone()
         if not admin_result:
-            return Response(f'Administrator with the fewest number of applications could not be fetched.', status=404)
+            return Response(f'There are no administrators to evaluate this application.', status=404)
         administrator_ID = admin_result[0]
 
         # Insert into Apply_Adopt table

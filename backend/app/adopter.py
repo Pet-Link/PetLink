@@ -136,7 +136,7 @@ def get_all_adopters():
 # Update adopter - PUT
 # Adopters can only update their description and adoption preferences
 # Updating their name, password and phone number should be done from user's endpoint
-@adopter.route('/<int:user_id>/update', methods=['PUT'])
+@adopter.route('/<int:user_ID>/update', methods=['PUT'])
 def update_adopter(user_ID):
     try:
         connection = get_connection()
@@ -172,6 +172,45 @@ def update_adopter(user_ID):
                         WHERE user_ID = %s 
                         ''',
                        (description, age, sex, species, breed, adoption_age, neuter_status, adoption_sex, user_ID))
+
+        # Commit the changes to the database
+        connection.commit()
+
+        return Response('Adopter updated successfully', 200)
+    except Exception as e:
+        # return the error
+        return Response(f'Adopter with user_ID {user_ID} could not be updated with exception {e}', 500)
+    
+# Update adopter age and sex - PUT
+@adopter.route('/<int:user_ID>/update_age_sex', methods=['PUT'])
+def update_adopter_age_sex(user_ID):
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        # check if the user exists
+        cursor.execute('SELECT * FROM User WHERE user_ID = %s', (user_ID,))
+        result = cursor.fetchone()
+        if not result:
+            return Response(f'User with id {user_ID} does not exist', 404)
+
+        # check if the user has an adopter record
+        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (user_ID,))
+        adopter_result = cursor.fetchone()
+        if not adopter_result:
+            return Response(f'User with id {user_ID} does not have an adopter record', 404)
+
+        data = request.get_json()
+        age = data['age']
+        sex = data['sex']
+
+        # update the user
+        cursor.execute('''
+                        UPDATE Adopter
+                        SET age = %s, sex = %s
+                        WHERE user_ID = %s 
+                        ''',
+                       (age, sex, user_ID))
 
         # Commit the changes to the database
         connection.commit()

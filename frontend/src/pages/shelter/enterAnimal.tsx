@@ -134,7 +134,7 @@ const EnterAnimalDetailsPage = () => {
             neutered_status: neutered_status,
             // if vaccination_status is true set to 1, else 0
             vaccination_status: vaccination_status,
-            shelter_ID: parseInt(localStorage.getItem('user_id') || '0'),
+            shelter_ID: parseInt(localStorage.getItem('user_ID') || '0'),
             sex: sex,
             description: details,
             house_trained_status: houseTrained === 'yes' ? true : false,
