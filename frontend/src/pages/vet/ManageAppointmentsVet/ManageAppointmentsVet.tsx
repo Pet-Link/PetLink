@@ -22,15 +22,32 @@ import { UserService } from '../../../services/userService';
 import userModel from '../../../models/userModel';
 import { useNavigate } from 'react-router';
 import HomeIcon from '@mui/icons-material/Home';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import TextField from '@mui/material/TextField';
+import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { AppointmentService } from '../../../services/appointmentService';
+import { format } from 'date-fns';
 
 const ManageAppointmentsVet: React.FC = () => {
-
+    const [rescheduleData, setRescheduleData] = useState({ open: false, appointment: null as appointmentModel | null });
     const navigate = useNavigate();
     const [appointments, setAppointments] = useState<appointmentModel[]>([
         // { adopter_ID: 1, veterinarian_ID: 1, date: new Date('2023-05-01'), approval_status: null, details: 'Appointment 1' },
         // { adopter_ID: 2, veterinarian_ID: 1, date: new Date('2023-05-02'), approval_status: null, details: 'Appointment 2' },
         // // Add more sample appointments as needed
     ]);
+
+    // State for managing selected date and time
+    const [selectedDateTime, setSelectedDateTime] = useState<Date | null>(null);
+
+    // Function to handle the change of date and time
+    const handleDateTimeChange = (newDateTime: Date | null) => {
+        setSelectedDateTime(newDateTime);
+    };
 
     const fetchAppointments = async () => {
         const user_ID = localStorage.getItem('user_ID');
@@ -155,8 +172,55 @@ const ManageAppointmentsVet: React.FC = () => {
         navigate('/veterinarian/home');
     };
 
+    // Function to open the reschedule pop-up
+    const handleOpenReschedule = (appointment: appointmentModel) => {
+        setRescheduleData({ open: true, appointment });
+    };
+
+    // Update the reschedule function to use the selected date and time
+    const handleReschedule = () => {
+        if (rescheduleData.appointment && selectedDateTime) {
+            const formattedDateTime = format(selectedDateTime, 'yyyy-MM-dd HH:mm:ss');
+            rescheduleData.appointment.date = formattedDateTime;
+            console.log(rescheduleData.appointment.date) 
+            AppointmentService.updateAppointment(rescheduleData.appointment).then(response => {
+                if (response.ok) {
+                    toastr.success("Appointment rescheduled successfully!");
+                    fetchAppointments();
+                } else {
+                    toastr.error("Error rescheduling appointment!");
+                }
+            }
+            ).catch(error => {
+                console.error('Error rescheduling appointment:', error);
+                toastr.error("Error rescheduling appointment!");
+            });
+            console.log(rescheduleData.appointment)
+            console.log("Rescheduling appointment to", selectedDateTime);
+
+            // Close the pop-up after rescheduling
+            setRescheduleData({ ...rescheduleData, open: false });
+        }
+    };
+
     return (
         <Container>
+            <Dialog open={rescheduleData.open} onClose={() => setRescheduleData({ ...rescheduleData, open: false })}>
+                <DialogTitle>Reschedule Appointment</DialogTitle>
+                <DialogContent>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <DateTimePicker
+                            label="Reschedule Date & Time"
+                            value={selectedDateTime}
+                            onChange={handleDateTimeChange}
+                        />
+                    </LocalizationProvider>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setRescheduleData({ ...rescheduleData, open: false })}>Cancel</Button>
+                    <Button onClick={handleReschedule}>Reschedule</Button>
+                </DialogActions>
+            </Dialog>
             <Grid container justifyContent="space-between" alignItems="center">
                 <Grid item>
                     <Typography variant="h4" gutterBottom>
@@ -195,9 +259,7 @@ const ManageAppointmentsVet: React.FC = () => {
                                     <TableCell>{appointment.pet_breed}</TableCell>
                                     <TableCell>{appointment.pet_species}</TableCell>
                                     <TableCell>{appointment.details}</TableCell>
-                                    <TableCell>{appointment.date.toDateString()}</TableCell>
-                                    {/* Assume time is not part of your model */}
-                                    <TableCell>{appointment.date.toTimeString()}</TableCell>
+                                    <TableCell>{appointment.date.toString()}</TableCell>
                                     <TableCell>
                                         {appointment.approval_status === null
                                             ? 'Pending'
@@ -234,6 +296,15 @@ const ManageAppointmentsVet: React.FC = () => {
                                     >
                                         Delete
                                     </Button>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Button
+                                            variant="contained"
+                                            color="inherit"
+                                            onClick={() => handleOpenReschedule(appointment)}
+                                        >
+                                            Reschedule
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}

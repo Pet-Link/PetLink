@@ -2,7 +2,7 @@ import React from 'react';
 type appointmentModel = {
     adopter_ID: number;
     veterinarian_ID: number;
-    date: Date;
+    date: string;
     approval_status: boolean | null;
     details: string;
     adopter_name?: string;
