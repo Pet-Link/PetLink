@@ -57,6 +57,14 @@ export class VeterinarianService {
         });
     }
 
+    static deleteApointment(veterinarian_ID: string, adopter_ID: string) {
+        return fetch(`${VeterinarianService.baseUrl}/appointment/delete`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({adopter_ID, veterinarian_ID})
+        });
+    }
+
     static createMedicalRecord(medicalRecord: medicalRecordModel) {
         return fetch(`${VeterinarianService.baseUrl}/medicalrecord/create`, {
             method: 'POST',
@@ -68,6 +76,12 @@ export class VeterinarianService {
     static getMedicalRecordForSpecificVet(vet_id: string) {
         return fetch(`${VeterinarianService.baseUrl}/medicalrecord/all/veterinarian/${vet_id}`, {
             method: 'GET'
+        });
+    }
+
+    static deleteMedicalRecord(id: string) {
+        return fetch(`${VeterinarianService.baseUrl}/medicalrecord/delete/${id}`, {
+            method: 'DELETE'
         });
     }
 }

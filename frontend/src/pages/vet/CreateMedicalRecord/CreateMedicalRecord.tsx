@@ -32,7 +32,7 @@ const LogMedicalRecord: React.FC = () => {
         pet_name: '', // pet name can be added to the table
     });
 
-    const fetchMedicalRecords = () => {
+    const fetchMedicalRecords = (toastrF: boolean) => {
         // local storage is used to store the veterinarian ID
         var vet_id = localStorage.getItem('user_ID');
         if (vet_id != null) {
@@ -41,7 +41,9 @@ const LogMedicalRecord: React.FC = () => {
                     response.json().then((data) => {
                         setMedicalRecords(data);
                     });
-                    toastr.success('Medical records fetched successfully');
+                    if (toastrF) {
+                        toastr.success('Medical Records Fetched Successfully');
+                    }
                 } else {
                     toastr.error('Error fetching medical records');
                 }
@@ -69,18 +71,19 @@ const LogMedicalRecord: React.FC = () => {
         VeterinarianService.createMedicalRecord(medicalRecord).then((response) => {
             if (response.ok) {
                 toastr.success('Medical Record Logged Successfully');
-                // Update the list of medical records with the new record
-                setMedicalRecords(prevRecords => [...prevRecords, medicalRecord]);
+                // // Update the list of medical records with the new record
+                // setMedicalRecords(prevRecords => [...prevRecords, medicalRecord]);
 
-                // You can reset the form or perform other actions after logging the record
-                setMedicalRecord({
-                    record_ID: 0,
-                    pet_ID: 0,
-                    veterinarian_ID: 0,
-                    date: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                    operation: '',
-                    pet_name: '',
-                });
+                // // You can reset the form or perform other actions after logging the record
+                // setMedicalRecord({
+                //     record_ID: 0,
+                //     pet_ID: 0,
+                //     veterinarian_ID: 0,
+                //     date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                //     operation: '',
+                //     pet_name: '',
+                // });
+                fetchMedicalRecords(false);
             } else {
                 response.text().then((data) => {
                     toastr.error(data);
@@ -90,6 +93,20 @@ const LogMedicalRecord: React.FC = () => {
         });
     };
 
+    const handleDelete = (record_ID: string) => {
+        VeterinarianService.deleteMedicalRecord(record_ID).then((response) => {
+            if (response.ok) {
+                toastr.success('Medical Record Deleted Successfully');
+                // Update the list of medical records with the new record
+                setMedicalRecords(prevRecords => prevRecords.filter(record => record.record_ID?.toString() !== record_ID));
+            } else {
+                response.text().then((data) => {
+                    toastr.error(data);
+                }
+                );
+            }
+        });
+    }
 
     // Function to handle the "Go Back Home" action
     const goBackHome = () => {
@@ -144,7 +161,7 @@ const LogMedicalRecord: React.FC = () => {
                     <Button
                         variant="contained"
                         color="secondary"
-                        onClick={fetchMedicalRecords}
+                        onClick={ () => fetchMedicalRecords(true)}
                     >
                         Fetch Medical Records
                     </Button>
@@ -160,6 +177,7 @@ const LogMedicalRecord: React.FC = () => {
                             <TableCell>Veterinarian ID</TableCell>
                             <TableCell>Log Date</TableCell>
                             <TableCell>Operation</TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -170,6 +188,16 @@ const LogMedicalRecord: React.FC = () => {
                                 <TableCell>{record.veterinarian_ID}</TableCell>
                                 <TableCell>{record.date}</TableCell>
                                 <TableCell>{record.operation}</TableCell>
+                                <TableCell>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        style={{ backgroundColor: "red" }}
+                                        onClick={() => record.record_ID && handleDelete(record.record_ID.toString())}
+                                    >
+                                        Delete
+                                    </Button>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
