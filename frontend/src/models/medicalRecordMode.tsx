@@ -1,9 +1,9 @@
 import React from 'react';
 type medicalRecordModel = {
-    record_ID: number;
+    record_ID?: number;
     pet_ID: number;
     veterinarian_ID: number;
-    date: Date;
+    date: string;
     operation: string;
 };
 

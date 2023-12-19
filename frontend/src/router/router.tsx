@@ -17,6 +17,7 @@ import EnterAnimalDetailsPage from '../pages/shelter/enterAnimal';
 import Balance from '../pages/adopter/balance';
 import ViewApplications from '../pages/administrator/viewApplications';
 import ManageAppointmentsVet from '../pages/vet/ManageAppointmentsVet/ManageAppointmentsVet';
+import LogMedicalRecord from '../pages/vet/CreateMedicalRecord/CreateMedicalRecord';
 
 const Router: React.FC = () => {
     return <RouterProvider router={router}/>;
@@ -107,6 +108,10 @@ const router = createBrowserRouter([
           {
             path: 'see-appointments',
             element: <ManageAppointmentsVet />,
+          },
+          {
+            path: 'log-medical-details',
+            element: <LogMedicalRecord />,
           }
         ]
     },

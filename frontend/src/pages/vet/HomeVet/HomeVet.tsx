@@ -67,8 +67,7 @@ const HomeVet = () => {
                         },
                     }}
                     onClick={() => {
-                        // Handle click action
-                        // You can add your logic here
+                        navigate('/veterinarian/log-medical-details');
                     }}
                 >
                     Log Medical Details
