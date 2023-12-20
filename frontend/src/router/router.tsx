@@ -23,6 +23,7 @@ import PetDetailsPage from '../pages/adopter/AnimalDetails/DetailOfPetToAdoptAdo
 import EditPetDetailsPage from '../pages/administrator/editPetDetails';
 import ViewMeetAndGreets from '../pages/adopter/ViewMeetAndGreets';
 import SearchVets from '../pages/adopter/SearchVets';
+import Forum from '../pages/forum/Forum';
 
 const Router: React.FC = () => {
     return <RouterProvider router={router}/>;
@@ -124,6 +125,24 @@ const router = createBrowserRouter([
             element: <LogMedicalRecord />,
           }
         ]
+    },
+    { path: '/forum',
+      element: (
+        <PermissionContainer roles='Adopter'>
+          <Outlet />
+          </PermissionContainer>
+          ),
+        children: [
+          { path: 'home',
+            element: (
+              <PermissionContainer roles='Adopter'>
+                <ResponsiveAppBarAdopter />
+                <Forum />
+                <Outlet />
+                </PermissionContainer>
+                ),
+              },
+            ]
     },
 ]);
 
