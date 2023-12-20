@@ -34,6 +34,10 @@ const HomeAdopter = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [petData, setPetData] = useState<petModel[]>([]);
+    const [filteredPetData, setFilteredPetData] = useState<petModel[]>([]);
+    const [searchQuery, setSearchQuery] = useState('');
+
+
 
     const handleOpen = () => {
         setOpen(true);
@@ -63,25 +67,61 @@ const HomeAdopter = () => {
             }
             const data: petModel[] = await response.json();
             setPetData(data);
+            setFilteredPetData(data); // Set the filtered data as well
         } catch (error) {
             console.error("There was an error fetching the pets:", error);
             toastr.error("There was an internal error fetching the pets.");
         }
     };
 
-    useEffect(() => {
-        fetchPets();
-    }, []);
-
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         await fetchPets();
+    //     };
+    //     fetchData();
+    // }, []);
 
     const handleDetails = (pet_ID: number) => {
         navigate('/adopter/pet-details', { state: { pet_ID: pet_ID } });
     };
+
+    const handleFetch = async () => {
+        await fetchPets();
+    }
     
     const filterAnimalsByType = (type: AnimalType) => {
         return petData.filter((animal) => animal.species === type);
     };
 
+    const handleSearch = () => {
+        const query = searchQuery.toLowerCase();
+        const filteredData = petData.filter(pet => {            
+            if (pet.shelter_name !== null) {
+                return pet.name.toLowerCase().includes(query) || 
+                pet.shelter_name.toLowerCase().includes(query)
+            } else {
+                return pet.name.toLowerCase().includes(query)
+            }
+        }
+        );
+        setFilteredPetData(filteredData);
+    };
+    
+
+    const filterPetsByName = () => {
+        return petData.filter(pet => pet.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    };    
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(event.target.value);
+    };
+    
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            handleSearch();
+        }
+    };    
+    
     const style = {
         position: 'absolute',
         top: '50%',
@@ -129,6 +169,15 @@ const HomeAdopter = () => {
                     }}
                 >
                     Filter <FilterAltIcon />
+                </Button>
+                <Button
+                    onClick={handleFetch}
+                    style={{
+                        backgroundColor: 'grey',
+                        color: 'white', // Optionally set the text color
+                    }}
+                >
+                    Fetch <FilterAltIcon />
                 </Button>
                 <Modal sx={{borderRadius: 100}}
                     open={open}
@@ -261,9 +310,21 @@ const HomeAdopter = () => {
                     </Box>
                 </Modal>
                 <Grid item xs={12} sm={6}>
-                    {/* Search Bar */}
-                    <TextField label="Search animals..." variant="outlined" fullWidth />
+                    <TextField 
+                        label="Search animals..." 
+                        variant="outlined" 
+                        fullWidth 
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        onKeyPress={handleKeyPress} // Add this line
+                    />
                 </Grid>
+                <Button 
+                        onClick={handleSearch}
+                        style={{ marginLeft: '10px', backgroundColor: 'red', color: 'white' }}
+                    >
+                        Search
+                </Button>
             </Grid>
             <Grid container justifyContent="center" spacing={2} style={{ marginTop: 20 }}>
                 <TableContainer component={Box}>
@@ -281,7 +342,7 @@ const HomeAdopter = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {petData.map(pet => (
+                            {filteredPetData.map(pet => (
                                 <TableRow key={pet.adopter_ID}>
                                     <TableCell>{pet.name}</TableCell>
                                     <TableCell>{pet.breed}</TableCell>
