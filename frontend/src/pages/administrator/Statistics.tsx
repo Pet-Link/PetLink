@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Grid, Box } from '@mui/material';
+import { Typography, Grid, Box, Paper } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 const columnsForTopVets: GridColDef[] = [
@@ -54,6 +54,10 @@ const rowsForMostAdoptedPetBreed = [
     { id: 2, breed: 'Poodle', countAdopted: 3 }
 ];
 
+const totalAdoptionFees = 500;
+const highestFeePet = { name: 'Elsa', shelter: 'Happy Shelter', fee: 300, status: 'adopted' };
+const lowestFeePet = { name: 'Kirby', shelter: 'Çankaya Shelter', fee: 100, status: 'unadopted' };
+
 const Statistics = () => {
     
     return (
@@ -65,28 +69,53 @@ const Statistics = () => {
             mt: 5, 
             mb: 5
         }}>
-            <Typography variant="h4" gutterBottom>
-                System Reports
-            </Typography>
-            <Typography variant="h6" gutterBottom>
-                Top Vets
-            </Typography>
-            <Box sx={{ height: 400, width: '50%', mb:5 }}>
-                <DataGrid
-                    rows={rowsForTopVet}
-                    columns={columnsForTopVets}
-                    initialState={{
-                    pagination: {
-                        paginationModel: {
-                        pageSize: 5,
-                        },
-                    },
-                    }}
-                    pageSizeOptions={[5]}
-                    checkboxSelection
-                    disableRowSelectionOnClick
-                />
-            </Box>
+            <Grid item xs={12}>
+                <Typography variant="h4" gutterBottom>
+                    System Reports
+                </Typography>
+            </Grid>
+            <Grid container spacing={4}> 
+                <Grid item xs={6}>
+                    <Typography variant="h6" gutterBottom>
+                        Top Vets
+                    </Typography>
+                    <Box sx={{ height: 400, width: '100%' }}>
+                        <DataGrid
+                            rows={rowsForTopVet}
+                            columns={columnsForTopVets}
+                            pageSizeOptions={[5]}
+                            checkboxSelection
+                            disableRowSelectionOnClick
+                        />
+                    </Box>
+                </Grid>
+                <Grid item xs={6}>
+                    <Typography variant="h6" gutterBottom>
+                        Adoption Fees Summary
+                    </Typography>
+                    <Paper variant="outlined" sx={{ padding: 2, mb: 2 }}>
+                        <Typography variant="subtitle1">
+                            Total adoption fees: ${totalAdoptionFees}
+                        </Typography>
+                    </Paper>
+                    <Paper variant="outlined" sx={{ padding: 2, mb: 2 }}>
+                        <Typography>
+                            Pet with the highest fee: 
+                            <Box component="span">
+                                {  highestFeePet.name}, {highestFeePet.shelter}, ${highestFeePet.fee}, {highestFeePet.status}
+                            </Box>
+                        </Typography>
+                    </Paper>
+                    <Paper variant="outlined" sx={{ padding: 2 }}>
+                        <Typography>
+                            Pet with the lowest fee: 
+                            <Box component="span" >
+                                {  lowestFeePet.name}, {lowestFeePet.shelter}, ${lowestFeePet.fee}, {lowestFeePet.status}
+                            </Box>
+                        </Typography>
+                    </Paper>
+                </Grid>
+            </Grid>
             <Typography variant="h6" gutterBottom>
                 Most Number of Pets Adopted by a User
             </Typography>        
