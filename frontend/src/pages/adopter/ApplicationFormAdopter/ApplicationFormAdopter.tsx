@@ -142,7 +142,7 @@ const AdoptionApplicationPage = () => {
                     You are adopting: {petName} from {shelterName || "a"} shelter
                 </Typography>
                 <img
-                    src={`./HomePageAnimals/dog-1.png`}
+                    src="https://media.istockphoto.com/id/144804780/photo/dog-with-tennis-ball.jpg?s=612x612&w=0&k=20&c=7ES0wGFEMpZmU-Jax4YyrKywOJ7kFkDotHrcicxiIsM="
                     style={{ width: '350px', height: 'auto', borderRadius: 15}}
                 />
             </Grid>

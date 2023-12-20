@@ -44,9 +44,13 @@ const PetDetailsPage = () => {
         }
     };
 
-    useEffect(() => {
-        fetchPet();
-    }, []);
+    const handleFetchPet = async () => {
+        await fetchPet();
+    }
+
+    // useEffect(() => {
+    //     fetchPet();
+    // }, []);
     
     
     const handleApply = () => {
@@ -111,7 +115,7 @@ const PetDetailsPage = () => {
                     Photo of the Pet:
                 </Typography>
                 <img
-                    src={`./HomePageAnimals/dog-1.png`}
+                    src="https://media.istockphoto.com/id/144804780/photo/dog-with-tennis-ball.jpg?s=612x612&w=0&k=20&c=7ES0wGFEMpZmU-Jax4YyrKywOJ7kFkDotHrcicxiIsM="
                     style={{ width: '350px', height: 'auto', borderRadius: 15}}
                 />
             </Grid>
@@ -236,6 +240,9 @@ const PetDetailsPage = () => {
                     <Grid item xs={12} style={{ marginTop: '10px' }}>
                         <Button variant="contained" color="primary" onClick={handleApply} sx={{height: 50, bgcolor: '#04C35C',}}>
                             Apply For Adoption
+                        </Button>
+                        <Button variant="contained" color="primary" onClick={handleFetchPet} sx={{height: 50, bgcolor: '#04C35C',}}>
+                            Fetch Details
                         </Button>
                     </Grid>
                 </Grid>
