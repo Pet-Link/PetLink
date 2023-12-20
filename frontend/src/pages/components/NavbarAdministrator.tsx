@@ -139,19 +139,6 @@ function ResponsiveAppBar() {
                         ))}
                     </Box>
 
-                    {/*meet and greet button*/}
-                    <Button
-                        variant="contained"
-                        color = "secondary"  // Change the color to red
-                        sx={{ marginRight: 2, textTransform: 'none' }}
-                        onClick={() => {
-                            // Handle click action
-                            // You can add your logic here
-                        }}
-                    >
-                        See My Meet&Greets
-                    </Button>
-
                     <NotificationsActiveIcon color={"primary"} style={{ marginRight: 15 }}></NotificationsActiveIcon>
 
                     <Box sx={{ flexGrow: 0 }}>
