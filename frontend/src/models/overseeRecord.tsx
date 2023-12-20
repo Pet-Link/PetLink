@@ -5,7 +5,7 @@ type overseeRecordModel = {
     adopter_ID: number;
     date: Date;
     details: string;
-    verification_status: boolean;
+    verification_status: boolean | null;
 };
 
 export default overseeRecordModel;

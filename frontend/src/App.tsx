@@ -3,7 +3,10 @@ import React from 'react';
 import HomeAdmin from './pages/administrator/HomeAdministrator/HomeAdministrator';
 import SeeApplicationDetails from './pages/administrator/SeeApplicationDetailsAdministrator/SeeApplicationDetailsAdministrator';
 import RegisterAdmin from './pages/administrator/registerAdmin';
-import viewApplications from './pages/administrator/viewApplications'; 
+import viewApplications from './pages/administrator/viewApplications';
+import AdminApproveRegistration from './pages/administrator/AdminApproveRegistration/AdminApproveRegistration';
+import AdminAddOverseeRecord from './pages/administrator/AdminAddOverseeRecord/AdminAddOverseeRecord';
+import AdminOverseeRecordView from './pages/administrator/AdminOverseeRecordView/AdminOverseeRecordView';
 
 //Adopter imports
 import HomeAdopter from './pages/adopter/HomeAdopter/HomeAdopter';
@@ -21,6 +24,7 @@ import Forum from './pages/forum/Forum';
 import HomeShelter from './pages/shelter/HomeShelter/HomeShelter';
 import EnterAnimal from './pages/shelter/enterAnimal';
 import RegisterShelter from './pages/shelter/registerShelter';
+import ShelterViewMeetAndGreet from './pages/shelter/ShelterViewMeetAndGreet/ShelterViewMeetAndGreet';
 
 //Vet imports
 import HomeVet from './pages/vet/HomeVet/HomeVet';
