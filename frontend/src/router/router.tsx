@@ -24,6 +24,7 @@ import EditPetDetailsPage from '../pages/administrator/editPetDetails';
 import ViewMeetAndGreets from '../pages/adopter/ViewMeetAndGreets';
 import SearchVets from '../pages/adopter/SearchVets';
 import Statistics from '../pages/administrator/Statistics';
+import Forum from '../pages/forum/Forum';
 
 const Router: React.FC = () => {
     return <RouterProvider router={router}/>;

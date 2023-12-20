@@ -64,37 +64,12 @@ const HomeAdministrator = () => {
                         },
                     }}
                     onClick={() => {
-                        // Handle click action
-                        // You can add your logic here
+                        navigate('/administrator/statistics');
                     }}
                 >
-                    View Registrations
+                    View System Reports
                 </Button>
 
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    sx={{
-                        width: '200px',
-                        height: '170px',
-                        textTransform: 'none',
-                        marginBottom: 2,
-                        color: 'black',       // Set text color to black
-                        fontWeight: 'bold',   // Make the text bold
-                        fontSize: '1.2rem',    // Set the font size to 1.2rem (adjust as needed)
-                        mr:10,
-                        '&:hover': {
-                            color : 'white',
-                            transform: 'scale(1.1)',
-                        },
-                    }}
-                    onClick={() => {
-                        // Handle click action
-                        // You can add your logic here
-                    }}
-                >
-                    Oversee Records
-                </Button>
 
                 <Button
                     variant="contained"
