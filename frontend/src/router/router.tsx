@@ -6,6 +6,7 @@ import RegisterVet from '../pages/vet/registerVet';
 import RegisterShelter from '../pages/shelter/registerShelter';
 import ResponsiveAppBar from '../pages/components/NavbarAdministrator';
 import ResponsiveAppBarAdopter from '../pages/components/NavbarAdopter';
+import ResponsiveAppBarVet from '../pages/components/NavbarVet';
 import HomeAdopter from '../pages/adopter/HomeAdopter/HomeAdopter';
 import HomeAdministrator from '../pages/administrator/HomeAdministrator/HomeAdministrator';
 import HomeShelter from '../pages/shelter/HomeShelter/HomeShelter';
@@ -85,13 +86,13 @@ const router = createBrowserRouter([
     { path: '/shelter',
       element: ( 
         <PermissionContainer roles='Shelter'>
+          <ResponsiveAppBar />
           <Outlet />
         </PermissionContainer> ),
       children: [
         { path: 'home', 
           element: ( 
             <PermissionContainer roles='Shelter'>
-              <ResponsiveAppBar />
               <HomeShelter />
               <Outlet />
             </PermissionContainer> ), 
@@ -105,6 +106,7 @@ const router = createBrowserRouter([
     { path: '/veterinarian',
       element: (
         <PermissionContainer roles='Veterinarian'>
+          <ResponsiveAppBarVet />
           <Outlet />
           </PermissionContainer>
           ),
@@ -112,7 +114,6 @@ const router = createBrowserRouter([
           { path: 'home',
             element: (
               <PermissionContainer roles='Veterinarian'>
-                <ResponsiveAppBar />
                 <HomeVet />
                 <Outlet />
               </PermissionContainer>
