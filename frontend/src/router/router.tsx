@@ -136,7 +136,7 @@ const router = createBrowserRouter([
           }
         ]
     },
-    { path: '/forum-adopter',
+    { path: '/adopter/forum',
       element: (
         <PermissionContainer roles=''>
           <ResponsiveAppBarAdopter />
@@ -145,7 +145,7 @@ const router = createBrowserRouter([
           </PermissionContainer>
           ),
     },
-    { path: '/forum-vet',
+    { path: '/veterinarian/forum',
       element: (
         <PermissionContainer roles=''>
           <ResponsiveAppBarVet />
@@ -154,7 +154,7 @@ const router = createBrowserRouter([
           </PermissionContainer>
           ),
     },
-    { path: '/forum-shelter',
+    { path: '/shelter/forum',
       element: (
         <PermissionContainer roles=''>
           <ResponsiveAppBarShelter />
@@ -163,7 +163,7 @@ const router = createBrowserRouter([
           </PermissionContainer>
           ),
     },
-    { path: '/forum-administrator',
+    { path: '/administrator/forum',
       element: (
         <PermissionContainer roles=''>
           <ResponsiveAppBar/>
