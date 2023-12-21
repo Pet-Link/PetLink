@@ -29,8 +29,8 @@ const CreatePet = () => {
         setBreed(event.target.value);
     };
 
-    const handleSpeciesChange = (event: SelectChangeEvent) => {
-        setSpecies(event.target.value as string);
+    const handleSpeciesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSpecies(event.target.value);
     };
 
     const handleAgeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,11 +90,11 @@ const CreatePet = () => {
             toastr.error('Age must be a number');
             return;
         }
-        // check if adoption fee is a number
-        if (isNaN(parseInt(adoptionFee))) {
-            toastr.error('Adoption fee must be a number');
-            return;
-        }
+        // // check if adoption fee is a number
+        // if (isNaN(parseInt(adoptionFee))) {
+        //     toastr.error('Adoption fee must be a number');
+        //     return;
+        // }
         // check if sex field is empty string
         if (sex === '') {
             toastr.error('Sex must be selected');
@@ -134,7 +134,8 @@ const CreatePet = () => {
             neutered_status: neutered_status,
             // if vaccination_status is true set to 1, else 0
             vaccination_status: vaccination_status,
-            shelter_ID: parseInt(localStorage.getItem('user_id') || '0'),
+            shelter_ID: null,
+            adopter_ID: parseInt(localStorage.getItem('user_ID') || '0'),
             sex: sex,
             description: details,
             house_trained_status: houseTrained === 'yes' ? true : false,
@@ -187,10 +188,12 @@ const CreatePet = () => {
 
                     <FormControl>
                         <FormLabel>Species</FormLabel>
-                        <Select value={species} onChange={handleSpeciesChange}>
-                            <MenuItem value="dog">Dog</MenuItem>
-                            <MenuItem value="cat">Cat</MenuItem>
-                        </Select>
+                        <TextField
+                            label="Enter Species"
+                            value={species}
+                            onChange={handleSpeciesChange}
+                            fullWidth
+                        />
                     </FormControl>
 
 
@@ -239,7 +242,7 @@ const CreatePet = () => {
                 <Stack spacing={2} direction="column">
                     <TextField label="Add Details" value={details} onChange={handleDetailsChange} multiline rows={4}/>
 
-                    <TextField label="Adoption Fee" value={adoptionFee} onChange={handleAdoptionFeeChange} />
+                    {/* <TextField label="Adoption Fee" value={adoptionFee} onChange={handleAdoptionFeeChange} /> */}
 
                     <Grid>
                         <Typography fontSize={'16px'}>Upload Photo</Typography>
