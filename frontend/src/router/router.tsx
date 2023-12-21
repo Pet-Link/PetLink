@@ -26,7 +26,7 @@ import EditPetDetailsPage from '../pages/administrator/editPetDetails';
 import ViewMeetAndGreets from '../pages/adopter/ViewMeetAndGreets';
 import ShelterViewMeetAndGreet from '../pages/shelter/ShelterViewMeetAndGreet/ShelterViewMeetAndGreet';
 import SearchVets from '../pages/adopter/SearchVets';
-import Statistics from '../pages/administrator/Statistics';
+import SystemReports from '../pages/administrator/systemReports';
 import Forum from '../pages/forum/Forum';
 import PetCareInfo from '../pages/petcare/PetCareInfo';
 import VetAppointments from '../pages/adopter/VetApointments';
@@ -60,8 +60,8 @@ const router = createBrowserRouter([
         { path: 'view-applications', element: <ViewApplications />},
         { path: 'see-application-detail', element: <SeeAdoptionApplicationPage /> },
         { path: 'edit-pet-details', element: <EditPetDetailsPage /> },
-        { path: 'statistics', element: <Statistics />},
         { path: 'pet-listings', element: <PetListings />},
+        { path: 'statistics', element: <SystemReports />}
         // add routes here
       ],
     },
