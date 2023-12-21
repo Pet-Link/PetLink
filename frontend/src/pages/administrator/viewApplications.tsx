@@ -20,6 +20,7 @@ const ViewApplications: React.FC = () => {
             const data: applyAdoptModel[] = await response.json();
             setApplications(data);
         } catch (error) {
+            toastr.error("There was an internal system error.");
             console.error("There was an error fetching the applications:", error);
         }
     };

@@ -4,6 +4,7 @@ type petCareInfoModel = {
     content: string;
     title: string;
     administrator_ID: number;
+    administrator_name?: string;
 };
 
 export default petCareInfoModel;
