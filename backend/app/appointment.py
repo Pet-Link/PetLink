@@ -1,3 +1,4 @@
+from datetime import timedelta
 from flask import Blueprint, Response, request, jsonify
 from database import get_connection
 from auxiliary import send_email_mes
@@ -37,6 +38,13 @@ def create_appointment():
         pet = cursor.fetchone()
         if not pet:
             return Response(f"Pet with ID {pet_ID} not found", status=400, mimetype='application/json')
+        
+        # Check if veterinarin is available at the given date and time (30 minutes)
+        # COMPLEX QUERY EXAMPLE BETWEEN
+        cursor.execute('SELECT * FROM Appointment WHERE veterinarian_ID = %s AND date BETWEEN %s AND %s', (veterinarian_ID, date, str(date + timedelta(minutes=30))))
+        appointment = cursor.fetchone()
+        if appointment:
+            return Response(f"Veterinarian with ID {veterinarian_ID} is not available at the given date and time", status=400, mimetype='application/json')
 
         cursor.execute('INSERT INTO Appointment(adopter_ID, veterinarian_ID, date, pet_ID, approval_status, details) VALUES (%s, %s, %s, %s, %s, %s)', (adopter_ID, veterinarian_ID, date, pet_ID, approval_status, details))
         connection.commit()
@@ -106,6 +114,13 @@ def update_appointment():
         veterinarian = cursor.fetchone()
         if not veterinarian:
             return Response(f"Veterinarian with ID {veterinarian_ID} not found", status=400, mimetype='application/json')
+        
+        # Check if the veterinarian is available at the given date and time (30 minutes)
+        # COMPLEX QUERY EXAMPLE BETWEEN
+        cursor.execute('SELECT * FROM Appointment WHERE veterinarian_ID = %s AND date BETWEEN %s AND %s', (veterinarian_ID, str(date), str(date + timedelta(minutes=30))))
+        appointment = cursor.fetchone()
+        if appointment:
+            return Response(f"Veterinarian with ID {veterinarian_ID} is not available at the given date and time", status=400, mimetype='application/json')
         
         # get the name of the veterinarian
         cursor.execute('SELECT name FROM User WHERE user_ID = %s', (veterinarian_ID,))
