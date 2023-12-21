@@ -18,4 +18,18 @@ export class meetGreetService{
             headers: {'Content-Type': 'application/json'},
         });
     }
+
+    static async getAllMeetGreetShelter(shelter_ID: number) {
+        return fetch(`${meetGreetService.baseUrl}/shelter/${shelter_ID}`, {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'},
+        });
+    }
+
+    static async deleteMeetGreet(adopter_ID: number, pet_ID: number) {
+        return fetch(`${meetGreetService.baseUrl}/delete/${adopter_ID}/${pet_ID}`, {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json'},
+        });
+    }
 }

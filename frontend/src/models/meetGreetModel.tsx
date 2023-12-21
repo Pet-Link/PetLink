@@ -5,6 +5,8 @@ type meetGreetModel = {
     date: string;
     pet_name?: string,
     shelter_name?: string,
+    adopter_name?: string,
+    adopter_e_mail?: string
 };
 
 export default meetGreetModel;

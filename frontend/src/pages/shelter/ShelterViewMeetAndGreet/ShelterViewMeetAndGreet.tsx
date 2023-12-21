@@ -9,49 +9,89 @@ import {
     Button,
 } from '@mui/material';
 import meetGreetModel from '../../../models/meetGreetModel';
+import { meetGreetService } from '../../../services/meetGreetService';
+import toastr from 'toastr';
 
 const ShelterViewMeetAndGreet: React.FC = () => {
-    const [meetGreets, setMeetGreets] = useState<meetGreetModel[]>([
-        //mockups
-        //{adopter_ID: 1, pet_ID: 101, date: '2023-07-10'},
-        //{adopter_ID: 2, pet_ID: 102, date: '2023-07-15'},
-        //{adopter_ID: 3, pet_ID: 103, date: '2023-07-20'},
-        // Add more sample meet and greet data as needed
-    ]);
 
-    useEffect(() => {
-        // Fetch meet and greet data when the component mounts
-        fetchMeetGreets();
-    }, []);
+    const [meetAndGreets, setMeetAndGreets] = useState<meetGreetModel[]>([]);
 
     const fetchMeetGreets = async () => {
         try {
-            //TODO: connecting, there is no getMeetGreets() in service
-            // Assuming getMeetGreets is a function that fetches meet and greet data from the server
-            //const meetGreetsData = await getMeetGreets();
-            //setMeetGreets(meetGreetsData);
+            const shelter_ID = parseInt(localStorage.getItem("user_ID") || "0");
+            const response = await meetGreetService.getAllMeetGreetShelter(shelter_ID);
+            if (response.status === 404) {
+                setMeetAndGreets([]);
+                toastr.info("This shelter does not have any meet and greet appointments.");
+                return;
+            }
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+            const data: meetGreetModel[] = await response.json();
+            setMeetAndGreets(data);
         } catch (error) {
-            console.error('Error fetching meet and greets:', error);
+            toastr.error("There was an internal system error.");
+            console.error("There was an error fetching the meet and greets for the shelter:", error);
         }
     };
 
+    useEffect(() => {
+        fetchMeetGreets();
+    }, []);
+
+    const handleDelete = (adopter_ID: number, pet_ID: number, adopter_name?: string) => {
+        meetGreetService.deleteMeetGreet(adopter_ID, pet_ID).then((response) => {
+            if (response.ok) {
+                const successMessage = adopter_name
+                ? `Meet and Greet for ${adopter_name} is successfully deleted.`
+                : 'Meet and Greet is successfully deleted.';
+                toastr.success(successMessage);
+                fetchMeetGreets();
+            } else {
+                response.text().then((text) => {
+                    try {
+                        toastr.error("Failed to delete meet and greet.");
+                        console.error(text);
+                    } catch (error) {
+                        console.error('Invalid JSON:', text);
+                    }
+                });
+            }
+        }
+        );
+    }
+
     return (
         <Container>
-            <Typography variant="h4" align="center" gutterBottom>
+            <Typography variant="h4" align="center" gutterBottom sx={{mt: 5, mb: 5}}>
                 Meet and Greets
             </Typography>
             <Grid container spacing={2}>
-                {meetGreets.map((meetGreet, index) => (
+                {meetAndGreets.map((meetGreet, index) => (
                     <Grid item xs={12} md={6} lg={4} key={index}>
                         <Card>
                             <CardHeader
-                                title={`Adopter ID: ${meetGreet.adopter_ID}`}
-                                subheader={`Pet ID: ${meetGreet.pet_ID}`}
+                                title={`Adopter: ${meetGreet.adopter_name}`}
+                                subheader={`Pet: ${meetGreet.pet_name}`}
                             />
                             <CardContent>
                                 <Typography variant="body1" color="textSecondary" gutterBottom>
+                                    Adopter's e-mail: {meetGreet.adopter_e_mail ? meetGreet.adopter_e_mail : "Not given"}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary" gutterBottom>
                                     Date: {meetGreet.date}
                                 </Typography>
+                                <div style={{ display: 'flex', justifyContent: 'center'}}>
+                                    <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    style={{ backgroundColor: "red" }}
+                                    onClick={() => handleDelete(meetGreet.adopter_ID, meetGreet.pet_ID, meetGreet.adopter_name)}
+                                    >
+                                    Delete
+                                    </Button>
+                                </div>
                             </CardContent>
                         </Card>
                     </Grid>
