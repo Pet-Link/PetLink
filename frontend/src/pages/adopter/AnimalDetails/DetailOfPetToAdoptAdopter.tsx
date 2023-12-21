@@ -50,7 +50,7 @@ const PetDetailsPage = () => {
     
     
     const handleApply = () => {
-        navigate('/adopter/see-application', { state: {pet_ID: pet_ID, petName: petName, shelterName: shelterName}});
+        navigate('/adopter/adoption-application', { state: {pet_ID: pet_ID, petName: petName, shelterName: shelterName}});
     };
 
 

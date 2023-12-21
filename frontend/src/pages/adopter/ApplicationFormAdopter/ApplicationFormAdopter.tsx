@@ -255,7 +255,7 @@ const AdoptionApplicationPage = () => {
                             Your Balance:
                         </Typography>
                         <Typography variant="body1">
-                            ${adopter ? adopter.balance.toString() : 'Loading...'}
+                            ${adopter ? adopter.balance.toString() : '0'}
                         </Typography>
                     </Grid>
 
@@ -263,7 +263,8 @@ const AdoptionApplicationPage = () => {
                     <Grid item xs={12}>
                         <Typography variant="body2">
                             Note: The adoption fee will be paid from your balance automatically after the acceptance
-                            of your application!
+                            of your application! <br />
+                            Your email will be shared with an administrator who may contact you for further questions. 
                         </Typography>
                     </Grid>
                 </Grid>
