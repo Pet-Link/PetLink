@@ -35,8 +35,9 @@ export class VeterinarianService {
         });
     }
 
-    static getAllAppointmentsOfVeterinarian(vet_id: string) {
-        return fetch(`${VeterinarianService.baseUrl}/appointment/all/${vet_id}`, {
+    static getAllAppointmentsOfVeterinarian() {
+        const vet_ID = localStorage.getItem("user_ID");
+        return fetch(`${VeterinarianService.baseUrl}/appointment/all/${vet_ID}`, {
             method: 'GET'
         });
     }
