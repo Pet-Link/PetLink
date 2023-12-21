@@ -9,10 +9,11 @@ def top_veterinarians():
     try:
         connection = get_connection()
         cursor = connection.cursor()
+        
         query = """
         SELECT
             v.user_ID, u.name, v.speciality,
-            v.year_of_experience, a.appointment_count
+            v.year_of_experience, COALESCE(a.appointment_count, 0) AS appointment_count
         FROM
             Veterinarian v
         JOIN
@@ -32,6 +33,9 @@ def top_veterinarians():
         """
         cursor.execute(query)
         results = cursor.fetchall()
+        
+        if not results: 
+            return Response(f'There are no veterinarians.', status=404)
         
         # Convert result set to list of dictionaries
         columns = [col[0] for col in cursor.description]
@@ -58,6 +62,7 @@ def adoption_fees_summary():
             SELECT
                 p.name AS max_fee_pet_name,
                 u.name AS max_fee_shelter_name,
+                p.adoption_status AS max_fee_adoption_status,
                 p.adoption_fee AS max_fee
             FROM
                 Pet p
@@ -70,7 +75,8 @@ def adoption_fees_summary():
             SELECT
                 p.name AS min_fee_pet_name,
                 u.name AS min_fee_shelter_name,
-                p.adoption_fee AS min_fee
+                p.adoption_status AS min_fee_adoption_status,
+                p.adoption_fee AS min_fee    
             FROM
                 Pet p
                 JOIN User u ON p.shelter_ID = u.user_ID
@@ -79,24 +85,28 @@ def adoption_fees_summary():
             LIMIT 1
         )
         SELECT
-            MAX(mfp.max_fee_pet_name) AS max_fee_pet_name,
-            MAX(mfp.max_fee_shelter_name) AS max_fee_shelter_name,
-            MAX(mfp.max_fee) AS max_fee,
-            MAX(mnp.min_fee_pet_name) AS min_fee_pet_name,
-            MAX(mnp.min_fee_shelter_name) AS min_fee_shelter_name,
-            MAX(mnp.min_fee) AS min_fee,
+            mfp.max_fee_pet_name,
+            mfp.max_fee_shelter_name,
+            mfp.max_fee_adoption_status,
+            mfp.max_fee,
+            mnp.min_fee_pet_name,
+            mnp.min_fee_shelter_name,
+            mnp.min_fee_adoption_status,
+            mnp.min_fee,
             COALESCE((SELECT SUM(adoption_fee) FROM Pet WHERE adoption_status = TRUE), 0) AS total_adoption_fee
         FROM
             MaxFeePet mfp,
             MinFeePet mnp;
         """
         cursor.execute(query)
-        results = cursor.fetchall()
+        results = cursor.fetchone()
         
-        columns = [col[0] for col in cursor.description]
-        results = [dict(zip(columns, row)) for row in results]
+        if not results[0]:  # results[0]: max_fee_pet_name
+            return Response(f'There are no pets.', status=404)
         
-        return jsonify(results)
+        summary = dict(zip([key[0] for key in cursor.description], results))
+        return jsonify(summary)
+        
     except Exception as e:
         return Response(f'Failed to fetch adoption fees summary\n{e}', status=500)
 
@@ -124,6 +134,9 @@ def top_adopters():
         """
         cursor.execute(query)
         results = cursor.fetchall()
+        
+        if not results: 
+            return Response(f'There are no adoptions.', status=404)
         
         columns = [col[0] for col in cursor.description]
         results = [dict(zip(columns, row)) for row in results]
@@ -154,6 +167,9 @@ def top_adopted_breeds():
         """
         cursor.execute(query)
         results = cursor.fetchall()
+        
+        if not results: 
+            return Response(f'There are no adopted pets.', status=404)
         
         columns = [col[0] for col in cursor.description]
         results = [dict(zip(columns, row)) for row in results]

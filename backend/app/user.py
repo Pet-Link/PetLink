@@ -251,6 +251,30 @@ def update_password(user_id):
     except Exception as e:
         # return the error
         return Response(f'An error occurred {e}', 500)
+    
+@user.route('/update/password/email/<string:e_mail>', methods=['PUT'])
+def update_password_by_email(e_mail):
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+        body = request.json
+        password = body['password']
+
+        # check if the user exists
+        cursor.execute('SELECT * FROM User WHERE e_mail = %s', (e_mail,))
+        result = cursor.fetchone()
+        if not result:
+            return Response(f'User with e-mail {e_mail} does not exist', 404)
+
+        # hash & update the password
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        cursor.execute('UPDATE User SET password = %s WHERE e_mail = %s', (hashed_password, e_mail))
+        connection.commit()
+
+        return Response('Password updated successfully', 200)
+    except Exception as e:
+        # return the error
+        return Response(f'An error occurred {e}', 500)
 
 # Update User - PUT
 # Note that, the user can only update their name, phone number and e-mail

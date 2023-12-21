@@ -1,6 +1,7 @@
 import datetime
 from flask import Blueprint, Response, request, jsonify
 from database import get_connection
+import pytz
 
 post = Blueprint('post', __name__, url_prefix='/post')
 
@@ -11,7 +12,7 @@ def create_post():
     data = request.json
     title = data['title']
     content = data['content']
-    post_date = datetime.datetime.now()
+    post_date = datetime.datetime.now(pytz.timezone('Europe/Istanbul'))
     poster_id = data['poster_ID']
     
     connection = get_connection()

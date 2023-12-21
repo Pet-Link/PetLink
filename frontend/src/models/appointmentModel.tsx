@@ -9,6 +9,8 @@ type appointmentModel = {
     pet_breed?: string;
     pet_species?: string;
     pet_ID?: number;
+    veterinarian_name?: string;
+    pet_name?: string;
 };
 
 export default appointmentModel;

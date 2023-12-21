@@ -82,6 +82,7 @@ const HomeAdministrator = () => {
                         color: 'black',       // Set text color to black
                         fontWeight: 'bold',   // Make the text bold
                         fontSize: '1.2rem',    // Set the font size to 1.2rem (adjust as needed)
+                        mr:10,
                         '&:hover': {
                             color : 'white',
                             transform: 'scale(1.1)',
@@ -93,6 +94,28 @@ const HomeAdministrator = () => {
                     }}
                 >
                     Add General Pet Care Information
+                </Button>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    sx={{
+                        width: '200px',
+                        height: '170px',
+                        textTransform: 'none',
+                        marginBottom: 2,
+                        color: 'black',       // Set text color to black
+                        fontWeight: 'bold',   // Make the text bold
+                        fontSize: '1.2rem',    // Set the font size to 1.2rem (adjust as needed)
+                        '&:hover': {
+                            color : 'white',
+                            transform: 'scale(1.1)',
+                        },
+                    }}
+                    onClick={() => {
+                        navigate('/administrator/pet-listings');
+                    }}
+                >
+                    Manage Pet Listings
                 </Button>
             </Grid>
 

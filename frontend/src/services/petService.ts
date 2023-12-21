@@ -8,6 +8,10 @@ export class PetService {
     return fetch(`${PetService.baseUrl}/all`);
   }
 
+  static getPetsWithShelters() {
+    return fetch(`${PetService.baseUrl}/all/with-shelters`);
+  }
+
   static getPetById(pet_ID: number) {
     return fetch(`${PetService.baseUrl}/${pet_ID}`);
   }
@@ -47,7 +51,7 @@ export class PetService {
     return fetch(`${PetService.baseUrl}/breeds`);
   }
 
-  static filterPets(breed: string, species: string, age: string, vaccination_status: string, neutered_status: string, house_trained_status: string, sex: string) {
+  static filterPets(adopted: string, breed: string, species: string, age: string, vaccination_status: string, neutered_status: string, house_trained_status: string, sex: string) {
     var temp = {
       breed: breed,
       species: species,
@@ -57,10 +61,31 @@ export class PetService {
       house_trained_status: house_trained_status,
       sex: sex
     }
-    return fetch(`${PetService.baseUrl}/filter`, {
+    return fetch(`${PetService.baseUrl}/filter/${adopted}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(temp),
     });
+  }
+
+  static filterPetsOfShelter(shelter_ID:string, adopted: string, breed: string, species: string, age: string, vaccination_status: string, neutered_status: string, house_trained_status: string, sex: string) {
+    var temp = {
+      breed: breed,
+      species: species,
+      age: age,
+      vaccination_status: vaccination_status,
+      neutered_status: neutered_status,
+      house_trained_status: house_trained_status,
+      sex: sex
+    }
+    return fetch(`${PetService.baseUrl}/filter-by-shelter/${shelter_ID}/${adopted}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(temp),
+    });
+  }
+
+  static getPetsByShelter(shelter_ID: string) {
+    return fetch(`${PetService.baseUrl}/shelter/${shelter_ID}`);
   }
 }

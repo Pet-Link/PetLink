@@ -35,36 +35,7 @@ export class VeterinarianService {
         });
     }
 
-    static getAllAppointmentsOfVeterinarian() {
-        const vet_ID = localStorage.getItem("user_ID");
-        return fetch(`${VeterinarianService.baseUrl}/appointment/all/${vet_ID}`, {
-            method: 'GET'
-        });
-    }
-
-    static approveAppointment(veterinarian_ID: string, adopter_ID: string) {
-        return fetch(`${VeterinarianService.baseUrl}/appointment/approve`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({adopter_ID, veterinarian_ID})
-        });
-    }
-
-    static rejectAppointment(veterinarian_ID: string, adopter_ID: string) {
-        return fetch(`${VeterinarianService.baseUrl}/appointment/reject`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({adopter_ID, veterinarian_ID})
-        });
-    }
-
-    static deleteApointment(veterinarian_ID: string, adopter_ID: string) {
-        return fetch(`${VeterinarianService.baseUrl}/appointment/delete`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({adopter_ID, veterinarian_ID})
-        });
-    }
+   
 
     static createMedicalRecord(medicalRecord: medicalRecordModel) {
         return fetch(`${VeterinarianService.baseUrl}/medicalrecord/create`, {

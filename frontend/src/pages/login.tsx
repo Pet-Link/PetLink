@@ -128,7 +128,7 @@ export default function Login() {
                         sx={{ mb: 2 }}
                         size="small"
                     />
-                    <Link sx={{ mt: 2, mb:1, textDecoration: 'none' }} href="/forgot" variant="body2">
+                    <Link sx={{ mt: 2, mb:1, textDecoration: 'none' }} href="/forgot-password" variant="body2">
                     Forgot password?
                     </Link>
                     <Button variant="contained" color='primary' onClick={handleLogin} sx={{ mb: 6} }>Login</Button>

@@ -1,3 +1,4 @@
+import pytz
 from flask import Blueprint, Response, request, jsonify
 from database import get_connection
 import datetime
@@ -40,7 +41,7 @@ def create_applyadopt():
 
         adopter_ID = data['adopter_ID']
         pet_ID = data['pet_ID']
-        date = datetime.datetime.now()
+        date = datetime.datetime.now(pytz.timezone('Europe/Istanbul'))
         pet_ownership = data['pet_ownership']
         pet_care_experience = data['pet_care_experience']
         housing_situation = data['housing_situation']

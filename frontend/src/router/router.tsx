@@ -26,10 +26,12 @@ import EditPetDetailsPage from '../pages/administrator/editPetDetails';
 import ViewMeetAndGreets from '../pages/adopter/ViewMeetAndGreets';
 import ShelterViewMeetAndGreet from '../pages/shelter/ShelterViewMeetAndGreet/ShelterViewMeetAndGreet';
 import SearchVets from '../pages/adopter/SearchVets';
-import Statistics from '../pages/administrator/Statistics';
+import SystemReports from '../pages/administrator/systemReports';
 import Forum from '../pages/forum/Forum';
 import PetCareInfo from '../pages/petcare/PetCareInfo';
 import VetAppointments from '../pages/adopter/VetApointments';
+import PetListings from '../pages/administrator/petListings';
+import ForgotPassword from '../pages/forgotPassword';
 
 const Router: React.FC = () => {
     return <RouterProvider router={router}/>;
@@ -37,6 +39,7 @@ const Router: React.FC = () => {
 
 const router = createBrowserRouter([
     { path: '', element: <Login /> },
+    { path: '/forgot-password', element: <ForgotPassword /> },
     { path: '/register-administrator', element: <RegisterAdmin /> },
     { path: '/register-adopter', element: <RegisterAdopter /> },
     { path: '/register-veterinarian', element: <RegisterVet /> },
@@ -59,7 +62,8 @@ const router = createBrowserRouter([
         { path: 'view-applications', element: <ViewApplications />},
         { path: 'see-application-detail', element: <SeeAdoptionApplicationPage /> },
         { path: 'edit-pet-details', element: <EditPetDetailsPage /> },
-        { path: 'statistics', element: <Statistics />}
+        { path: 'pet-listings', element: <PetListings />},
+        { path: 'statistics', element: <SystemReports />}
         // add routes here
       ],
     },
@@ -108,6 +112,7 @@ const router = createBrowserRouter([
           element: <EnterAnimalDetailsPage />,
         },
         { path: 'meet-and-greets', element: <ShelterViewMeetAndGreet />},
+        { path: 'edit-pet-details', element: <EditPetDetailsPage />},
       ]
     },
     { path: '/veterinarian',

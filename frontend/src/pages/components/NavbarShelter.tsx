@@ -57,7 +57,7 @@ function ResponsiveAppBarShelter() {
                         variant="h6"
                         noWrap
                         component="a"
-                        onClick={() => navigate('/adopter/home')}
+                        onClick={() => navigate('/shelter/home')}
                         sx={{
                             mr: 2,
                             display: { xs: 'none', md: 'flex' },
@@ -151,7 +151,7 @@ function ResponsiveAppBarShelter() {
                         See My Meet&Greets
                     </Button>
 
-                    <NotificationsActiveIcon color={"primary"} style={{ marginRight: 15 }}></NotificationsActiveIcon>
+                    {/* <NotificationsActiveIcon color={"primary"} style={{ marginRight: 15 }}></NotificationsActiveIcon> */}
 
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">

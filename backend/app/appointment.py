@@ -214,7 +214,7 @@ def get_all_appointments_for_veterinarian(veterinarian_ID):
         return Response(f"Appointment get all for veterinarian failed with exception: {e}", status=400, mimetype='application/json')
     
 # Get all appointments for a specific adopter - GET
-@appointment.route('/all/<int:adopter_ID>', methods=['GET'])
+@appointment.route('/all/adopter/<int:adopter_ID>', methods=['GET'])
 def get_all_appointments_for_adopter(adopter_ID):
     connection = get_connection()
     cursor = connection.cursor()
@@ -224,8 +224,15 @@ def get_all_appointments_for_adopter(adopter_ID):
         adopter = cursor.fetchone()
         if not adopter:
             return Response(f"Adopter with ID {adopter_ID} not found", status=400, mimetype='application/json')
-
-        cursor.execute('SELECT * FROM Appointment WHERE adopter_ID = %s', (adopter_ID,))
+        
+        cursor.execute(
+            """
+            SELECT a.*, p.name AS pet_name, u.name AS veterinarian_name
+            FROM Appointment a
+            JOIN User u ON a.veterinarian_ID = u.user_ID
+            JOIN Pet p ON a.pet_ID = p.pet_ID
+            WHERE a.adopter_ID = %s
+            """, (adopter_ID,))
         appointments = cursor.fetchall()
         # convert appointments to list of dictionaries with keys
         appointments = [dict(zip([key[0] for key in cursor.description], appointment)) for appointment in appointments]

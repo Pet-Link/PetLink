@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Table,
     TableHead,
@@ -16,12 +16,35 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import toastr from 'toastr';
+import { AppointmentService } from '../../services/appointmentService';
+import appointmentModel from '../../models/appointmentModel';
 
 const VetAppointments = () => {
-    const [appointments, setAppointments] = useState([]);
+    const [appointments, setAppointments] = useState<appointmentModel[]>([]);
     const [searchVet, setSearchVet] = useState('');
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const fetchAppointments = async () => {
+        try {
+            const adopter_ID = parseInt(localStorage.getItem("user_ID") || "0");
+            const response = await AppointmentService.getAllAppointmentsOfAdopter(adopter_ID);
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+            const data: appointmentModel[] = await response.json(); 
+            setAppointments(data);
+        } catch (error) {
+            console.error("There was an error while fetching the applications:", error);
+            toastr.error("There was an internal error while fetching the applications.");
+        }
+    };
+
+
+    useEffect(() => {
+        fetchAppointments();
+    }, []);
+    
 
     // Function to handle searching for a vet
     const handleSearchVet = () => {
@@ -40,6 +63,30 @@ const VetAppointments = () => {
         // Send arrangement information to the backend
         // Close the modal
         setIsModalOpen(false);
+    };
+
+    const handleDeleteAppointment = (veterinarian_ID: number, veterinarian_name?: string) => {
+        const adopter_ID = parseInt(localStorage.getItem("user_ID") || "0");
+        AppointmentService.deleteAppointment(veterinarian_ID, adopter_ID).then((response) => {
+            if (response.ok) {
+                const successMessage = veterinarian_name
+                ? `Appointment for ${veterinarian_name} is successfully deleted.`
+                : 'Appointment is successfully deleted.';
+                toastr.success(successMessage);
+                fetchAppointments();
+            } else {
+                response.text().then((text) => {
+                    try {
+                        toastr.error("Failed to delete appointment.");
+                        console.error(text);
+                    } catch (error) {
+                        console.error('Invalid JSON:', text);
+                    }
+                });
+            }
+        }
+        );
+
     };
 
     return (
@@ -142,28 +189,29 @@ const VetAppointments = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Vet Name</TableCell>
+                            <TableCell>Veterinarian Name</TableCell>
+                            <TableCell>Pet Name</TableCell>
                             <TableCell>Date</TableCell>
-                            <TableCell>Time</TableCell>
                             <TableCell>Action</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {/*appointments.map((appointment) => (
-                            <TableRow key={appointment.id}>
-                                <TableCell>{appointment.vetName}</TableCell>
+                        {appointments.map((appointment, index) => (
+                            <TableRow key={index}>
+                                <TableCell>{appointment.veterinarian_name}</TableCell>
+                                <TableCell>{appointment.pet_name}</TableCell>
                                 <TableCell>{appointment.date}</TableCell>
-                                <TableCell>{appointment.time}</TableCell>
                                 <TableCell>
                                     <Button
                                         variant="contained"
-                                        onClick={() => handleScheduleAppointment(appointment.vetId)}
-                                    >
-                                        Schedule
-                                    </Button>
+                                        color="secondary"
+                                        style={{ backgroundColor: "red" }}
+                                        onClick={() => handleDeleteAppointment(appointment.veterinarian_ID, appointment.veterinarian_name)}
+                                    >Delete</Button>
+
                                 </TableCell>
                             </TableRow>
-                        ))*/}
+                        ))}
                     </TableBody>
                 </Table>
             </Grid>

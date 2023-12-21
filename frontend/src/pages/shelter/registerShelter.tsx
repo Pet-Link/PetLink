@@ -155,7 +155,7 @@ const RegisterShelter: React.FC = () => {
                 <TextField sx={{mb:2}} type="text" label="Description" size="small" value={description} onChange={handleDescriptionChange} />
             </Grid>
             </Stack>
-            <Grid>
+            {/* <Grid>
                 <Typography fontSize={'16px'}>Document For Verification</Typography>
                 <input name="fileInput" id="fileInput" style={{ display: 'none' }} type="file" onChange={handleFileSelection} />
                 <label htmlFor="fileInput">
@@ -163,7 +163,7 @@ const RegisterShelter: React.FC = () => {
                     {buttonText && buttonText !== '' ? buttonText : 'Choose File'}
                 </Button>
                 </label>
-            </Grid>
+            </Grid> */}
             <Button variant="outlined" color="success" onClick={handleRegister}>Register</Button>
             <Typography>
                 Already have an account? <Link href="/">Login</Link>

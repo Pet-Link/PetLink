@@ -151,7 +151,7 @@ function ResponsiveAppBarAdopter() {
                         See My Meet&Greets
                     </Button>
 
-                    <NotificationsActiveIcon color={"primary"} style={{ marginRight: 15 }}></NotificationsActiveIcon>
+                    {/* <NotificationsActiveIcon color={"primary"} style={{ marginRight: 15 }}></NotificationsActiveIcon> */}
 
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">

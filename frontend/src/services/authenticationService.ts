@@ -42,4 +42,26 @@ export class AuthenticationService {
       body: JSON.stringify({name, e_mail, phone_number, password, street, district, apartment_no, city, zip, country, description}),
     });
   }
+
+  static sendVerificationCode(e_mail: string) {
+    return fetch(`${AuthenticationService.baseUrl}/user/verification_code/create/${e_mail}`, {
+      method: 'POST'
+    });
+  }
+
+  static verifyVerificationCode(e_mail: string, verification_code: string) {
+    return fetch(`${AuthenticationService.baseUrl}/user/verification_code/check/${e_mail}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ verification_code }),
+    });
+  }
+
+  static updatePassword(e_mail: string, password: string) {
+    return fetch(`${AuthenticationService.baseUrl}/user/update/password/email/${e_mail}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    });
+  }
 }

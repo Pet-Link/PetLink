@@ -5,11 +5,13 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { PetService } from '../../services/petService';
 import toastr from 'toastr';
 import petModel from '../../models/petModel';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import HomeIcon from '@mui/icons-material/Home';
 
 const EditPetDetailsPage = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
     const [name, setName] = useState('');
     const [breed, setBreed] = useState('');
     const [age, setAge] = useState('');
@@ -24,8 +26,8 @@ const EditPetDetailsPage = () => {
     const [neutered_status, setNeuteredStatus] = useState(false);
     const [adoption_status, setAdoptionStatus] = useState(false);
 
-    const pet_ID = 2; // TODO like below
-    //const { pet_ID} = location.state || {};
+    //const pet_ID = 2; // TODO like below
+    const { pet_ID } = location.state || {};
 
     const [pet, setPet] = useState<petModel>();
     
@@ -300,9 +302,9 @@ const EditPetDetailsPage = () => {
 
                     <Button variant="contained" color="secondary" onClick={handleSubmit}>Submit Edit</Button>
                     <Button variant="contained" color="primary" onClick={handleDelete} sx={{bgcolor: '#C30404'}}>Delete Pet</Button>
-                    <Button onClick={goBackHome} variant='contained' color='primary'>
+                    {/* <Button onClick={goBackHome} variant='contained' color='primary'>
                         Go to Dashboard
-                    </Button>
+                    </Button> */}
                 </Stack>
             </Stack>
         </Grid>

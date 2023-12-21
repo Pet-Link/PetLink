@@ -57,6 +57,10 @@ def create_pet():
         shelter_ID = data.get('shelter_ID')  # Can be None
         adopter_ID = data.get('adopter_ID')  # Can be None
 
+        # convert breed and species to lowercase
+        breed = breed.lower()
+        species = species.lower()
+
         # Check if only one of shelter_ID or adopter_ID is non-null
         # Since all pets are listed either by shelters to be adopted or by adopters after already being adopted
         if (shelter_ID is None and adopter_ID is None) or (shelter_ID is not None and adopter_ID is not None):
@@ -130,6 +134,25 @@ def get_all_pets():
         return Response(f'Pets could not be fetched with exception {e}', status=500)
     
 # Get all unadopted Pets with Shelter Names - GET
+@pet.route('/all/with-shelters', methods=['GET'])
+def get_all_pets_with_shelter():
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute("""
+                       SELECT *
+                       FROM Pet_Shelter_Details_View
+                       """)
+        pets = cursor.fetchall()
+        if pets:
+            # convert pets to dictionary with keys
+            pets = [dict(zip([key[0] for key in cursor.description], pet)) for pet in pets]
+        return jsonify(pets)
+    except Exception as e:
+        print(e)
+        return Response(f'Pets could not be fetched with exception {e}', status=500)
+    
+# Get all unadopted Pets with Shelter Names - GET
 @pet.route('/all-unadopted-shelter-names', methods=['GET'])
 def get_all_unadopted_pets_with_shelter():
     try:
@@ -144,7 +167,7 @@ def get_all_unadopted_pets_with_shelter():
         if pets:
             # convert pets to dictionary with keys
             pets = [dict(zip([key[0] for key in cursor.description], pet)) for pet in pets]
-            return jsonify(pets)
+        return jsonify(pets)
     except Exception as e:
         print(e)
         return Response(f'Pets could not be fetched with exception {e}', status=500)
@@ -319,6 +342,10 @@ def update_pet(pet_ID):
         house_trained_status = data['house_trained_status']
         adoption_status = data['adoption_status']
         adoption_fee = data['adoption_fee']
+
+        # convert breed and species to lowercase
+        breed = breed.lower()
+        species = species.lower()
         
         # Check if pet exists
         cursor.execute('SELECT * FROM Pet WHERE pet_ID = %s', (pet_ID,))
@@ -379,8 +406,8 @@ def get_pet_shelter(pet_ID):
         print(e)
         return Response(f'Pet with pet_ID {pet_ID} could not be fetched with exception {e}', status=500)
     
-@pet.route('/filter', methods=['PUT'])
-def filter_pets():
+@pet.route('/filter/<int:adopted>', methods=['PUT']) # 0 = unadopted, 1 = all pets
+def filter_pets(adopted):
     try:
         data = request.get_json()
 
@@ -420,6 +447,85 @@ def filter_pets():
         if neutered_status:
             query += " AND neutered_status = %s"
             params.append(neutered_status)
+
+        if adopted == 0:
+            query += " AND adoption_status = 0"
+
+        # Connect to the database and execute the query
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute(query, params)
+        pets = cursor.fetchall()
+
+        result=[]
+        pets=[dict(zip([key[0] for key in cursor.description], pet)) for pet in pets]
+        for pet in pets:
+            cursor.execute("""
+                        SELECT *
+                        FROM Pet_Shelter_Details_View
+                        WHERE pet_ID = %s
+                        """, (pet['pet_ID'],))
+            pet = cursor.fetchone()
+            result.append(pet)
+        
+        if result is None:
+            return Response(f'No pets found with the given filters', status=404)
+
+        # Convert pets to a list of dictionaries to return as JSON
+        pets_list = [dict(zip([key[0] for key in cursor.description], pet)) for pet in result]
+        return jsonify(pets_list)
+
+    except Exception as e:
+        print(e)
+        return Response(f'Error filtering pets with exception {e}', status=500)
+    
+# filter the pets of a shelter
+@pet.route('/filter-by-shelter/<int:shelter_ID>/<int:adopted>', methods=['PUT']) # 0 = unadopted, 1 = all pets
+def filter_pets_by_shelter(shelter_ID, adopted):
+    try:
+        data = request.get_json()
+
+        # Get filter parameters from the request
+        species = data['species']
+        breed = data['breed']
+        age = data['age']
+        vaccination_status = data['vaccination_status']
+        house_trained_status = data['house_trained_status']
+        sex = data['sex']
+        neutered_status = data['neutered_status']
+
+        # Start building the query
+        query = "SELECT * FROM Pet WHERE 1=1"
+        params = []
+
+        # Append to the query and parameters if filters exist
+        # check if species is not an empty string
+        if species:
+            query += " AND species = %s"
+            params.append(species)
+        if breed:
+            query += " AND breed = %s"
+            params.append(breed)
+        if age:
+            query += " AND age = %s"
+            params.append(age)
+        if vaccination_status:
+            query += " AND vaccination_status = %s"
+            params.append(vaccination_status)
+        if house_trained_status:
+            query += " AND house_trained_status = %s"
+            params.append(house_trained_status)
+        if sex:
+            query += " AND sex = %s"
+            params.append(sex)
+        if neutered_status:
+            query += " AND neutered_status = %s"
+            params.append(neutered_status)
+
+        if adopted == 0:
+            query += " AND adoption_status = 0"
+        
+        query += " AND shelter_ID = {0}".format(shelter_ID)
 
         # Connect to the database and execute the query
         connection = get_connection()

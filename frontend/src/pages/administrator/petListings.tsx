@@ -17,10 +17,12 @@ import Modal from '@mui/material/Modal';
 import MenuItem from "@mui/material/MenuItem"; // Import your CSS file
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useNavigate } from 'react-router';
-import petModel from '../../../models/petModel';
-import { PetService } from '../../../services/petService';
+import petModel from '../../models/petModel';
+import { PetService } from '../../services/petService';
+import toastr from 'toastr';
 
-const HomeShelter = () => {    
+
+const PetListings: React.FC = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [petData, setPetData] = useState<petModel[]>([]);
@@ -85,7 +87,7 @@ const HomeShelter = () => {
         try {
             var shelter_ID = localStorage.getItem('user_ID');
             if (shelter_ID !== null) { 
-                const response = await PetService.getPetsByShelter(shelter_ID);
+                const response = await PetService.getPetsWithShelters();
                 if (!response.ok) {
                     throw new Error('Network response was not ok.');
                 }
@@ -132,26 +134,21 @@ const HomeShelter = () => {
             tSpecies = (species[0]);
         }
         // Filter the data
-        var shelter_ID = localStorage.getItem('user_ID');
-        if (shelter_ID !== null) {
-            PetService.filterPetsOfShelter(shelter_ID, "1", tBreed, tSpecies, age, vaccinationStatus, neuterStatus, houseTrainedStatus, sex).then((response) => {
-                if (response.ok) {
-                    response.json().then((data) => {
-                        console.log(data);
-                        setFilteredPetData(data);
-                    });
-                }
+        PetService.filterPets("1", tBreed, tSpecies, age, vaccinationStatus, neuterStatus, houseTrainedStatus, sex).then((response) => {
+            if (response.ok) {
+                response.json().then((data) => {
+                    console.log(data);
+                    setFilteredPetData(data);
+                });
             }
-            );
-            handleClose();
-        } else {
-            toastr.error("Please login to filter pets!");
         }
+        );
+        handleClose();
     };
 
 
     const handleManageListing = (pet_ID: number) => {
-        navigate('/shelter/edit-pet-details', { state: { pet_ID: pet_ID } });
+        navigate('/administrator/edit-pet-details', { state: { pet_ID: pet_ID } });
     };
 
     const handleFetch = async () => {
@@ -213,14 +210,6 @@ const HomeShelter = () => {
     return (
         <Box m={2} pt={3}>
         <Container >
-            <Typography variant="h4" align="center" gutterBottom>
-                Shelters: {' '}
-                <span style={{ color: 'red', fontWeight: 'bold'}}>Profile, list, approve adoptions, engage in forums, and update</span>  credentials seamlessly.
-            </Typography>
-            <Typography variant="body1" align="center" paragraph>
-                Browse our available animals and learn more about the adoption process. Together, we can rescue, rehabilitate, and rehome pets in need. Thank you for supporting our mission to bring joy to families through pet adoption.
-            </Typography>
-
             {/* Filter and Search Bar */}
             <Grid container justifyContent="center" >
                 <Button
@@ -380,7 +369,7 @@ const HomeShelter = () => {
             </Grid>
 
             <Typography variant="h5" align="center" style={{fontWeight: "bold", marginTop: 25}}>
-                Pets Currently Available In Your Shelter
+                All the Pets Available in the PetLink
             </Typography>
             <Grid container justifyContent="center" spacing={2} style={{ marginTop: 20 }}>
                 <TableContainer component={Box}>
@@ -388,12 +377,14 @@ const HomeShelter = () => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Pet Name</TableCell>
+                                <TableCell>Shelter Name</TableCell>
                                 <TableCell>Pet Breed</TableCell>
                                 <TableCell>Pet Species</TableCell>
                                 <TableCell>Sex</TableCell>
                                 <TableCell>Vaccination Status</TableCell>
                                 <TableCell>Neuter Status</TableCell>
                                 <TableCell>Adoption Fee</TableCell>
+                                <TableCell>Adoption Status</TableCell>
                                 <TableCell></TableCell>
                             </TableRow>
                         </TableHead>
@@ -401,6 +392,7 @@ const HomeShelter = () => {
                             {filteredPetData.map(pet => (
                                 <TableRow key={pet.adopter_ID}>
                                     <TableCell>{pet.name}</TableCell>
+                                    <TableCell>{pet.shelter_name}</TableCell>
                                     <TableCell>{pet.breed}</TableCell>
                                     <TableCell>{pet.species}</TableCell>
                                     <TableCell>{pet.sex}</TableCell>
@@ -408,11 +400,12 @@ const HomeShelter = () => {
                                     <TableCell>{pet.vaccination_status ? 'Vaccinated' : 'Not Vaccinated'}</TableCell>
                                     <TableCell>{pet.neutered_status ? 'Neutered' : 'Not Neutered'}</TableCell>
                                     <TableCell>{pet.adoption_fee} $</TableCell>
+                                    <TableCell>{pet.adoption_status ? 'Adopted' : 'Not Adopted'}</TableCell>
                                     <TableCell>
                                         <Button
                                             variant="contained"
                                             color="secondary"
-                                            style={{ backgroundColor: "orange" }}
+                                            style={{ backgroundColor: "orange", height: "25%" }}
                                             onClick={() => handleManageListing(pet.pet_ID || 0)}
                                         >
                                             Manage Listing
@@ -427,6 +420,6 @@ const HomeShelter = () => {
         </Container>
         </Box>
     );
-};
+}
 
-export default HomeShelter;
+export default PetListings;
