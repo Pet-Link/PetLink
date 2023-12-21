@@ -26,6 +26,7 @@ import ViewMeetAndGreets from '../pages/adopter/ViewMeetAndGreets';
 import SearchVets from '../pages/adopter/SearchVets';
 import Statistics from '../pages/administrator/Statistics';
 import Forum from '../pages/forum/Forum';
+import PetCareInfo from '../pages/petcare/PetCareInfo';
 
 const Router: React.FC = () => {
     return <RouterProvider router={router}/>;
@@ -79,7 +80,8 @@ const router = createBrowserRouter([
         { path: 'create-pet', element: <CreatePet />},
         { path: 'pet-details', element: <PetDetailsPage />},
         { path: 'view-meet-and-greets', element: <ViewMeetAndGreets />},
-        { path: 'search-vets', element: <SearchVets />}
+        { path: 'search-vets', element: <SearchVets />},
+        { path: 'pet-care-info', element: <PetCareInfo />}
         // add routes here
       ]
     },
