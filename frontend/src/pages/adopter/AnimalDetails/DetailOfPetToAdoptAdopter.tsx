@@ -10,7 +10,7 @@ import { Typography } from '@mui/material';
 import petModel from '../../../models/petModel';
 import { PetService } from '../../../services/petService';
 import { meetGreetService } from '../../../services/meetGreetService';
-import meetGreetModel from '../../../models/meetGreet';
+import meetGreetModel from '../../../models/meetGreetModel';
 import dayjs from 'dayjs';
 import toastr from 'toastr';
 

@@ -24,6 +24,7 @@ import CreatePet from '../pages/adopter/createPet';
 import PetDetailsPage from '../pages/adopter/AnimalDetails/DetailOfPetToAdoptAdopter';
 import EditPetDetailsPage from '../pages/administrator/editPetDetails';
 import ViewMeetAndGreets from '../pages/adopter/ViewMeetAndGreets';
+import ShelterViewMeetAndGreet from '../pages/shelter/ShelterViewMeetAndGreet/ShelterViewMeetAndGreet';
 import SearchVets from '../pages/adopter/SearchVets';
 import Statistics from '../pages/administrator/Statistics';
 import Forum from '../pages/forum/Forum';
@@ -81,7 +82,7 @@ const router = createBrowserRouter([
         { path: 'payment', element: <Balance />},
         { path: 'create-pet', element: <CreatePet />},
         { path: 'pet-details', element: <PetDetailsPage />},
-        { path: 'view-meet-and-greets', element: <ViewMeetAndGreets />},
+        { path: 'meet-and-greets', element: <ViewMeetAndGreets />},
         { path: 'search-vets', element: <SearchVets />},
         { path: 'pet-care-info', element: <PetCareInfo />},
         { path: 'vet-appointments', element: <VetAppointments />},
@@ -105,7 +106,8 @@ const router = createBrowserRouter([
         {
           path: 'enter-animal',
           element: <EnterAnimalDetailsPage />,
-        }
+        },
+        { path: 'meet-and-greets', element: <ShelterViewMeetAndGreet />},
       ]
     },
     { path: '/veterinarian',
