@@ -32,6 +32,7 @@ import PetCareInfo from '../pages/petcare/PetCareInfo';
 import VetAppointments from '../pages/adopter/VetApointments';
 import PetListings from '../pages/administrator/petListings';
 import ForgotPassword from '../pages/forgotPassword';
+import AboutUs from '../pages/aboutUs';
 
 const Router: React.FC = () => {
     return <RouterProvider router={router}/>;
@@ -90,6 +91,7 @@ const router = createBrowserRouter([
         { path: 'search-vets', element: <SearchVets />},
         { path: 'pet-care-info', element: <PetCareInfo />},
         { path: 'vet-appointments', element: <VetAppointments />},
+        { path: 'about-us', element: <AboutUs />}
         // add routes here
       ]
     },
