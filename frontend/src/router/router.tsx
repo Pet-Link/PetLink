@@ -31,6 +31,7 @@ import Forum from '../pages/forum/Forum';
 import PetCareInfo from '../pages/petcare/PetCareInfo';
 import VetAppointments from '../pages/adopter/VetApointments';
 import PetListings from '../pages/administrator/petListings';
+import ForgotPassword from '../pages/forgotPassword';
 
 const Router: React.FC = () => {
     return <RouterProvider router={router}/>;
@@ -38,6 +39,7 @@ const Router: React.FC = () => {
 
 const router = createBrowserRouter([
     { path: '', element: <Login /> },
+    { path: '/forgot-password', element: <ForgotPassword /> },
     { path: '/register-administrator', element: <RegisterAdmin /> },
     { path: '/register-adopter', element: <RegisterAdopter /> },
     { path: '/register-veterinarian', element: <RegisterVet /> },
