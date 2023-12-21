@@ -95,6 +95,25 @@ export default function ForgotPassword() {
         navigate('/');
     }
 
+    // Function to handle key press in the password field
+    const handleKeyPress1 = (event: React.KeyboardEvent) => {
+        if (event.key === 'Enter') {
+            sendVerificationCode();
+        }
+    };
+
+    const handleKeyPress2 = (event: React.KeyboardEvent) => {
+        if (event.key === 'Enter') {
+            submitVerificationCode();
+        }
+    };
+
+    const handleKeyPress3 = (event: React.KeyboardEvent) => {
+        if (event.key === 'Enter') {
+            submitNewPassword();
+        }
+    };
+
     return (
         <Grid
             container
@@ -134,8 +153,10 @@ export default function ForgotPassword() {
                                 onChange={handleEmailChange}
                                 sx={{ mb: 2 }}
                                 size="small"
+                                onKeyPress={handleKeyPress1}
                             />
-                            <Button variant="contained" color="primary" onClick={sendVerificationCode} sx={{ mb: 6 }}>
+                            <Button variant="contained" color="primary" onClick={sendVerificationCode} sx={{ mb: 6 }}
+                            >
                                 Send Verification Code
                             </Button>
                             <Button variant="contained" color="secondary" onClick={handleReturn} sx={{ mb: 6 }}>
@@ -151,6 +172,7 @@ export default function ForgotPassword() {
                                 onChange={handleVerificationCodeChange}
                                 sx={{ mb: 2 }}
                                 size="small"
+                                onKeyPress={handleKeyPress2}
                             />
                             <Button variant="contained" color="primary" onClick={submitVerificationCode} sx={{ mb: 6 }}>
                                 Submit Verification Code
@@ -172,6 +194,7 @@ export default function ForgotPassword() {
                                 type="password"
                                 value={confirmPassword}
                                 onChange={handleConfirmPasswordChange}
+                                onKeyPress={handleKeyPress3}
                                 sx={{ mb: 2 }}
                                 size="small"
                             />
