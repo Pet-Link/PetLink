@@ -29,6 +29,7 @@ const columnsForTopVets: GridColDef[] = [
   ];
   
 const rowsForTopVet = [
+    //use this field for assigning instances fetched from the backend
     { id: 1, name: 'Snow', speciality: 'Cats', yearsOfExperience: 14, countAppointments: 20 },
     { id: 2, name: 'Veteriner 3', speciality: 'Dogs', yearsOfExperience: 4, countAppointments: 9 },
   ];
@@ -39,6 +40,7 @@ const columnsForMostAdoptedPetsAdoptedByUser: GridColDef[] = [
     { field: 'countAdoption', headerName: 'Adoption Count', width: 150 },
 ];
 const rowsForMostAdoptedPetsAdoptedByUser = [
+    //use this field for assigning instances fetched from the backend
     { id: 2, nameUser: 'Ahmet', countAdoption: 5 },
     { id: 5, nameUser: 'Mehmet', countAdoption: 3 }
 ];
@@ -50,6 +52,7 @@ const columnsForMostAdoptedPetBreed: GridColDef[] = [
 ];
 
 const rowsForMostAdoptedPetBreed = [
+    //use this field for assigning instances fetched from the backend
     { id: 1, breed: 'Golden Retriever', countAdopted: 5 },
     { id: 2, breed: 'Poodle', countAdopted: 3 }
 ];
@@ -74,47 +77,19 @@ const Statistics = () => {
                     System Reports
                 </Typography>
             </Grid>
-            <Grid container spacing={4}> 
-                <Grid item xs={6}>
-                    <Typography variant="h6" gutterBottom>
-                        Top Vets
-                    </Typography>
-                    <Box sx={{ height: 400, width: '100%' }}>
-                        <DataGrid
-                            rows={rowsForTopVet}
-                            columns={columnsForTopVets}
-                            pageSizeOptions={[5]}
-                            checkboxSelection
-                            disableRowSelectionOnClick
-                        />
-                    </Box>
-                </Grid>
-                <Grid item xs={6}>
-                    <Typography variant="h6" gutterBottom>
-                        Adoption Fees Summary
-                    </Typography>
-                    <Paper variant="outlined" sx={{ padding: 2, mb: 2 }}>
-                        <Typography variant="subtitle1">
-                            Total adoption fees: ${totalAdoptionFees}
-                        </Typography>
-                    </Paper>
-                    <Paper variant="outlined" sx={{ padding: 2, mb: 2 }}>
-                        <Typography>
-                            Pet with the highest fee: 
-                            <Box component="span">
-                                {  highestFeePet.name}, {highestFeePet.shelter}, ${highestFeePet.fee}, {highestFeePet.status}
-                            </Box>
-                        </Typography>
-                    </Paper>
-                    <Paper variant="outlined" sx={{ padding: 2 }}>
-                        <Typography>
-                            Pet with the lowest fee: 
-                            <Box component="span" >
-                                {  lowestFeePet.name}, {lowestFeePet.shelter}, ${lowestFeePet.fee}, {lowestFeePet.status}
-                            </Box>
-                        </Typography>
-                    </Paper>
-                </Grid>
+            <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom>
+                    Top Vets
+                </Typography>
+                <Box sx={{ height: 400, width: '100%' }}>
+                    <DataGrid
+                        rows={rowsForTopVet}
+                        columns={columnsForTopVets}
+                        pageSizeOptions={[5]}
+                        checkboxSelection
+                        disableRowSelectionOnClick
+                    />
+                </Box>
             </Grid>
             <Typography variant="h6" gutterBottom>
                 Most Number of Pets Adopted by a User
@@ -138,7 +113,7 @@ const Statistics = () => {
             <Typography variant="h6" gutterBottom>
                 Most Adopted Pet Breed
             </Typography>
-            <Box sx={{ height: 400, width: '30%' }}>
+            <Box sx={{ height: 400, width: '30%', mb:5 }}>
             <DataGrid
                 rows={rowsForMostAdoptedPetBreed}
                 columns={columnsForMostAdoptedPetBreed}
@@ -154,6 +129,32 @@ const Statistics = () => {
                 disableRowSelectionOnClick
             />
             </Box>
+            <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom>
+                    Adoption Fees Summary
+                </Typography>
+                <Paper variant="outlined" sx={{ padding: 2, mb: 2 }}>
+                    <Typography variant="subtitle1">
+                        Total adoption fees: ${totalAdoptionFees}
+                    </Typography>
+                </Paper>
+                <Paper variant="outlined" sx={{ padding: 2, mb: 2 }}>
+                    <Typography>
+                        Pet with the highest fee: 
+                        <Box component="span">
+                            {  highestFeePet.name}, {highestFeePet.shelter}, ${highestFeePet.fee}, {highestFeePet.status}
+                        </Box>
+                    </Typography>
+                </Paper>
+                <Paper variant="outlined" sx={{ padding: 2 }}>
+                    <Typography>
+                        Pet with the lowest fee: 
+                        <Box component="span" >
+                            {  lowestFeePet.name}, {lowestFeePet.shelter}, ${lowestFeePet.fee}, {lowestFeePet.status}
+                        </Box>
+                    </Typography>
+                </Paper>
+            </Grid>
         </Grid>
     );
 };

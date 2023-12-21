@@ -15,8 +15,8 @@ import AdbIcon from '@mui/icons-material/Adb';
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import { useNavigate } from 'react-router';
 
-const pages = ['About Us', 'Adopt', 'Forum', 'Top-up', 'My Pets', 'Add a Pet'];
-const links = ["", "", "", "/adopter/payment", "", "/adopter/create-pet"]
+const pages = ['About Us', 'Adopt', 'Forum', 'Top-up', 'My Pets', 'Add a Pet', 'Vet Appointment', 'Pet Care Info'];
+const links = ["/about-us", "/adopter/adoption-application", "/forum", "/adopter/payment", "", "/adopter/create-pet", "/adopter/vet-appointments", "/adopter/pet-care-info"]
 const settings = ['Dashboard', 'Logout'];
 
 function ResponsiveAppBarAdopter() {
