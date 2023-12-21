@@ -19,6 +19,7 @@ from shelter import shelter
 from veterinarian import veterinarian
 from photo import photo
 from reply import reply
+from systemreport import systemreport
 
 CORS(db)
 
@@ -38,6 +39,7 @@ db.register_blueprint(photo)
 db.register_blueprint(meetandgreet)
 db.register_blueprint(administrator)
 db.register_blueprint(medicalrecord)
+db.register_blueprint(systemreport)
 
 # Initialize Flask app
 @db.route('/')
