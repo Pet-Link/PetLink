@@ -199,7 +199,7 @@ def get_all_appointments_for_veterinarian(veterinarian_ID):
 
         cursor.execute(
             """
-            SELECT a.*, u.name AS adopter_name, p.breed, p.species 
+            SELECT a.*, u.name AS adopter_name, p.breed AS pet_breed, p.species AS pet_species
             FROM Appointment a
             JOIN User u ON a.adopter_ID = u.user_ID
             JOIN Pet p ON a.pet_ID = p.pet_ID
