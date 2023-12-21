@@ -16,7 +16,7 @@ import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import { useNavigate } from 'react-router';
 
 const pages = ['About Us', 'Forum', 'Appointments', 'Log Medical Details'];
-const links = ["", "", "/veterinarian/see-appointments", "/veterinarian/log-medical-details"]
+const links = ["", "/forum-vet", "/veterinarian/see-appointments", "/veterinarian/log-medical-details"]
 const settings = ['Dashboard', 'Logout'];
 
 function ResponsiveAppBarVet() {

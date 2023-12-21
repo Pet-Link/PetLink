@@ -16,7 +16,7 @@ import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import { useNavigate } from 'react-router';
 
 const pages = ['About Us', 'Forum', 'Applications'];
-const links = ["", "", "/administrator/view-applications"]
+const links = ["", "/forum-administrator", "/administrator/view-applications"]
 const settings = ['Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {

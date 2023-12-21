@@ -134,23 +134,41 @@ const router = createBrowserRouter([
           }
         ]
     },
-    { path: '/forum',
+    { path: '/forum-adopter',
       element: (
-        <PermissionContainer roles='Adopter'>
+        <PermissionContainer roles=''>
+          <ResponsiveAppBarAdopter />
+          <Forum/>
           <Outlet />
           </PermissionContainer>
           ),
-        children: [
-          { path: 'home',
-            element: (
-              <PermissionContainer roles='Adopter'>
-                <ResponsiveAppBarAdopter />
-                <Forum />
-                <Outlet />
-                </PermissionContainer>
-                ),
-              },
-            ]
+    },
+    { path: '/forum-vet',
+      element: (
+        <PermissionContainer roles=''>
+          <ResponsiveAppBarVet />
+          <Forum/>
+          <Outlet />
+          </PermissionContainer>
+          ),
+    },
+    { path: '/forum-shelter',
+      element: (
+        <PermissionContainer roles=''>
+          <ResponsiveAppBarShelter />
+          <Forum/>
+          <Outlet />
+          </PermissionContainer>
+          ),
+    },
+    { path: '/forum-administrator',
+      element: (
+        <PermissionContainer roles=''>
+          <ResponsiveAppBar/>
+          <Forum/>
+          <Outlet />
+          </PermissionContainer>
+          ),
     },
 ]);
 
