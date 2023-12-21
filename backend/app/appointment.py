@@ -182,7 +182,14 @@ def get_all_appointments_for_veterinarian(veterinarian_ID):
         if not veterinarian:
             return Response(f"Veterinarian with ID {veterinarian_ID} not found", status=400, mimetype='application/json')
 
-        cursor.execute('SELECT * FROM Appointment WHERE veterinarian_ID = %s', (veterinarian_ID,))
+        cursor.execute(
+            """
+            SELECT a.*, u.name AS adopter_name, p.breed, p.species 
+            FROM Appointment a
+            JOIN User u ON a.adopter_ID = u.user_ID
+            JOIN Pet p ON a.pet_ID = p.pet_ID
+            WHERE a.veterinarian_ID = %s
+            """, (veterinarian_ID,))
         appointments = cursor.fetchall()
         # convert appointments to list of dictionaries with keys
         appointments = [dict(zip([key[0] for key in cursor.description], appointment)) for appointment in appointments]

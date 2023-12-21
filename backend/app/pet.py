@@ -123,7 +123,6 @@ def get_all_pets():
             # convert pets to dictionary with keys
             pets = [dict(zip([key[0] for key in cursor.description], pet)) for pet in pets]
             return jsonify(pets)
-        return Response(f'No pets exist', status=404)
     except Exception as e:
         print(e)
         return Response(f'Pets could not be fetched with exception {e}', status=500)
@@ -144,7 +143,6 @@ def get_all_unadopted_pets_with_shelter():
             # convert pets to dictionary with keys
             pets = [dict(zip([key[0] for key in cursor.description], pet)) for pet in pets]
             return jsonify(pets)
-        return Response(f'No pets exist', status=404)
     except Exception as e:
         print(e)
         return Response(f'Pets could not be fetched with exception {e}', status=500)

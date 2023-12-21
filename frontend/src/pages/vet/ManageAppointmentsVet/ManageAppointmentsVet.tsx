@@ -16,10 +16,6 @@ import {
 import appointmentModel from "../../../models/appointment";
 import { VeterinarianService } from '../../../services/veterinarianService';
 import toastr from 'toastr';
-import { PetService } from '../../../services/petService';
-import petModel from '../../../models/petModel';
-import { UserService } from '../../../services/userService';
-import userModel from '../../../models/userModel';
 import { useNavigate } from 'react-router';
 import HomeIcon from '@mui/icons-material/Home';
 import Dialog from '@mui/material/Dialog';
@@ -30,16 +26,11 @@ import TextField from '@mui/material/TextField';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { AppointmentService } from '../../../services/appointmentService';
-import { format } from 'date-fns';
 
 const ManageAppointmentsVet: React.FC = () => {
     const [rescheduleData, setRescheduleData] = useState({ open: false, appointment: null as appointmentModel | null });
     const navigate = useNavigate();
-    const [appointments, setAppointments] = useState<appointmentModel[]>([
-        // { adopter_ID: 1, veterinarian_ID: 1, date: new Date('2023-05-01'), approval_status: null, details: 'Appointment 1' },
-        // { adopter_ID: 2, veterinarian_ID: 1, date: new Date('2023-05-02'), approval_status: null, details: 'Appointment 2' },
-        // // Add more sample appointments as needed
-    ]);
+    const [appointments, setAppointments] = useState<appointmentModel[]>([]);
 
     // State for managing selected date and time
     const [selectedDateTime, setSelectedDateTime] = useState<Date | null>(null);
@@ -62,48 +53,21 @@ const ManageAppointmentsVet: React.FC = () => {
     };
 
     const fetchAppointments = async () => {
-        const user_ID = localStorage.getItem('user_ID');
-        if (user_ID != null) {
-            try {
-                const response = await VeterinarianService.getAllAppointmentsOfVeterinarian(user_ID);
-                const data = await response.json();
-                const updatedAppointments: appointmentModel[] = [];
-    
-                for (const appointment of data) {
-                    if (appointment.pet_ID != null && appointment.pet_ID !== undefined) {
-                        try {
-                            const petResponse = await PetService.getPetById(appointment.pet_ID.toString());
-                            const petData = await petResponse.json();
-                            appointment.pet_breed = petData.breed;
-                            appointment.pet_species = petData.species;
-                        } catch (error) {
-                            console.error('Error fetching pet:', error);
-                        }
-    
-                        try {
-                            const userResponse = await UserService.getUserById(appointment.adopter_ID.toString());
-                            const userData = await userResponse.json();
-                            appointment.adopter_name = userData.name;
-                        } catch (error) {
-                            console.error('Error fetching user:', error);
-                        }
-                    }
-    
-                    appointment.date = formatDateToMySQL(new Date(appointment.date));
-                    updatedAppointments.push(appointment);
-                }
-    
-                setAppointments(updatedAppointments);
-                toastr.success("Appointments fetched successfully!");
-            } catch (error) {
-                console.error('Error fetching appointments:', error);
-                toastr.error("Error fetching appointments!");
-            }
-        } else {
-            toastr.error("Please login first!");
+        
+        try {
+            const response = await VeterinarianService.getAllAppointmentsOfVeterinarian();
+            const data = await response.json();
+            setAppointments(data);
+        } catch (error) {
+            console.error('Error fetching appointments:', error);
+            toastr.error("Error fetching appointments!");
         }
+        
     };
-    
+
+    useEffect(() => {
+        fetchAppointments();
+    }, []);
 
     const handleConfirm = (adopter_ID: number) => {
         // get the veterinarian_ID from localStorage
@@ -123,13 +87,6 @@ const ManageAppointmentsVet: React.FC = () => {
                     toastr.error("Error confirming appointment!");
                 });
         }
-        const updatedAppointments = appointments.map(appointment => {
-             if (appointment.adopter_ID === adopter_ID) {
-                 return { ...appointment, approval_status: true };
-             }
-             return appointment;
-         });
-        setAppointments(updatedAppointments);
     };
 
     const handleReject = (adopter_ID: number) => {
@@ -150,14 +107,6 @@ const ManageAppointmentsVet: React.FC = () => {
                     toastr.error("Error rejecting appointment!");
                 });
         }
-
-        const updatedAppointments = appointments.map(appointment => {
-            if (appointment.adopter_ID === adopter_ID) {
-                return { ...appointment, approval_status: false };
-            }
-            return appointment;
-        });
-        setAppointments(updatedAppointments);
     };
 
     const handleDelete = (adopter_ID: number) => {
@@ -235,7 +184,7 @@ const ManageAppointmentsVet: React.FC = () => {
             </Dialog>
             <Grid container justifyContent="space-between" alignItems="center">
                 <Grid item>
-                    <Typography variant="h4" gutterBottom>
+                    <Typography variant="h4"  sx={{ padding: 2, mt: 5 }}gutterBottom>
                         Manage Appointments
                     </Typography>
                 </Grid>
@@ -245,9 +194,6 @@ const ManageAppointmentsVet: React.FC = () => {
                     </IconButton>
                 </Grid>
             </Grid>
-            <Button variant="contained" color="primary" onClick={fetchAppointments}>
-                Fetch Appointments
-            </Button>
             <Grid container justifyContent="center" spacing={2} style={{ marginTop: 20 }}>
                 <TableContainer component={Box}>
                     <Table>
