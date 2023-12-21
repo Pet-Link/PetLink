@@ -14,7 +14,6 @@ import {
     IconButton,
 } from '@mui/material';
 import appointmentModel from "../../../models/appointmentModel";
-import { VeterinarianService } from '../../../services/veterinarianService';
 import toastr from 'toastr';
 import { useNavigate } from 'react-router';
 import HomeIcon from '@mui/icons-material/Home';
@@ -55,7 +54,7 @@ const ManageAppointmentsVet: React.FC = () => {
     const fetchAppointments = async () => {
         
         try {
-            const response = await VeterinarianService.getAllAppointmentsOfVeterinarian();
+            const response = await AppointmentService.getAllAppointmentsOfVeterinarian();
             const data = await response.json();
             setAppointments(data);
         } catch (error) {
@@ -71,9 +70,9 @@ const ManageAppointmentsVet: React.FC = () => {
 
     const handleConfirm = (adopter_ID: number) => {
         // get the veterinarian_ID from localStorage
-        const veterinarian_ID = localStorage.getItem('user_ID');
+        const veterinarian_ID = parseInt(localStorage.getItem("user_ID") || "0");
         if (veterinarian_ID != null) {
-            VeterinarianService.approveAppointment(veterinarian_ID, adopter_ID.toString())
+            AppointmentService.approveAppointment(veterinarian_ID, adopter_ID)
                 .then(response => {
                     if (response.ok) {
                         toastr.success("Appointment confirmed successfully!");
@@ -91,9 +90,9 @@ const ManageAppointmentsVet: React.FC = () => {
 
     const handleReject = (adopter_ID: number) => {
         // get the veterinarian_ID from localStorage
-        const veterinarian_ID = localStorage.getItem('user_ID');
+        const veterinarian_ID = parseInt(localStorage.getItem("user_ID") || "0");
         if (veterinarian_ID != null) {
-            VeterinarianService.rejectAppointment(veterinarian_ID, adopter_ID.toString())
+            AppointmentService.rejectAppointment(veterinarian_ID, adopter_ID)
                 .then(response => {
                     if (response.ok) {
                         toastr.success("Appointment rejected successfully!");
@@ -111,9 +110,9 @@ const ManageAppointmentsVet: React.FC = () => {
 
     const handleDelete = (adopter_ID: number) => {
         // get the veterinarian_ID from localStorage
-        const veterinarian_ID = localStorage.getItem('user_ID');
+        const veterinarian_ID = parseInt(localStorage.getItem("user_ID") || "0");
         if (veterinarian_ID != null) {
-            VeterinarianService.deleteApointment(veterinarian_ID, adopter_ID.toString())
+            AppointmentService.deleteAppointment(veterinarian_ID, adopter_ID)
                 .then(response => {
                     if (response.ok) {
                         toastr.success("Appointment deleted successfully!");
