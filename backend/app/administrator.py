@@ -90,7 +90,7 @@ def get_administrator(user_ID):
     try:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute('SELECT * FROM Administrator WHERE user_ID = %s', (user_ID,))
+        cursor.execute('SELECT a.*, u.name FROM Administrator a JOIN User u WHERE user_ID = %s', (user_ID,))
         administrator = cursor.fetchone()
         if administrator:
             # convert the administrator to a dictionary with the keys

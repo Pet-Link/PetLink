@@ -1,5 +1,6 @@
 from flask import Blueprint, Response, request, jsonify
-from database import get_connection
+from database import get_connection, db
+from flask_cors import CORS
 
 pet = Blueprint('pet', __name__, url_prefix='/pet')
 
@@ -29,6 +30,7 @@ CREATE TABLE IF NOT EXISTS Pet(
 );
 '''
 
+CORS(db)
 
 # CRUD operations
 
@@ -253,6 +255,48 @@ def get_species_and_breeds():
     except Exception as e:
         print(e)
         return Response(f'Error fetching species and breeds with exception {e}', status=500)
+    
+# return the distinct species in the database - GET
+@pet.route('/species', methods=['GET'])
+def get_species():
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        # Get distinct species
+        cursor.execute('''
+            SELECT DISTINCT species
+            FROM Pet
+        ''')
+
+        species = cursor.fetchall()
+        
+        return jsonify(species)
+
+    except Exception as e:
+        print(e)
+        return Response(f'Error fetching species with exception {e}', status=500)
+    
+# return the distinct breeds in the database - GET
+@pet.route('/breeds', methods=['GET'])
+def get_breeds():
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        # Get distinct breeds
+        cursor.execute('''
+            SELECT DISTINCT breed
+            FROM Pet
+        ''')
+
+        breeds = cursor.fetchall()
+        
+        return jsonify(breeds)
+
+    except Exception as e:
+        print(e)
+        return Response(f'Error fetching breeds with exception {e}', status=500)
 
 
 # Update Pet - PUT
@@ -334,3 +378,73 @@ def get_pet_shelter(pet_ID):
     except Exception as e:
         print(e)
         return Response(f'Pet with pet_ID {pet_ID} could not be fetched with exception {e}', status=500)
+    
+@pet.route('/filter', methods=['PUT'])
+def filter_pets():
+    try:
+        data = request.get_json()
+
+        # Get filter parameters from the request
+        species = data['species']
+        breed = data['breed']
+        age = data['age']
+        vaccination_status = data['vaccination_status']
+        house_trained_status = data['house_trained_status']
+        sex = data['sex']
+        neutered_status = data['neutered_status']
+
+        # Start building the query
+        query = "SELECT * FROM Pet WHERE 1=1"
+        params = []
+
+        # Append to the query and parameters if filters exist
+        # check if species is not an empty string
+        if species:
+            query += " AND species = %s"
+            params.append(species)
+        if breed:
+            query += " AND breed = %s"
+            params.append(breed)
+        if age:
+            query += " AND age = %s"
+            params.append(age)
+        if vaccination_status:
+            query += " AND vaccination_status = %s"
+            params.append(vaccination_status)
+        if house_trained_status:
+            query += " AND house_trained_status = %s"
+            params.append(house_trained_status)
+        if sex:
+            query += " AND sex = %s"
+            params.append(sex)
+        if neutered_status:
+            query += " AND neutered_status = %s"
+            params.append(neutered_status)
+
+        # Connect to the database and execute the query
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute(query, params)
+        pets = cursor.fetchall()
+
+        result=[]
+        pets=[dict(zip([key[0] for key in cursor.description], pet)) for pet in pets]
+        for pet in pets:
+            cursor.execute("""
+                        SELECT *
+                        FROM Pet_Shelter_Details_View
+                        WHERE pet_ID = %s
+                        """, (pet['pet_ID'],))
+            pet = cursor.fetchone()
+            result.append(pet)
+        
+        if result is None:
+            return Response(f'No pets found with the given filters', status=404)
+
+        # Convert pets to a list of dictionaries to return as JSON
+        pets_list = [dict(zip([key[0] for key in cursor.description], pet)) for pet in result]
+        return jsonify(pets_list)
+
+    except Exception as e:
+        print(e)
+        return Response(f'Error filtering pets with exception {e}', status=500)

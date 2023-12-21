@@ -37,27 +37,88 @@ const HomeAdopter = () => {
     const [filteredPetData, setFilteredPetData] = useState<petModel[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
 
-
-
     const handleOpen = () => {
         setOpen(true);
     };
 
     const handleClose = () => {
+        setBreed('');
+        setSpecies('');
+        setAge('');
+        setSex('');
+        setVaccinationStatus('');
+        setNeuterStatus('');
+        setHouseTrainedStatus('');
         setOpen(false);
+    }
+
+    const handleApplyFilter = () => {
+        console.log("Breed: " + breed);
+        console.log("Species: " + species);
+        console.log("Age: " + age);
+        console.log("vac: " + vaccinationStatus);
+        console.log("neut: " + neuterStatus);
+        console.log("house: " + houseTrainedStatus);
+        console.log("sex: " + sex);
+        var tBreed = breed;
+        if (breed !== '') {
+            tBreed = (breed[0]);
+        }
+        var tSpecies = species;
+        if (species !== '') {
+            tSpecies = (species[0]);
+        }
+        // Filter the data
+        PetService.filterPets(tBreed, tSpecies, age, vaccinationStatus, neuterStatus, houseTrainedStatus, sex).then((response) => {
+            if (response.ok) {
+                response.json().then((data) => {
+                    console.log(data);
+                    setFilteredPetData(data);
+                });
+            }
+        }
+        );
+        handleClose();
     };
 
     const [breed, setBreed] = React.useState('');
     const [species, setSpecies] = React.useState('');
     const [age, setAge] = React.useState('');
+    const [sex, setSex] = React.useState('');
+    const [vaccinationStatus, setVaccinationStatus] = React.useState('');
+    const [neuterStatus, setNeuterStatus] = React.useState('');
+    const [houseTrainedStatus, setHouseTrainedStatus] = React.useState('');
 
-    const handleChange = (event: SelectChangeEvent) => {
+    const [breeds, setBreeds] = React.useState([]);
+    const [specieses, setSpecieses] = React.useState([]);
+
+    const handleBreedChange = (event: SelectChangeEvent) => {
         setBreed(event.target.value as string);
-        setSpecies(event.target.value as string);
-        setAge(event.target.value as string);
     };
 
-    type AnimalType = 'dog' | 'cat';
+    const handleSpeciesChange = (event: SelectChangeEvent) => {
+        setSpecies(event.target.value as string);
+    }
+
+    const handleAgeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setAge(event.target.value);
+    }
+
+    const handleSexChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSex(event.target.value);
+    }
+
+    const handleVaccinationStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setVaccinationStatus(event.target.value);
+    }
+
+    const handleNeuterStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setNeuterStatus(event.target.value);
+    }
+
+    const handleHouseTrainedStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setHouseTrainedStatus(event.target.value);
+    }
 
     const fetchPets = async () => {
         try {
@@ -66,6 +127,7 @@ const HomeAdopter = () => {
                 throw new Error('Network response was not ok.');
             }
             const data: petModel[] = await response.json();
+            console.log(data);
             setPetData(data);
             setFilteredPetData(data); // Set the filtered data as well
         } catch (error) {
@@ -74,11 +136,35 @@ const HomeAdopter = () => {
         }
     };
 
+    const populateBreedDropdown = async () => {
+        await PetService.getBreeds().then((response) => {
+            if (response.ok) {
+                response.json().then((data) => {
+                    setBreeds(data);
+                });
+            }
+        }
+        );
+    }
+
+    const populateSpeciesDropdown = async  () => {
+        await PetService.getSpecies().then((response) => {
+            if (response.ok) {
+                response.json().then((data) => {
+                    setSpecieses(data);
+                });
+            }
+        }
+        );
+    }
+
     // useEffect(() => {
     //     const fetchData = async () => {
     //         await fetchPets();
     //     };
     //     fetchData();
+    //     populateBreedDropdown();
+    //     populateSpeciesDropdown();
     // }, []);
 
     const handleDetails = (pet_ID: number) => {
@@ -87,11 +173,9 @@ const HomeAdopter = () => {
 
     const handleFetch = async () => {
         await fetchPets();
+        await populateBreedDropdown();
+        await populateSpeciesDropdown();
     }
-    
-    const filterAnimalsByType = (type: AnimalType) => {
-        return petData.filter((animal) => animal.species === type);
-    };
 
     const handleSearch = () => {
         const query = searchQuery.toLowerCase();
@@ -105,12 +189,7 @@ const HomeAdopter = () => {
         }
         );
         setFilteredPetData(filteredData);
-    };
-    
-
-    const filterPetsByName = () => {
-        return petData.filter(pet => pet.name.toLowerCase().includes(searchQuery.toLowerCase()));
-    };    
+    };  
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(event.target.value);
@@ -198,12 +277,11 @@ const HomeAdopter = () => {
                                     id="demo-simple-select"
                                     value={breed}
                                     label="Breed"
-                                    onChange={handleChange}
+                                    onChange={handleBreedChange}
                                 >
-                                    {/* TODO
-                                    breedleri çek menü item olarak göster*/}
-                                    <MenuItem value={10}>Husky</MenuItem>
-                                    <MenuItem value={20}>Kangal</MenuItem>
+                                    {breeds.map((breedItem) => (
+                                        <MenuItem key={breedItem} value={breedItem}>{breedItem}</MenuItem>
+                                    ))}
                                 </Select>
                             </FormControl>
                         </Box>
@@ -217,47 +295,32 @@ const HomeAdopter = () => {
                                     id="demo-simple-select"
                                     value={species}
                                     label="Species"
-                                    onChange={handleChange}
+                                    onChange={handleSpeciesChange}
                                 >
-                                    {/* TODO
-                                    speciesleri çek menü item olarak göster*/}
-                                    <MenuItem value={10}>Cat</MenuItem>
-                                    <MenuItem value={20}>Dog</MenuItem>
+                                    {specieses.map((speciesItem) => (
+                                        <MenuItem key={speciesItem} value={speciesItem}>{speciesItem}</MenuItem>
+                                    ))}
                                 </Select>
                             </FormControl>
                         </Box>
 
-                        {/* Age Dropdown */}
-                        <Box sx={{ minWidth: 120 }}>
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Age</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={age}
-                                    label="Age"
-                                    onChange={handleChange}
-                                >
-                                    {/* TODO
-                                    speciesleri çek menü item olarak göster*/}
-                                    <MenuItem value={10}>1</MenuItem>
-                                    <MenuItem value={20}>2</MenuItem>
-                                    <MenuItem value={10}>3</MenuItem>
-                                    <MenuItem value={20}>4</MenuItem>
-                                    <MenuItem value={10}>5</MenuItem>
-                                    <MenuItem value={20}>6</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
-
+                        {/* Age Input Field */}
+                        <TextField
+                            id="age-input"
+                            label="Age"
+                            value={age}
+                            onChange={handleAgeChange}
+                            fullWidth
+                        />
 
                         {/* Sex TextField */}
                         <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
                             <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
-                                defaultValue="female"
                                 name="radio-buttons-group"
+                                value={sex}
+                                onChange={handleSexChange}
                             >
                                 <FormControlLabel value="female"  control={<Radio style={{ color: '#FF0000' }} />} label="Female" />
                                 <FormControlLabel value="male" control={<Radio style={{ color: '#FF0000' }} />} label="Male" />
@@ -266,27 +329,31 @@ const HomeAdopter = () => {
 
                         {/* Medical History TextField */}
                         <FormControl>
-                            <FormLabel id="demo-radio-buttons-group-label">Medical History</FormLabel>
+                            <FormLabel id="demo-radio-buttons-group-label">Vaccination Status</FormLabel>
                             <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 defaultValue="female"
                                 name="radio-buttons-group"
+                                value={vaccinationStatus}
+                                onChange={handleVaccinationStatusChange}
                             >
-                                <FormControlLabel value="all-vacc" control={<Radio style={{ color: '#FF0000' }} />} label="All vaccinations up to date" />
-                                <FormControlLabel value="spayed-neutered" control={<Radio style={{ color: '#FF0000' }} />} label="All vaccinations not up to date" />
+                                <FormControlLabel value="1" control={<Radio style={{ color: '#FF0000' }} />} label="All vaccinations up to date" />
+                                <FormControlLabel value="0" control={<Radio style={{ color: '#FF0000' }} />} label="All vaccinations not up to date" />
                             </RadioGroup>
                         </FormControl>
 
-                        {/* Medical History TextField */}
+                        {/* Neutured TextField */}
                         <FormControl>
-                            <FormLabel id="demo-radio-buttons-group-label">Medical History</FormLabel>
+                            <FormLabel id="demo-radio-buttons-group-label">Neuter Status</FormLabel>
                             <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 defaultValue="female"
                                 name="radio-buttons-group"
+                                value={neuterStatus}
+                                onChange={handleNeuterStatusChange}
                             >
-                                <FormControlLabel value="spayed-neutered" control={<Radio style={{ color: '#FF0000' }} />} label="Spayed/Neutered" />
-                                <FormControlLabel value="all-vacc" control={<Radio style={{ color: '#FF0000' }} />} label="Not spayed/neutered" />
+                                <FormControlLabel value="1" control={<Radio style={{ color: '#FF0000' }} />} label="Spayed/Neutered" />
+                                <FormControlLabel value="0" control={<Radio style={{ color: '#FF0000' }} />} label="Not spayed/neutered" />
                             </RadioGroup>
                         </FormControl>
 
@@ -297,21 +364,23 @@ const HomeAdopter = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 defaultValue="female"
                                 name="radio-buttons-group"
+                                value={houseTrainedStatus}
+                                onChange={handleHouseTrainedStatusChange}
                             >
-                                <FormControlLabel value="all-vacc" control={<Radio style={{ color: '#FF0000' }} />} label="House trained" />
-                                <FormControlLabel value="spayed-neutered" control={<Radio style={{ color: '#FF0000' }} />} label="Not house trained" />
+                                <FormControlLabel value="1" control={<Radio style={{ color: '#FF0000' }} />} label="House trained" />
+                                <FormControlLabel value="0" control={<Radio style={{ color: '#FF0000' }} />} label="Not house trained" />
                             </RadioGroup>
                         </FormControl>
 
                         {/* Apply Button */}
-                        <Button variant="contained" onClick={handleClose} fullWidth sx={{ backgroundColor: '#FF0000', color: 'white' }}>
+                        <Button variant="contained" onClick={handleApplyFilter} fullWidth sx={{ backgroundColor: '#FF0000', color: 'white' }}>
                             Apply Filters
                         </Button>
                     </Box>
                 </Modal>
                 <Grid item xs={12} sm={6}>
                     <TextField 
-                        label="Search animals..." 
+                        label="Search Animals by Shelter Name or Pet Name..." 
                         variant="outlined" 
                         fullWidth 
                         value={searchQuery}

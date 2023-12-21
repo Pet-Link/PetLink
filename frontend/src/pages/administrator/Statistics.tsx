@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography, Grid, Box, Paper } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { TopVeterinarianModel, AdoptionFeesSummaryModel, TopAdopterModel, TopAdoptedBreedModel }  from '../../models/systemReportModels';
 
 const columnsForTopVets: GridColDef[] = [
     { field: 'id', headerName: 'ID Vet', width: 90 },

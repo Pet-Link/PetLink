@@ -33,7 +33,7 @@ def create_petcareinfo():
         if not administrator:
             return Response(f'Administrator with user ID {administrator_ID} does not exist', status=409)
 
-        cursor.execute('INSERT INTO PetCareInfo VALUES (%s, %s, %s)', (content, title, administrator_ID))
+        cursor.execute('INSERT INTO PetCareInfo(content, title, administrator_ID) VALUES (%s, %s, %s)', (content, title, administrator_ID))
         connection.commit()
         return Response(f'Pet care info created!', status=201)
     except Exception as e:
@@ -97,7 +97,7 @@ def get_all_petcareinfo():
     try:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute('SELECT * FROM PetCareInfo')
+        cursor.execute('SELECT p.*, u.name AS administrator_name FROM PetCareInfo p JOIN User u ON p.administrator_ID = u.user_ID')
         petcareinfo = cursor.fetchall()
         if not petcareinfo:
             return Response(f'No pet care info exists', status=404)

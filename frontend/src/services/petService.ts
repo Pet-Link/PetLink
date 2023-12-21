@@ -38,4 +38,29 @@ export class PetService {
   static getPetShelterDetails() {
     return fetch(`${PetService.baseUrl}/all-unadopted-shelter-names`);
   }
+
+  static getSpecies() {
+    return fetch(`${PetService.baseUrl}/species`);
+  }
+
+  static getBreeds() {
+    return fetch(`${PetService.baseUrl}/breeds`);
+  }
+
+  static filterPets(breed: string, species: string, age: string, vaccination_status: string, neutered_status: string, house_trained_status: string, sex: string) {
+    var temp = {
+      breed: breed,
+      species: species,
+      age: age,
+      vaccination_status: vaccination_status,
+      neutered_status: neutered_status,
+      house_trained_status: house_trained_status,
+      sex: sex
+    }
+    return fetch(`${PetService.baseUrl}/filter`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(temp),
+    });
+  }
 }
