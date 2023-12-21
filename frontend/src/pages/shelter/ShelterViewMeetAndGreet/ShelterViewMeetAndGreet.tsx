@@ -8,9 +8,9 @@ import {
     CardHeader,
     Button,
 } from '@mui/material';
-import meetGreetModel from '../../../models/meetGreet';
+import meetGreetModel from '../../../models/meetGreetModel';
 
-const MeetGreetPage: React.FC = () => {
+const ShelterViewMeetAndGreet: React.FC = () => {
     const [meetGreets, setMeetGreets] = useState<meetGreetModel[]>([
         //mockups
         //{adopter_ID: 1, pet_ID: 101, date: '2023-07-10'},
@@ -61,4 +61,4 @@ const MeetGreetPage: React.FC = () => {
     );
 };
 
-export default MeetGreetPage;
+export default ShelterViewMeetAndGreet;

@@ -145,8 +145,7 @@ function ResponsiveAppBarShelter() {
                         color = "secondary"  // Change the color to red
                         sx={{ marginRight: 2, textTransform: 'none' }}
                         onClick={() => {
-                            // Handle click action
-                            // You can add your logic here
+                            navigate("meet-and-greets")
                         }}
                     >
                         See My Meet&Greets

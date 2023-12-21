@@ -129,8 +129,24 @@ def get_all_meetandgreets_by_adopter(adopter_ID):
     try:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute('SELECT * FROM Meet_Greet WHERE adopter_ID = %s', (adopter_ID,))
+        
+         # Check if the adopter exists
+        cursor.execute('SELECT * FROM Adopter WHERE user_ID = %s', (adopter_ID,))
+        adopter = cursor.fetchone()
+
+        if not adopter:
+            return Response(f'Adopter with user ID {adopter_ID} does not exist', status=409)
+        
+        cursor.execute("""
+                       SELECT m.*, p.name AS pet_name, u.name AS shelter_name 
+                       FROM Meet_Greet m 
+                       JOIN Pet p 
+                       JOIN User u ON u.user_ID = p.shelter_ID 
+                       WHERE m.adopter_ID = %s
+                       ORDER BY m.date DESC
+                       """, (adopter_ID,))
         meetandgreets = cursor.fetchall()
+        
         # convert meetandgreets to list of dictionaries with keys
         meetandgreets = [dict(zip([key[0] for key in cursor.description], meetandgreet)) for meetandgreet in meetandgreets]
         return jsonify(meetandgreets)
