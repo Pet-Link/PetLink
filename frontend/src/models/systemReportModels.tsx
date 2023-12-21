@@ -9,9 +9,11 @@ export type TopVeterinarianModel = {
 export type AdoptionFeesSummaryModel = {
     max_fee_pet_name: string;
     max_fee_shelter_name: string;
+    max_fee_adoption_status: number;
     max_fee: number;
     min_fee_pet_name: string;
     min_fee_shelter_name: string;
+    min_fee_adoption_status: number;
     min_fee: number;
     total_adoption_fee: number;
 };
