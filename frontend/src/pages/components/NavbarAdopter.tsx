@@ -16,7 +16,7 @@ import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import { useNavigate } from 'react-router';
 
 const pages = ['About Us', 'Adopt', 'Forum', 'Top-up', 'My Pets', 'Add a Pet', 'Vet Appointment', 'Pet Care Info'];
-const links = ["/about-us", "/adopter/adoption-application", "/adopter/forum", "/adopter/payment", "", "/adopter/create-pet", "/adopter/vet-appointments", "/adopter/pet-care-info"]
+const links = ["/about-us", "/adopter/adoption-application", "/forum/home", "/adopter/payment", "", "/adopter/create-pet", "/adopter/vet-appointments", "/adopter/pet-care-info"]
 const settings = ['Dashboard', 'Logout'];
 
 function ResponsiveAppBarAdopter() {

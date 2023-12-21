@@ -12,7 +12,7 @@ def create_post():
     title = data['title']
     content = data['content']
     post_date = datetime.datetime.now()
-    poster_id = data['poster_id']
+    poster_id = data['poster_ID']
     
     connection = get_connection()
     cursor = connection.cursor()
@@ -41,6 +41,7 @@ def get_post(post_id):
     if post is None:
         response = Response('Post does not exist!', status=400, mimetype='application/json')
         return response
+    
     # convert post into dictionary with keys
     post = dict(zip([key[0] for key in cursor.description], post))
     response = jsonify(post)
@@ -128,4 +129,37 @@ def delete_all_replies(post_id):
     connection.commit()
 
     response = Response('All replies of the post deleted successfully!', status=200, mimetype='application/json')
+    return response
+
+# Get All posts with poster name - GET
+@post.route('/all/with-name', methods=['GET'])
+def get_all_posts_with_name():
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT * from PostWithPosterName')
+    posts = cursor.fetchall()
+    # convert posts into dictionary with keys
+    posts = [dict(zip([key[0] for key in cursor.description], post)) for post in posts]
+    response = jsonify(posts)
+    response.status_code = 200
+    response.mimetype = 'application/json'
+    return response
+
+# Get A post with poster name - GET
+@post.route('/<int:post_id>/with-name', methods=['GET'])
+def get_post_with_name(post_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT * from PostWithPosterName WHERE post_ID = %s', (post_id,))
+    post = cursor.fetchone()
+
+    if post is None:
+        response = Response('Post does not exist!', status=400, mimetype='application/json')
+        return response
+    
+    # convert post into dictionary with keys
+    post = dict(zip([key[0] for key in cursor.description], post))
+    response = jsonify(post)
+    response.status_code = 200
+    response.mimetype = 'application/json'
     return response

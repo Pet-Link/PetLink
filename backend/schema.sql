@@ -337,3 +337,14 @@ DELIMITER ;
 ALTER TABLE Adopter
 ADD CONSTRAINT check_balance_non_negative_or_null
 CHECK (balance >= 0 OR balance IS NULL);
+
+CREATE VIEW PostWithPosterName AS
+SELECT 
+    Post.post_ID as post_ID,
+    Post.title as title,
+    Post.content as content,
+    Post.post_date as post_date,
+    User.user_ID AS poster_ID,
+    User.name AS poster_name
+FROM Post
+JOIN User ON Post.poster_ID = User.user_ID;

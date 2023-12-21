@@ -21,30 +21,13 @@ import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
 import { ArrowUpward, ChatBubbleOutline, Share } from '@mui/icons-material';
 import TextField from "@mui/material/TextField";
+import postModel from '../../models/postModel';
+import { forumService } from '../../services/forumService';
+import toastr from 'toastr';
 
 const Forum = () => {
     // Mock data for posts
-    const [posts, setPosts] = useState([
-        {
-            id: 1,
-            user: 'Kardelen Ceren',
-            timeAgo: '23 hours ago',
-            title: 'Seeking Advice on Choosing the Perfect Furry Companion',
-            content: 'I\'ve been pondering the idea of adopting a pet lately, and the multitude of adorable faces on PetLink is making it a tough decision. Could use some guidance from those who\'ve been through the adoption process. How did you decide on the right furry friend for your family? Did you have specific criteria or a checklist while browsing profiles?...',
-            comments: 17,
-            upvotes: 42,
-        },
-        {
-            id: 2,
-            user: 'Alperen Yılmazyıldız',
-            timeAgo: '6 hours ago',
-            title: 'Pet Healthcare Real Talk: Navigating the Ups and Downs',
-            content: 'I\'m not gonna lie; this whole pet healthcare thing has me feeling like I\'m on the struggle bus. From figuring out what\'s in their food to...',
-            category: 'Medical',
-            comments: 149,
-            upvotes: 96,
-        },
-    ]);
+    const [posts, setPosts] = useState<postModel[]>([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [newPost, setNewPost] = useState({ title: '', content: '' });
 
@@ -55,26 +38,58 @@ const Forum = () => {
     const handleDialogClose = () => {
         setOpenDialog(false);
     };
-
     const handleCreatePost = () => {
-        // TODO: Handle creating a new post (e.g., send data to the backend)
-        // For now, just add a new post to the state
-        setPosts((prevPosts) => [
-            ...prevPosts,
-            {
-                id: prevPosts.length + 1,
-                user: 'CurrentUser', // TODO: Replace with actual user information
-                timeAgo: 'just now',
-                title: newPost.title,
-                content: newPost.content,
-                comments: 0,
-                upvotes: 0,
-            },
-        ]);
-        // Close the dialog and clear the input fields
-        setOpenDialog(false);
-        setNewPost({ title: '', content: '' });
+        // Create a new post object
+        const newPostObject: postModel = {
+            title: newPost.title,
+            content: newPost.content,
+            post_date: '',
+            poster_ID: (parseInt(localStorage.getItem('user_ID') || '0')).toString(),
+            post_ID: "0",
+        };
+        if (parseInt(localStorage.getItem('user_ID') || '0') === 0) {
+            toastr.error("You must be logged in to create a post!");
+            return;
+        }
+        // Send the post object to the backend
+        forumService.createPost(newPostObject).then((response) => {
+            if (response.ok) {
+                toastr.success('Post created successfully!');
+                // If the post was created successfully, fetch the posts again
+                forumService.getAllPosts().then((response) => {     
+
+                    if (response.ok) {
+                    response.json().then((data) => {
+                        setPosts(data);
+                    });
+
+                    setOpenDialog(false);
+                    setNewPost({ title: '', content: '' });
+                    }
+                });
+            } else {
+                response.text().then((data) => {
+                    toastr.error("Post creation failed with error: " + data);
+                });
+            }
+        }).catch(error => {
+            // Handle any errors that occur during the post creation
+            toastr.error("An error occurred while creating the post: " + error.message);
+        });
     };
+    
+
+    const handleFetch = () => {
+        forumService.getAllPosts().then((response) => {
+            if (response.ok) {
+                response.json().then((data) => {
+                    setPosts(data);
+                });
+            }
+        }
+        );
+    }
+
     return (
         <div>
             <CssBaseline />
@@ -88,18 +103,16 @@ const Forum = () => {
 
                 <main>
                     {posts.map((post) => (
-                        <Card key={post.id} sx={{ mb: 2 }}>
+                        <Card key={post.post_ID} sx={{ mb: 2 }}>
                             <CardContent>
                                 <Typography variant="h6">{post.title}</Typography>
                                 <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                                    Posted by {post.user} {post.timeAgo}
+                                    Posted by {post.poster_name} {post.post_date}
                                 </Typography>
                                 <Typography paragraph>{post.content}</Typography>
                             </CardContent>
                             <Divider />
                             <CardActions>
-                                <Button startIcon={<ArrowUpward />} size="small">{post.upvotes}</Button>
-                                <Button startIcon={<ChatBubbleOutline />} size="small">{post.comments}</Button>
                                 <Button startIcon={<Share />} size="small">Share</Button>
                             </CardActions>
                         </Card>
@@ -109,6 +122,9 @@ const Forum = () => {
             <div style={{ position: 'fixed', bottom: 20, right: 20 }}>
                 <Button variant="contained" color="secondary" onClick={handleDialogOpen}>
                     Create Post
+                </Button>
+                <Button variant="contained" color="secondary" onClick={handleFetch}>
+                    Fetch Forum
                 </Button>
             </div>
             <Dialog open={openDialog} onClose={handleDialogClose}>
