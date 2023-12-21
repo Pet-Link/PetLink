@@ -1,5 +1,5 @@
 import { environment } from '../environment';
-import appointmentModel from '../models/appointment';
+import appointmentModel from '../models/appointmentModel';
 
 export class AppointmentService {
     private static baseUrl: string = environment.apiUrl;

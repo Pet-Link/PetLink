@@ -13,7 +13,7 @@ import {
     TableBody,
     IconButton,
 } from '@mui/material';
-import appointmentModel from "../../../models/appointment";
+import appointmentModel from "../../../models/appointmentModel";
 import { VeterinarianService } from '../../../services/veterinarianService';
 import toastr from 'toastr';
 import { useNavigate } from 'react-router';
