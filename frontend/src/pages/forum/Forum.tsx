@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     AppBar,
     Container,
@@ -56,17 +56,20 @@ const Forum = () => {
             if (response.ok) {
                 toastr.success('Post created successfully!');
                 // If the post was created successfully, fetch the posts again
-                forumService.getAllPosts().then((response) => {     
+                // forumService.getAllPosts().then((response) => {     
 
-                    if (response.ok) {
-                    response.json().then((data) => {
-                        setPosts(data);
-                    });
+                //     if (response.ok) {
+                //     response.json().then((data) => {
+                //         setPosts(data);
+                //     });
 
-                    setOpenDialog(false);
-                    setNewPost({ title: '', content: '' });
-                    }
-                });
+                //     
+                //     
+                //     }
+                // });
+                setPosts((prev) => [...prev, newPostObject]);
+                setOpenDialog(false);
+                setNewPost({ title: '', content: '' });
             } else {
                 response.text().then((data) => {
                     toastr.error("Post creation failed with error: " + data);
@@ -77,6 +80,11 @@ const Forum = () => {
             toastr.error("An error occurred while creating the post: " + error.message);
         });
     };
+
+    useEffect(() => {
+        handleFetch();
+    }
+    , []);
     
 
     const handleFetch = () => {
@@ -123,9 +131,9 @@ const Forum = () => {
                 <Button variant="contained" color="secondary" onClick={handleDialogOpen}>
                     Create Post
                 </Button>
-                <Button variant="contained" color="secondary" onClick={handleFetch}>
+                {/* <Button variant="contained" color="secondary" onClick={handleFetch}>
                     Fetch Forum
-                </Button>
+                </Button> */}
             </div>
             <Dialog open={openDialog} onClose={handleDialogClose}>
                 <DialogTitle>Create a New Post</DialogTitle>
