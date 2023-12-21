@@ -1,3 +1,4 @@
+import pytz
 from flask import Blueprint, Response, request, jsonify
 from database import get_connection
 import datetime
@@ -35,7 +36,7 @@ def create_reply():
         discriminator_ID = uuid.uuid4().int 
         # trunkate the discriminator_ID to fall into range ot int of mysql
         discriminator_ID = discriminator_ID % 2147483647
-        date = datetime.datetime.now()
+        date = datetime.datetime.now(pytz.timezone('Europe/Istanbul'))
         expert_verify_status = False
         content = data['content']
         replier_ID = data['replier_ID']

@@ -5,3 +5,4 @@ mysql-connector-python
 flask_mysqldb
 Werkzeug==2.2.2
 flask-bcrypt
+pytz==2023.3

@@ -40,7 +40,7 @@ const LogMedicalRecord: React.FC = () => {
         record_ID: 0,
         pet_ID: 0,
         veterinarian_ID: 0,
-        date: formatDateToMySQL(new Date()),
+        date: formatDateToMySQL((new Date)),
         operation: '',
         pet_name: '', // pet name can be added to the table
     });
@@ -79,7 +79,7 @@ const LogMedicalRecord: React.FC = () => {
         if (vet_id != null) {
             medicalRecord.veterinarian_ID = parseInt(vet_id);
         }
-        medicalRecord.date = formatDateToMySQL(new Date());
+        medicalRecord.date = new Date().toLocaleString('en-US', { timeZone: 'Europe/Istanbul' });
 
         VeterinarianService.createMedicalRecord(medicalRecord).then((response) => {
             if (response.ok) {

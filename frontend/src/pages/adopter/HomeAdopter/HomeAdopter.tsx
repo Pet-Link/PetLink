@@ -53,13 +53,6 @@ const HomeAdopter = () => {
     }
 
     const handleApplyFilter = () => {
-        console.log("Breed: " + breed);
-        console.log("Species: " + species);
-        console.log("Age: " + age);
-        console.log("vac: " + vaccinationStatus);
-        console.log("neut: " + neuterStatus);
-        console.log("house: " + houseTrainedStatus);
-        console.log("sex: " + sex);
         var tBreed = breed;
         if (breed !== '') {
             tBreed = (breed[0]);
@@ -69,7 +62,7 @@ const HomeAdopter = () => {
             tSpecies = (species[0]);
         }
         // Filter the data
-        PetService.filterPets(tBreed, tSpecies, age, vaccinationStatus, neuterStatus, houseTrainedStatus, sex).then((response) => {
+        PetService.filterPets("0", tBreed, tSpecies, age, vaccinationStatus, neuterStatus, houseTrainedStatus, sex).then((response) => {
             if (response.ok) {
                 response.json().then((data) => {
                     console.log(data);
@@ -177,6 +170,11 @@ const HomeAdopter = () => {
         await populateSpeciesDropdown();
     }
 
+    useEffect(() => {
+        handleFetch();
+    }
+    , []);
+
     const handleSearch = () => {
         const query = searchQuery.toLowerCase();
         const filteredData = petData.filter(pet => {            
@@ -249,15 +247,15 @@ const HomeAdopter = () => {
                 >
                     Filter <FilterAltIcon />
                 </Button>
-                <Button
+                {/* <Button
                     onClick={handleFetch}
                     style={{
-                        backgroundColor: 'grey',
+                        backgroundColor: 'green',
                         color: 'white', // Optionally set the text color
                     }}
                 >
-                    Fetch <FilterAltIcon />
-                </Button>
+                    Fetch
+                </Button> */}
                 <Modal sx={{borderRadius: 100}}
                     open={open}
                     onClose={handleClose}

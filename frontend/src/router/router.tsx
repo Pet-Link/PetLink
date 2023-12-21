@@ -30,6 +30,7 @@ import Statistics from '../pages/administrator/Statistics';
 import Forum from '../pages/forum/Forum';
 import PetCareInfo from '../pages/petcare/PetCareInfo';
 import VetAppointments from '../pages/adopter/VetApointments';
+import PetListings from '../pages/administrator/petListings';
 
 const Router: React.FC = () => {
     return <RouterProvider router={router}/>;
@@ -59,7 +60,8 @@ const router = createBrowserRouter([
         { path: 'view-applications', element: <ViewApplications />},
         { path: 'see-application-detail', element: <SeeAdoptionApplicationPage /> },
         { path: 'edit-pet-details', element: <EditPetDetailsPage /> },
-        { path: 'statistics', element: <Statistics />}
+        { path: 'statistics', element: <Statistics />},
+        { path: 'pet-listings', element: <PetListings />},
         // add routes here
       ],
     },
@@ -108,6 +110,7 @@ const router = createBrowserRouter([
           element: <EnterAnimalDetailsPage />,
         },
         { path: 'meet-and-greets', element: <ShelterViewMeetAndGreet />},
+        { path: 'edit-pet-details', element: <EditPetDetailsPage />},
       ]
     },
     { path: '/veterinarian',
