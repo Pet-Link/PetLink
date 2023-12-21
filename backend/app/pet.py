@@ -116,6 +116,27 @@ def get_pet(pet_ID):
     except Exception as e:
         print(e)
         return Response(f'Pet with pet_ID {pet_ID} could not be fetched with exception {e}', status=500)
+    
+# Get Pet with the pet ID - GET
+@pet.route('/adopter-pet/<int:pet_ID>', methods=['GET'])
+def get_pet_adopter(pet_ID):
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute("""
+                       SELECT *
+                       FROM Pet
+                       WHERE pet_ID = %s
+                       """, (pet_ID,))
+        pet = cursor.fetchone()
+        if pet:
+            # convert pet to dictionary with keys
+            pet = dict(zip([key[0] for key in cursor.description], pet))
+            return jsonify(pet)
+        return Response(f'Pet with pet_ID {pet_ID} does not exist', status=404)
+    except Exception as e:
+        print(e)
+        return Response(f'Pet with pet_ID {pet_ID} could not be fetched with exception {e}', status=500)
 
 # Get all Pets - GET
 @pet.route('/all', methods=['GET'])
@@ -186,7 +207,7 @@ def get_adopter_pets(adopter_ID):
             return Response(f'Adopter with ID {adopter_ID} does not exist', status=404)
 
         # Get all pets of the adopter
-        cursor.execute('SELECT * FROM Pet WHERE adopter_ID = %s', adopter_ID)
+        cursor.execute('SELECT * FROM Pet WHERE adopter_ID = %s', (adopter_ID,))
         pets = cursor.fetchall()
 
         # convert pets to dictionary with keys

@@ -88,4 +88,12 @@ export class PetService {
   static getPetsByShelter(shelter_ID: string) {
     return fetch(`${PetService.baseUrl}/shelter/${shelter_ID}`);
   }
+
+  static getPetsOfaAdopter(adopter_ID: string) {
+    return fetch(`${PetService.baseUrl}/adopter/${adopter_ID}`);
+  }
+
+  static getDetailsOfAdopterPet(pet_ID: string) {
+    return fetch(`${PetService.baseUrl}/adopter-pet/${pet_ID}`);
+  }
 }
