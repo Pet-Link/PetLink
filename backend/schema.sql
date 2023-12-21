@@ -235,45 +235,31 @@ SELECT Pet.*, User.name as shelter_name
 FROM Pet 
 JOIN User ON User.user_ID = Pet.shelter_ID;
 
-CREATE VIEW User_Posts_And_Replies AS
-SELECT 
-    u.name AS UserName,
-    p.title AS PostTitle,
-    p.content AS PostContent,
-    r.content AS ReplyContent,
-    r.date AS ReplyDate
-FROM User u
-INNER JOIN Post p ON u.user_ID = p.poster_ID
-LEFT JOIN Reply r ON p.post_ID = r.post_ID;
+CREATE VIEW User_Types_View AS
+SELECT user_ID,
+    CASE 
+        WHEN EXISTS (SELECT 1 FROM Adopter WHERE Adopter.user_id = User.user_id) THEN 'adopter'
+        WHEN EXISTS (SELECT 1 FROM Shelter WHERE Shelter.user_id = User.user_id) THEN 'shelter'
+        WHEN EXISTS (SELECT 1 FROM Administrator WHERE Administrator.user_id = User.user_id) THEN 'administrator'
+        WHEN EXISTS (SELECT 1 FROM Veterinarian WHERE Veterinarian.user_id = User.user_id) THEN 'veterinarian'
+        ELSE 'unknown' 
+    END AS user_type 
+FROM User;
 
-CREATE VIEW Shelter_Pets AS
-SELECT 
-    sh.description AS ShelterDescription,
-    pt.name AS PetName,
-    pt.species,
-    pt.breed,
-    pt.age,
-    pt.neutered_status
-FROM Shelter sh
-INNER JOIN Pet pt ON sh.user_ID = pt.shelter_ID;
 
-CREATE VIEW User_Pet_Medical_Records AS
-SELECT 
-    u.name AS UserName,
-    pt.name AS PetName,
-    mr.date AS RecordDate,
-    mr.operation AS MedicalOperation
-FROM User u
-INNER JOIN Pet pt ON u.user_ID = pt.adopter_ID
-INNER JOIN MedicalRecord mr ON pt.pet_ID = mr.pet_ID;
-
-CREATE VIEW PetCare_Info_By_Admin AS
-SELECT 
-    u.name AS AdminName,
-    pci.title AS InfoTitle,
-    pci.content AS InfoContent
-FROM Administrator ad JOIN User u
-INNER JOIN PetCareInfo pci ON u.user_ID = pci.administrator_ID;
+CREATE VIEW Adoption_Application_Details_View AS
+SELECT aa.*, 
+    adopter_user.name AS adopter_name,
+    adopter_user.e_mail AS adopter_e_mail, 
+    adopter.age AS adopter_age,
+    adopter.sex AS adopter_sex,
+    p.name AS pet_name, 
+    shelter_user.name AS shelter_name
+FROM Apply_Adopt aa
+JOIN User adopter_user ON aa.adopter_ID = adopter_user.user_ID
+JOIN Adopter adopter ON aa.adopter_ID = adopter.user_ID
+JOIN Pet p ON aa.pet_ID = p.pet_ID
+JOIN User shelter_user ON p.shelter_id = shelter_user.user_ID;
 
 DELIMITER $$
 
@@ -290,3 +276,64 @@ END$$
 
 DELIMITER ;
 
+DELIMITER $$
+
+CREATE TRIGGER delete_unadopted_pet
+AFTER DELETE ON Shelter
+FOR EACH ROW
+BEGIN
+    DELETE FROM Pet
+    WHERE Pet.shelter_ID = OLD.user_ID AND Pet.adoption_status = 0;
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER change_adoption_status
+AFTER UPDATE ON Apply_Adopt
+FOR EACH ROW
+BEGIN
+    IF NEW.approval_status != OLD.approval_status THEN
+        UPDATE Pet AS P
+        SET P.adoption_status = NEW.approval_status
+        WHERE P.pet_ID = NEW.pet_ID;
+    END IF;
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER make_fee_payment
+AFTER UPDATE ON Apply_Adopt
+FOR EACH ROW
+BEGIN
+    IF NEW.approval_status = TRUE AND NEW.approval_status != OLD.approval_status THEN
+        UPDATE Adopter AS AD
+        INNER JOIN Pet AS P ON AD.user_ID = NEW.adopter_ID
+        SET AD.balance = AD.balance - P.adoption_fee
+        WHERE P.pet_ID = NEW.pet_ID;
+    END IF;
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER assign_admin
+AFTER INSERT ON Apply_Adopt
+FOR EACH ROW
+BEGIN
+    IF NEW.administrator_id IS NULL THEN
+        UPDATE Apply_Adopt
+        SET administrator_id = (SELECT user_ID FROM Administrator_with_Least_Applications)
+        WHERE adopter_ID = NEW.adopter_ID AND pet_ID = NEW.pet_ID;
+    END IF;
+END$$
+
+DELIMITER ;
+
+ALTER TABLE Adopter
+ADD CONSTRAINT check_balance_non_negative_or_null
+CHECK (balance >= 0 OR balance IS NULL);

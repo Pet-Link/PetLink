@@ -110,19 +110,9 @@ def get_applyadopt(adopter_ID, pet_ID):
 
         # Check if the application exists  
         cursor.execute('''
-            SELECT aa.*, 
-                adopter_user.name AS adopter_name,
-                adopter_user.e_mail AS adopter_e_mail, 
-                adopter.age AS adopter_age,
-                adopter.sex AS adopter_sex,
-                p.name AS pet_name, 
-                shelter_user.name AS shelter_name
-            FROM Apply_Adopt aa
-            JOIN User adopter_user ON aa.adopter_ID = adopter_user.user_ID
-            JOIN Adopter adopter ON aa.adopter_ID = adopter.user_ID
-            JOIN Pet p ON aa.pet_ID = p.pet_ID
-            JOIN User shelter_user ON p.shelter_id = shelter_user.user_ID
-            WHERE aa.adopter_ID = %s AND aa.pet_ID = %s
+            SELECT *
+            FROM Adoption_Application_Details_View a
+            WHERE a.adopter_ID = %s AND a.pet_ID = %s
             ''', (adopter_ID, pet_ID))
         
         application = cursor.fetchone()
@@ -170,16 +160,10 @@ def get_applyadopts_for_admin(administrator_ID):
 
         # Get Apply_Adopt records for the specified administrator
         cursor.execute('''
-            SELECT aa.*, 
-                adopter_user.name AS adopter_name, 
-                p.name AS pet_name, 
-                shelter_user.name AS shelter_name
-            FROM Apply_Adopt aa
-            JOIN User adopter_user ON aa.adopter_ID = adopter_user.user_ID
-            JOIN Pet p ON aa.pet_ID = p.pet_ID
-            JOIN User shelter_user ON p.shelter_id = shelter_user.user_ID
-            WHERE aa.administrator_ID = %s 
-            ORDER BY aa.date DESC
+            SELECT *
+            FROM Adoption_Application_Details_View a
+            WHERE a.administrator_ID = %s 
+            ORDER BY a.date DESC
             ''', (administrator_ID,))
         applyadopts = cursor.fetchall()
         # convert the applications to a dictionary with the keys
