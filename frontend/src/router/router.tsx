@@ -32,6 +32,7 @@ import PetCareInfo from '../pages/petcare/PetCareInfo';
 import VetAppointments from '../pages/adopter/VetApointments';
 import PetListings from '../pages/administrator/petListings';
 import ForgotPassword from '../pages/forgotPassword';
+import EnterPetCareInfo from '../pages/administrator/EnterPetCareInfo';
 
 const Router: React.FC = () => {
     return <RouterProvider router={router}/>;
@@ -63,7 +64,8 @@ const router = createBrowserRouter([
         { path: 'see-application-detail', element: <SeeAdoptionApplicationPage /> },
         { path: 'edit-pet-details', element: <EditPetDetailsPage /> },
         { path: 'pet-listings', element: <PetListings />},
-        { path: 'statistics', element: <SystemReports />}
+        { path: 'statistics', element: <SystemReports />},
+        { path: 'create-pet-care-info', element: <EnterPetCareInfo />}
         // add routes here
       ],
     },
