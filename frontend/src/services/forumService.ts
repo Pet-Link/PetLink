@@ -36,4 +36,18 @@ export class forumService {
     static getAllReplies() {
         return fetch(`${this.baseUrl}/reply/all`);
     }
+
+    static deletePost(post_ID: number){
+        return fetch(`${this.baseUrl}/post/delete/${post_ID}`, {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json'},
+        });
+    }
+
+    static deleteReply(post_ID: number, discriminator_ID: number){
+        return fetch(`${this.baseUrl}/reply/delete/${post_ID}/${discriminator_ID}`, {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json'},
+        });
+    }
 }
