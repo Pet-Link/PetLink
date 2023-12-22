@@ -89,8 +89,7 @@ const HomeAdministrator = () => {
                         },
                     }}
                     onClick={() => {
-                        // Handle click action
-                        // You can add your logic here
+                        navigate('/administrator/create-pet-care-info');
                     }}
                 >
                     Add General Pet Care Information

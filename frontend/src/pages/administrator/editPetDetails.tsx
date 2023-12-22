@@ -26,7 +26,6 @@ const EditPetDetailsPage = () => {
     const [neutered_status, setNeuteredStatus] = useState(false);
     const [adoption_status, setAdoptionStatus] = useState(false);
 
-    //const pet_ID = 2; // TODO like below
     const { pet_ID } = location.state || {};
 
     const [pet, setPet] = useState<petModel>();
