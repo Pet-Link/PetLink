@@ -9,9 +9,12 @@ import {
     Button,
     Grid,
     Typography,
-    Modal
+    Modal,
+    InputLabel,
+    Select,
+    MenuItem,
+    SelectChangeEvent
 } from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
@@ -20,16 +23,35 @@ import { AppointmentService } from '../../services/appointmentService';
 import appointmentModel from '../../models/appointmentModel';
 import { VeterinarianService } from '../../services/veterinarianService';
 import veterinarianModel from '../../models/veterinarian';
-import { TopVeterinarianModel } from '../../models/systemReportModels';
+import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { PetService } from '../../services/petService';
+import petModel from '../../models/petModel';
 
 const VetAppointments = () => {
     const [appointments, setAppointments] = useState<appointmentModel[]>([]);
+    const [new_appointment_veterinerian_ID, setNewAppointmentVeterinerianID] = useState(0);
     const [veterinarian_name, setVeterinarianName] = useState('');
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [selectedDateTime, setSelectedDateTime] = useState<Date | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [veterinarians, setVeterinarians] = useState<veterinarianModel[]>([]);
+    const [appointmentDetails, setAppointmentDetails] = useState('');
+    const [pets, setPets] = useState<petModel[]>([]);
+    const [selectedPetID, setSelectedPetID] = useState(0);
 
-    const fetchAppointments = async () => {
+    // NOTE: this is the format that MySQL expects
+    const formatDateToMySQL = (date: Date) => {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
+    
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    };
+
+    const fetchAppointmentsAndVets = async () => {
         try {
             const adopter_ID = parseInt(localStorage.getItem("user_ID") || "0");
             const response = await AppointmentService.getAllAppointmentsOfAdopter(adopter_ID);
@@ -65,10 +87,12 @@ const VetAppointments = () => {
 
 
     useEffect(() => {
-        fetchAppointments();
+        fetchAppointmentsAndVets();
     }, []);
 
-    const handleModalOpen = () => {
+    const handleModalOpen = (veterinarian_ID: number) => {
+        setNewAppointmentVeterinerianID(veterinarian_ID);
+        fetchPets();
         setIsModalOpen(true);
     }
     
@@ -94,27 +118,74 @@ const VetAppointments = () => {
     };
 
     // Function to handle scheduling an appointment
-    const handleScheduleAppointment = (newDate: Date | null) => {
-        // Perform scheduling logic here
-        // Update appointments state with the new appointment
-        setSelectedDate(newDate);
+    const handleSelectedDateChange = (newDate: Date | null) => {
+        setSelectedDateTime(newDate);
     };
 
-    const handleArrangeClick = () => {
-        // Send arrangement information to the backend
-        // Close the modal
+    const handlePetIDChange = (event: SelectChangeEvent) => {
+        setSelectedPetID(parseInt(event.target.value));
+    };
+
+    const handleScheduleAppointment = () => {
+        if (parseInt(localStorage.getItem('user_ID') || '0') === 0) {
+            toastr.error("You must be logged in to get an appointment.");
+            return;
+        }
+        const adopter_ID = parseInt(localStorage.getItem("user_ID") || "0");
+
+        if (selectedDateTime === null) {
+            toastr.error('Choose a date.');
+            return;
+        }
+
+        if (appointmentDetails === '') {
+            toastr.error('Appointment reason must be entered.');
+            return;
+        }
+
+        if (selectedPetID === 0) {
+            toastr.error('Choose a pet.');
+            return;
+        }
+
+
+        if (selectedDateTime){
+            const newAppointment: appointmentModel = {
+                adopter_ID: adopter_ID,
+                veterinarian_ID: new_appointment_veterinerian_ID,
+                date: formatDateToMySQL(selectedDateTime),
+                approval_status: null,
+                details: appointmentDetails,
+                pet_ID: selectedPetID,
+            };
+            
+            // Send the post object to the backend
+            AppointmentService.addAppointment(newAppointment).then(response => {
+                if (response.ok) {
+                    toastr.success("Appointment created successfully!");
+                    fetchAppointmentsAndVets();
+                } else {
+                    toastr.error("Error creating appointment!");
+                }
+            }
+            ).catch(error => {
+                console.error('Error creating appointment:', error);
+                toastr.error("Error creating appointment!");
+            });
+        }
         setIsModalOpen(false);
     };
+
 
     const handleDeleteAppointment = (veterinarian_ID: number, veterinarian_name?: string) => {
         const adopter_ID = parseInt(localStorage.getItem("user_ID") || "0");
         AppointmentService.deleteAppointment(veterinarian_ID, adopter_ID).then((response) => {
             if (response.ok) {
                 const successMessage = veterinarian_name
-                ? `Appointment for ${veterinarian_name} is successfully deleted.`
+                ? `Appointment with veterinarian ${veterinarian_name} is successfully deleted.`
                 : 'Appointment is successfully deleted.';
                 toastr.success(successMessage);
-                fetchAppointments();
+                fetchAppointmentsAndVets();
             } else {
                 response.text().then((text) => {
                     try {
@@ -129,6 +200,26 @@ const VetAppointments = () => {
         );
 
     };
+
+    const fetchPets = async () => {
+        try {
+            var user_ID = localStorage.getItem('user_ID');
+            if (user_ID !== null) {
+                const response = await PetService.getPetsOfaAdopter(user_ID);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok.');
+                }
+                const data: petModel[] = await response.json();
+                setPets(data);
+            } else {
+                toastr.error("Please login first.");
+            }
+        } catch (error) {
+            console.error("There was an error fetching the pets:", error);
+            toastr.error("There was an internal error fetching the pets.");
+        }
+    };
+    
 
     return (
         <Grid container sx={{ 
@@ -180,7 +271,7 @@ const VetAppointments = () => {
                                 <TableCell>
                                     <Button
                                         variant="contained"
-                                        onClick={handleModalOpen}
+                                        onClick={() => handleModalOpen(veterinarian.user_ID)}
                                     >
                                         Schedule
                                     </Button>
@@ -205,14 +296,32 @@ const VetAppointments = () => {
                     <Typography variant="h5" gutterBottom>
                         Choose a Date
                     </Typography>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <DateTimePicker
                             label="Schedule Appointment"
-                            value={selectedDate}
-                            onChange={handleScheduleAppointment}
+                            value={selectedDateTime}
+                            onChange={handleSelectedDateChange}
                         />
                     </LocalizationProvider>
-                    <Button sx={{mt:2}} variant="contained" onClick={handleArrangeClick}>
+                    <TextField style={{ width: '60%' }}
+                        label="Reason for appointment"
+                        value={appointmentDetails}
+                        onChange={(e) => setAppointmentDetails(e.target.value)}
+                        sx={{ mt: 2, width: '100%' }}
+                    />
+                    <InputLabel>Pet Name</InputLabel>
+                    <Select 
+                        value={selectedPetID.toString()}
+                        label="Pet Name"
+                        onChange={handlePetIDChange}
+                    >
+                        {pets.map((pet) => (
+                            <MenuItem key={pet.pet_ID} value={pet.pet_ID}>
+                                {pet.name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                    <Button sx={{mt:2}} variant="contained" onClick={handleScheduleAppointment}>
                         Arrange
                     </Button>
                 </Grid>

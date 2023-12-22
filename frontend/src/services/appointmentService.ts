@@ -5,7 +5,7 @@ export class AppointmentService {
     private static baseUrl: string = environment.apiUrl + '/appointment';
 
     static addAppointment(appointment: appointmentModel) {
-        return fetch(`${AppointmentService.baseUrl}`, {
+        return fetch(`${AppointmentService.baseUrl}/create`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(appointment),

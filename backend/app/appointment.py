@@ -45,6 +45,12 @@ def create_appointment():
         appointment = cursor.fetchone()
         if appointment:
             return Response(f"Veterinarian with ID {veterinarian_ID} is not available at the given date and time", status=400, mimetype='application/json')
+        
+        # Check if the appointment exists
+        cursor.execute('SELECT * FROM Appointment WHERE veterinarian_ID = %s AND adopter_ID = %s', (veterinarian_ID, adopter_ID))
+        existing_appointment = cursor.fetchone()
+        if existing_appointment:
+            return Response(f"Appointment already exists.", status=400, mimetype='application/json')
 
         cursor.execute('INSERT INTO Appointment(adopter_ID, veterinarian_ID, date, pet_ID, approval_status, details) VALUES (%s, %s, %s, %s, %s, %s)', (adopter_ID, veterinarian_ID, date, pet_ID, approval_status, details))
         connection.commit()
