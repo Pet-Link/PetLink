@@ -65,6 +65,25 @@ const PetCareInfo = () => {
         });
     };
 
+    const handleDeletePost = async (info_ID: number) => {
+        PetCareInfoService.deletePetCareInfo(info_ID).then(async (response) => {
+            if (response.ok) {
+                toastr.success("Pet care information successfully deleted.");
+                await fetchPetCareInfo();
+            } else {
+                response.text().then((text) => {
+                    try {
+                    toastr.error('Failed to delete Pet care information.');
+                    console.log(text);
+                    } catch (error) {
+                        console.error('Invalid JSON:', text);
+                    }
+                });
+            }
+        }
+        );
+    }
+
     return (
         <div>
             <CssBaseline/>
@@ -95,7 +114,20 @@ const PetCareInfo = () => {
                                 >
                                     Share
                                 </Button>
-                                </CardActions>
+                                {localStorage.getItem("user_ID") === String(post.administrator_ID) && (
+                                    <Button
+                                        variant="contained"
+                                        style={{ backgroundColor: "red" }}
+                                        onClick={(event) => {
+                                            event.stopPropagation(); // Prevents the CardContent onClick from being triggered
+                                            handleDeletePost(post.info_ID);
+                                        }}
+                                    >
+                                        Delete Post
+                                    </Button>
+                                )}
+                            </CardActions>
+                            
                         </Card>
                     ))}
                 </main>

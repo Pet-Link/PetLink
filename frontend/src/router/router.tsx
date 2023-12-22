@@ -69,7 +69,8 @@ const router = createBrowserRouter([
         { path: 'edit-pet-details', element: <EditPetDetailsPage /> },
         { path: 'pet-listings', element: <PetListings />},
         { path: 'statistics', element: <SystemReports />},
-        { path: 'create-pet-care-info', element: <EnterPetCareInfo />}
+        { path: 'create-pet-care-info', element: <EnterPetCareInfo />},
+        { path: 'pet-care-info', element: <PetCareInfo />},
         // add routes here
       ],
     },
