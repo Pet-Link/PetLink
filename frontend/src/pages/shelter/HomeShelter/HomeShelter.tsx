@@ -19,6 +19,7 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useNavigate } from 'react-router';
 import petModel from '../../../models/petModel';
 import { PetService } from '../../../services/petService';
+import toastr from 'toastr';
 
 const HomeShelter = () => {    
     const navigate = useNavigate();
@@ -134,13 +135,18 @@ const HomeShelter = () => {
         // Filter the data
         var shelter_ID = localStorage.getItem('user_ID');
         if (shelter_ID !== null) {
-            PetService.filterPetsOfShelter(shelter_ID, "1", tBreed, tSpecies, age, vaccinationStatus, neuterStatus, houseTrainedStatus, sex).then((response) => {
-                if (response.ok) {
-                    response.json().then((data) => {
-                        console.log(data);
-                        setFilteredPetData(data);
+            PetService.filterPetsOfShelter(shelter_ID, "1", tBreed, tSpecies, age, vaccinationStatus, neuterStatus, houseTrainedStatus, sex).then(async (response) => {
+                if (response.status === 404) {
+                    setFilteredPetData([]);
+                    response.text().then((text) => {
+                        toastr.info(text);
                     });
-                }
+                } else if (!response.ok) {
+                    throw new Error('Network response was not ok.');
+                } else {
+                    const data: petModel[] = await response.json(); 
+                    setFilteredPetData(data);
+                }  
             }
             );
             handleClose();

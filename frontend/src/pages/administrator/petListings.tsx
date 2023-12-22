@@ -134,15 +134,21 @@ const PetListings: React.FC = () => {
             tSpecies = (species[0]);
         }
         // Filter the data
-        PetService.filterPets("1", tBreed, tSpecies, age, vaccinationStatus, neuterStatus, houseTrainedStatus, sex).then((response) => {
-            if (response.ok) {
-                response.json().then((data) => {
-                    console.log(data);
-                    setFilteredPetData(data);
+        PetService.filterPets("1", tBreed, tSpecies, age, vaccinationStatus, neuterStatus, houseTrainedStatus, sex).then(async (response) => {
+            if (response.status === 404) {
+                setFilteredPetData([]);
+                response.text().then((text) => {
+                    toastr.info(text);
                 });
-            }
+            } else if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            } else {
+                const data: petModel[] = await response.json(); 
+                setFilteredPetData(data);
+            }  
         }
         );
+
         handleClose();
     };
 
@@ -396,7 +402,6 @@ const PetListings: React.FC = () => {
                                     <TableCell>{pet.breed}</TableCell>
                                     <TableCell>{pet.species}</TableCell>
                                     <TableCell>{pet.sex}</TableCell>
-                                    {/* Assume time is not part of your model */}
                                     <TableCell>{pet.vaccination_status ? 'Vaccinated' : 'Not Vaccinated'}</TableCell>
                                     <TableCell>{pet.neutered_status ? 'Neutered' : 'Not Neutered'}</TableCell>
                                     <TableCell>{pet.adoption_fee} $</TableCell>

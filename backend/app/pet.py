@@ -475,27 +475,37 @@ def filter_pets(adopted):
         # Connect to the database and execute the query
         connection = get_connection()
         cursor = connection.cursor()
+
+        # Execute the initial query
         cursor.execute(query, params)
         pets = cursor.fetchall()
 
-        result=[]
-        pets=[dict(zip([key[0] for key in cursor.description], pet)) for pet in pets]
+        # Check if any pets are found
+        if not pets:
+            return Response('No pets found with the given filters', status=404)
+
+        # Fetch additional details for each pet
+        result = []
         for pet in pets:
+            pet_dict = dict(zip([key[0] for key in cursor.description], pet))
             cursor.execute("""
-                        SELECT *
-                        FROM Pet_Shelter_Details_View
-                        WHERE pet_ID = %s
-                        """, (pet['pet_ID'],))
-            pet = cursor.fetchone()
-            result.append(pet)
+                SELECT *
+                FROM Pet_Shelter_Details_View
+                WHERE pet_ID = %s
+                """, (pet_dict['pet_ID'],))
+            
+            pet_details = cursor.fetchone()
+            if pet_details:
+                pet_detail_dict = dict(zip([key[0] for key in cursor.description], pet_details))
+                # Merge pet_dict with pet_detail_dict or use one of them as per requirement
+                pet_dict.update(pet_detail_dict)
+                result.append(pet_dict)
+
+        # Check if no detailed records are found
+        if not result:
+            return Response('No pets found with the given filters', status=404)
         
-        if result is None:
-            return Response(f'No pets found with the given filters', status=404)
-
-        # Convert pets to a list of dictionaries to return as JSON
-        pets_list = [dict(zip([key[0] for key in cursor.description], pet)) for pet in result]
-        return jsonify(pets_list)
-
+        return jsonify(result)
     except Exception as e:
         print(e)
         return Response(f'Error filtering pets with exception {e}', status=500)
@@ -553,25 +563,33 @@ def filter_pets_by_shelter(shelter_ID, adopted):
         cursor = connection.cursor()
         cursor.execute(query, params)
         pets = cursor.fetchall()
-
-        result=[]
-        pets=[dict(zip([key[0] for key in cursor.description], pet)) for pet in pets]
-        for pet in pets:
-            cursor.execute("""
-                        SELECT *
-                        FROM Pet_Shelter_Details_View
-                        WHERE pet_ID = %s
-                        """, (pet['pet_ID'],))
-            pet = cursor.fetchone()
-            result.append(pet)
         
-        if result is None:
-            return Response(f'No pets found with the given filters', status=404)
+         # Check if any pets are found
+        if not pets:
+            return Response('No pets found with the given filters', status=404)
 
-        # Convert pets to a list of dictionaries to return as JSON
-        pets_list = [dict(zip([key[0] for key in cursor.description], pet)) for pet in result]
-        return jsonify(pets_list)
+        # Fetch additional details for each pet
+        result = []
+        for pet in pets:
+            pet_dict = dict(zip([key[0] for key in cursor.description], pet))
+            cursor.execute("""
+                SELECT *
+                FROM Pet_Shelter_Details_View
+                WHERE pet_ID = %s
+                """, (pet_dict['pet_ID'],))
+            
+            pet_details = cursor.fetchone()
+            if pet_details:
+                pet_detail_dict = dict(zip([key[0] for key in cursor.description], pet_details))
+                # Merge pet_dict with pet_detail_dict or use one of them as per requirement
+                pet_dict.update(pet_detail_dict)
+                result.append(pet_dict)
 
+        # Check if no detailed records are found
+        if not result:
+            return Response('No pets found with the given filters', status=404)
+        
+        return jsonify(result)
     except Exception as e:
         print(e)
         return Response(f'Error filtering pets with exception {e}', status=500)

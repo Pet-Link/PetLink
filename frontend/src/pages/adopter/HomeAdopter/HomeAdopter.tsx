@@ -62,13 +62,18 @@ const HomeAdopter = () => {
             tSpecies = (species[0]);
         }
         // Filter the data
-        PetService.filterPets("0", tBreed, tSpecies, age, vaccinationStatus, neuterStatus, houseTrainedStatus, sex).then((response) => {
-            if (response.ok) {
-                response.json().then((data) => {
-                    console.log(data);
-                    setFilteredPetData(data);
+        PetService.filterPets("0", tBreed, tSpecies, age, vaccinationStatus, neuterStatus, houseTrainedStatus, sex).then(async (response) => {
+            if (response.status === 404) {
+                setFilteredPetData([]);
+                response.text().then((text) => {
+                    toastr.info(text);
                 });
-            }
+            } else if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            } else {
+                const data: petModel[] = await response.json(); 
+                setFilteredPetData(data);
+            }  
         }
         );
         handleClose();
