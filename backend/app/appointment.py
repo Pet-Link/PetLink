@@ -123,7 +123,7 @@ def update_appointment():
         
         # Check if the veterinarian is available at the given date and time (30 minutes)
         # COMPLEX QUERY EXAMPLE BETWEEN
-        cursor.execute('SELECT * FROM Appointment WHERE veterinarian_ID = %s AND date BETWEEN %s AND %s', (veterinarian_ID, str(date), str(date + timedelta(minutes=30))))
+        cursor.execute('SELECT * FROM Appointment WHERE veterinarian_ID = %s AND date BETWEEN %s AND %s', (veterinarian_ID, str(date), str(date + str(timedelta(minutes=30)))))
         appointment = cursor.fetchone()
         if appointment:
             return Response(f"Veterinarian with ID {veterinarian_ID} is not available at the given date and time", status=400, mimetype='application/json')
