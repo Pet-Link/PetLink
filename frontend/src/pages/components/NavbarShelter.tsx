@@ -15,8 +15,8 @@ import AdbIcon from '@mui/icons-material/Adb';
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import { useNavigate } from 'react-router';
 
-const pages = ['About Us', 'Forum', 'My Pets', 'Add a Pet'];
-const links = ["", "", "/shelter/forum", "/shelter/enter-animal"]
+const pages = ['Forum', 'Add a Pet'];
+const links = ["/shelter/forum", "/shelter/enter-animal"]
 const settings = ['Dashboard', 'Logout'];
 
 function ResponsiveAppBarShelter() {
