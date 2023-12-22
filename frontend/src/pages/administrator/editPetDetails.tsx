@@ -192,7 +192,6 @@ const EditPetDetailsPage = () => {
         PetService.deletePet(pet_ID).then((response) => {
             if (response.ok) {
                 toastr.success('Successfully deleted pet');
-                navigate('/administrator/home');
             } else {
                 toastr.error('Failed to delete pet');
             }
@@ -200,9 +199,6 @@ const EditPetDetailsPage = () => {
         );
     };
     
-    const goBackHome = () => {
-        navigate('/administrator/home');
-    }
 
     return (
         <Grid sx={{ 
