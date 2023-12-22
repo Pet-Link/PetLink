@@ -242,9 +242,10 @@ const Forum = () => {
                                     Posted by {post.poster_name} {post.post_date}
                                 </Typography>
                                 <Typography paragraph>{post.content}</Typography>
-                                <Typography variant="subtitle2" >
-                                    {post.reply_count} Replies
+                                <Typography variant="subtitle2">
+                                    {((post.reply_count || 0 ) > 0) ? `Click to see ${post.reply_count} Replies` : 'Be the first one to reply!'}
                                 </Typography>
+
                                 {localStorage.getItem("user_ID") === String(post.poster_ID) && (
                                     <Button
                                         variant="contained"

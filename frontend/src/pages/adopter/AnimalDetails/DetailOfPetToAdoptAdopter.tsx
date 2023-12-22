@@ -24,6 +24,7 @@ const PetDetailsPage = () => {
     const [pet, setPet] = useState<petModel>();
     const [petName, setPetName] = useState("");
     const [shelterName, setShelterName] = useState("");
+    const [adoption_fee, setAdoptionFee] = useState(0);
     const [meetGreetDate, setMeetGreetDate] = useState<Date | null>(null);
 
     const fetchPet = async () => {
@@ -36,6 +37,7 @@ const PetDetailsPage = () => {
             const data: petModel = await response.json();
             setPet(data);
             setPetName(data.name);
+            setAdoptionFee(data.adoption_fee);
             setShelterName(data.shelter_name || "");
         } catch (error) {
             console.error("There was an error fetching the applications:", error);
@@ -50,7 +52,7 @@ const PetDetailsPage = () => {
     
     
     const handleApply = () => {
-        navigate('/adopter/adoption-application', { state: {pet_ID: pet_ID, petName: petName, shelterName: shelterName}});
+        navigate('/adopter/adoption-application', { state: {pet_ID: pet_ID, petName: petName, shelterName: shelterName, adoption_fee: adoption_fee}});
     };
 
 

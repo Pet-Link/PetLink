@@ -13,7 +13,7 @@ const AdoptionApplicationPage = () => {
     const inputStyle = { marginBottom: '20px', alignItems: 'center'};
     const navigate = useNavigate();
     const location = useLocation();
-    const { pet_ID, petName, shelterName} = location.state || {};
+    const { pet_ID, petName, shelterName, adoption_fee} = location.state || {};
 
     const [age, setAge] = useState('');
     const [sex, setSex] = useState('');
@@ -158,7 +158,7 @@ const AdoptionApplicationPage = () => {
             {/* Age */}
             <Grid item xs={12}>
                 <Typography variant="h6" gutterBottom>
-                    Age
+                    Your Age
                 </Typography>
                 <TextField
                     label="Enter a number"
@@ -174,7 +174,7 @@ const AdoptionApplicationPage = () => {
             <Grid item xs={12}>
                 <FormControl fullWidth style={inputStyle}>
                     <Typography variant="h6" gutterBottom>
-                        Sex
+                        Your Sex
                     </Typography>
                     <RadioGroup row value={sex} onChange={handleSexChange}>
                         <FormControlLabel value="female" control={<Radio />} label="Female" />
@@ -246,7 +246,7 @@ const AdoptionApplicationPage = () => {
                         <Typography variant="h6" gutterBottom>
                             Adoption Fee:
                         </Typography>
-                        <Typography variant="body1">$100</Typography>
+                        <Typography variant="body1">${adoption_fee}</Typography>
                     </Grid>
 
                     {/* Your Balance */}
