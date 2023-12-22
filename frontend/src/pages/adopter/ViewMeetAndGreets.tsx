@@ -54,7 +54,8 @@ const ViewMeetAndGreets: React.FC = () => {
         );
     }
 
-
+    console.log("Here");
+    console.log(meetAndGreets);
     return (
         <Grid sx={{ 
             display: 'flex',
@@ -76,8 +77,8 @@ const ViewMeetAndGreets: React.FC = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {meetAndGreets.map((meetAndGreet) => (
-                        <TableRow key={meetAndGreet.pet_ID}>
+                    {meetAndGreets.map((meetAndGreet, index) => (
+                        <TableRow key={index}>
                             <TableCell>{meetAndGreet.date}</TableCell>
                             <TableCell>{meetAndGreet.pet_name}</TableCell>
                             <TableCell>{meetAndGreet.shelter_name}</TableCell>

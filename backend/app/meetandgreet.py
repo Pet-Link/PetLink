@@ -144,7 +144,7 @@ def get_all_meetandgreets_by_adopter(adopter_ID):
         cursor.execute("""
                        SELECT m.*, p.name AS pet_name, u.name AS shelter_name 
                        FROM Meet_Greet m 
-                       JOIN Pet p 
+                       JOIN Pet p ON m.pet_ID = p.pet_ID
                        JOIN User u ON u.user_ID = p.shelter_ID 
                        WHERE m.adopter_ID = %s
                        ORDER BY m.date DESC
@@ -221,7 +221,7 @@ def get_all_meetandgreets_by_shelter(shelter_ID):
         cursor.execute("""
                        SELECT m.*, p.name AS pet_name, u.name AS adopter_name, u.e_mail AS adopter_e_mail
                        FROM Meet_Greet m 
-                       JOIN Pet p 
+                       JOIN Pet p ON m.pet_ID = p.pet_ID
                        JOIN User u ON u.user_ID = m.adopter_ID 
                        WHERE p.shelter_ID = %s
                        ORDER BY m.date DESC
