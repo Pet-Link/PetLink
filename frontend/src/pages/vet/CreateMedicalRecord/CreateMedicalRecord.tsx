@@ -14,11 +14,10 @@ import {
     IconButton,
 } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
-import medicalRecordModel from "../../../models/medicalRecordMode";
-import { VeterinarianService } from '../../../services/veterinarianService';
+import medicalRecordModel from "../../../models/medicalRecordModel";
 import toastr from 'toastr';
-import { PetService } from '../../../services/petService';
 import { useNavigate } from 'react-router';
+import { MedicalRecordService } from '../../../services/medicalRecordService';
 
 const LogMedicalRecord: React.FC = () => {
     const navigate = useNavigate();
@@ -45,18 +44,15 @@ const LogMedicalRecord: React.FC = () => {
         pet_name: '', // pet name can be added to the table
     });
 
-    const fetchMedicalRecords = (toastrF: boolean) => {
+    const fetchMedicalRecords = () => {
         // local storage is used to store the veterinarian ID
-        var vet_id = localStorage.getItem('user_ID');
-        if (vet_id != null) {
-            VeterinarianService.getMedicalRecordForSpecificVet(vet_id).then((response) => {
+        var vet_ID = localStorage.getItem('user_ID');
+        if (vet_ID != null) {
+            MedicalRecordService.getAllMedicalRecordsByVeterinarian(parseInt(vet_ID)).then((response) => {
                 if (response.ok) {
                     response.json().then((data) => {
                         setMedicalRecords(data);
                     });
-                    if (toastrF) {
-                        toastr.success('Medical Records Fetched Successfully');
-                    }
                 } else {
                     toastr.error('Error fetching medical records');
                 }
@@ -65,6 +61,11 @@ const LogMedicalRecord: React.FC = () => {
             toastr.error('Please login first!');
         }
     }
+
+
+    useEffect(() => {
+        fetchMedicalRecords();
+    }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -79,24 +80,17 @@ const LogMedicalRecord: React.FC = () => {
         if (vet_id != null) {
             medicalRecord.veterinarian_ID = parseInt(vet_id);
         }
-        medicalRecord.date = new Date().toLocaleString('en-US', { timeZone: 'Europe/Istanbul' });
 
-        VeterinarianService.createMedicalRecord(medicalRecord).then((response) => {
+        if (!medicalRecord.operation.trim()) {
+            toastr.error('Please explain the operation for this record.');
+            return;
+        }
+        medicalRecord.date = new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Istanbul' });
+
+        MedicalRecordService.createMedicalRecord(medicalRecord).then((response) => {
             if (response.ok) {
                 toastr.success('Medical Record Logged Successfully');
-                // // Update the list of medical records with the new record
-                // setMedicalRecords(prevRecords => [...prevRecords, medicalRecord]);
-
-                // // You can reset the form or perform other actions after logging the record
-                // setMedicalRecord({
-                //     record_ID: 0,
-                //     pet_ID: 0,
-                //     veterinarian_ID: 0,
-                //     date: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                //     operation: '',
-                //     pet_name: '',
-                // });
-                fetchMedicalRecords(false);
+                fetchMedicalRecords();
             } else {
                 response.text().then((data) => {
                     toastr.error(data);
@@ -106,12 +100,12 @@ const LogMedicalRecord: React.FC = () => {
         });
     };
 
-    const handleDelete = (record_ID: string) => {
-        VeterinarianService.deleteMedicalRecord(record_ID).then((response) => {
+    const handleDelete = (record_ID: number) => {
+        MedicalRecordService.deleteMedicalRecord(record_ID).then((response) => {
             if (response.ok) {
                 toastr.success('Medical Record Deleted Successfully');
                 // Update the list of medical records with the new record
-                setMedicalRecords(prevRecords => prevRecords.filter(record => record.record_ID?.toString() !== record_ID));
+                fetchMedicalRecords();
             } else {
                 response.text().then((data) => {
                     toastr.error(data);
@@ -171,13 +165,6 @@ const LogMedicalRecord: React.FC = () => {
                     >
                         Log Record
                     </Button>
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={ () => fetchMedicalRecords(true)}
-                    >
-                        Fetch Medical Records
-                    </Button>
                 </Grid>
             </Grid>
             {/* Display a table for logged medical records (this part can be extended based on your needs) */}
@@ -206,7 +193,7 @@ const LogMedicalRecord: React.FC = () => {
                                         variant="contained"
                                         color="secondary"
                                         style={{ backgroundColor: "red" }}
-                                        onClick={() => record.record_ID && handleDelete(record.record_ID.toString())}
+                                        onClick={() => record.record_ID && handleDelete(record.record_ID)}
                                     >
                                         Delete
                                     </Button>

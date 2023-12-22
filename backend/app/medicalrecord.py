@@ -170,3 +170,29 @@ def get_all_medicalrecord_veterinarian(veterinarian_ID):
         return jsonify(medicalrecord)
     except Exception as e:
         return Response(f'Failed to get medical record\n{e}', status=500)
+
+# Get all Medical Records of an adopter - GET
+@medicalrecord.route('/all/adopter/<int:adopter_ID>', methods=['GET'])
+def get_all_medicalrecord_adopter(adopter_ID):
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+
+        query = '''
+        SELECT MedicalRecord.*, Pet.name AS pet_name, User.name AS veterinarian_name
+        FROM MedicalRecord
+        JOIN Pet ON MedicalRecord.pet_ID = Pet.pet_ID
+        JOIN User ON MedicalRecord.veterinarian_ID = User.user_ID
+        WHERE Pet.adopter_ID = %s
+        '''
+        cursor.execute(query, (adopter_ID,))
+        records = cursor.fetchall()
+        
+        if not records:
+            return Response(f'No medical records for adopter with ID {adopter_ID} exists.', status=404)
+        
+        records_dict = [dict(zip([key[0] for key in cursor.description], record)) for record in records]
+        return jsonify(records_dict)
+    except Exception as e:
+        return Response(f'Failed to get medical records for adopter\n{e}', status=500)

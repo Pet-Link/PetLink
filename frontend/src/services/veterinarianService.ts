@@ -1,5 +1,5 @@
 import { environment } from '../environment';
-import medicalRecordModel from '../models/medicalRecordMode';
+import medicalRecordModel from '../models/medicalRecordModel';
 
 export class VeterinarianService {
     private static baseUrl: string = environment.apiUrl;
@@ -37,23 +37,10 @@ export class VeterinarianService {
 
    
 
-    static createMedicalRecord(medicalRecord: medicalRecordModel) {
-        return fetch(`${VeterinarianService.baseUrl}/medicalrecord/create`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(medicalRecord),
-        });
-    }
 
     static getMedicalRecordForSpecificVet(vet_id: string) {
         return fetch(`${VeterinarianService.baseUrl}/medicalrecord/all/veterinarian/${vet_id}`, {
             method: 'GET'
-        });
-    }
-
-    static deleteMedicalRecord(id: string) {
-        return fetch(`${VeterinarianService.baseUrl}/medicalrecord/delete/${id}`, {
-            method: 'DELETE'
         });
     }
 }
