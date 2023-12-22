@@ -18,12 +18,16 @@ import dayjs from 'dayjs';
 import toastr from 'toastr';
 import { AppointmentService } from '../../services/appointmentService';
 import appointmentModel from '../../models/appointmentModel';
+import { VeterinarianService } from '../../services/veterinarianService';
+import veterinarianModel from '../../models/veterinarian';
+import { TopVeterinarianModel } from '../../models/systemReportModels';
 
 const VetAppointments = () => {
     const [appointments, setAppointments] = useState<appointmentModel[]>([]);
-    const [searchVet, setSearchVet] = useState('');
+    const [veterinarian_name, setVeterinarianName] = useState('');
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [veterinarians, setVeterinarians] = useState<veterinarianModel[]>([]);
 
     const fetchAppointments = async () => {
         try {
@@ -38,6 +42,25 @@ const VetAppointments = () => {
             console.error("There was an error while fetching the applications:", error);
             toastr.error("There was an internal error while fetching the applications.");
         }
+
+        try {
+            const response = await VeterinarianService.getVeterinarians();
+
+            if (response.status === 404) {
+                setVeterinarians([]);
+                response.text().then((text) => {
+                    toastr.info(text);
+                });
+            } else if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            } else {
+                const data: veterinarianModel[] = await response.json(); 
+                setVeterinarians(data);
+            }  
+        } catch (error) {
+            console.error("There was an error while fetching all veterinarians:", error);
+            toastr.error("There was an internal error while fetching the veterinarians.");
+        }
     };
 
 
@@ -50,9 +73,24 @@ const VetAppointments = () => {
     }
     
     // Function to handle searching for a vet
-    const handleSearchVet = () => {
-        // Perform search logic here
-        // Update appointments state with the search results
+    const handleSearchVet = async () => {
+        try {
+            const response = await VeterinarianService.searchVeterinarian(veterinarian_name, null);
+            if (response.status === 404) {
+                setVeterinarians([]);
+                response.text().then((text) => {
+                    toastr.info(text);
+                });
+            } else if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            } else {
+                const data: veterinarianModel[] = await response.json(); 
+                setVeterinarians(data);
+            }  
+        } catch (error) {
+            console.error("There was an error while fetching the applications:", error);
+            toastr.error("There was an internal error while fetching the veterinarians.");
+        }
     };
 
     // Function to handle scheduling an appointment
@@ -114,8 +152,8 @@ const VetAppointments = () => {
                 </Typography>
                 <TextField
                     type="text"
-                    value={searchVet}
-                    onChange={(e) => setSearchVet(e.target.value)}
+                    value={veterinarian_name}
+                    onChange={(e) => setVeterinarianName(e.target.value)}
                     placeholder="Search Vet"
                     sx={{width:'20vw'}}
                 />
@@ -125,7 +163,7 @@ const VetAppointments = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Vet ID</TableCell>
+                            <TableCell>Veterinarian Name</TableCell>
                             <TableCell>Address</TableCell>
                             <TableCell>Speciality</TableCell>
                             <TableCell>Years Of Experience</TableCell>
@@ -133,11 +171,12 @@ const VetAppointments = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {/*vets.map((vet) => (
-                            <TableRow key={appointment.id}>
-                                <TableCell>{vet.user_ID}</TableCell>
-                                <TableCell>{vet.street + ' ' + vet.district + ' ' + vet.city}</TableCell>
-                                <TableCell>{vet.speciality}</TableCell>
+                        {veterinarians.map((veterinarian) => (
+                            <TableRow key={veterinarian.user_ID}>
+                                <TableCell>{veterinarian.veterinarian_name}</TableCell>
+                                <TableCell>{veterinarian.street + ' ' + veterinarian.district + ' ' + veterinarian.city}</TableCell>
+                                <TableCell>{veterinarian.speciality}</TableCell>
+                                <TableCell>{veterinarian.year_of_experience}</TableCell>
                                 <TableCell>
                                     <Button
                                         variant="contained"
@@ -147,7 +186,7 @@ const VetAppointments = () => {
                                     </Button>
                                 </TableCell>
                             </TableRow>
-                        ))*/}
+                        ))}
                     </TableBody>
                 </Table>
             </Grid>

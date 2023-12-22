@@ -9,6 +9,7 @@ type veterinarianModel = {
     city: string;
     zip: string;
     country: string;
+    veterinarian_name?: string; 
 };
 
 export default veterinarianModel;

@@ -1,8 +1,7 @@
 import { environment } from '../environment';
-import medicalRecordModel from '../models/medicalRecordModel';
 
 export class VeterinarianService {
-    private static baseUrl: string = environment.apiUrl;
+    private static baseUrl: string = environment.apiUrl + '/veterinarian';
     
     static getVeterinarians() {
         return fetch(`${VeterinarianService.baseUrl}/all`);
@@ -22,7 +21,7 @@ export class VeterinarianService {
     }
     
     static updateVeterinarian(veterinarian: any) {
-        return fetch(`${VeterinarianService.baseUrl}/veterinarian/${veterinarian.id}`, {
+        return fetch(`${VeterinarianService.baseUrl}/${veterinarian.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(veterinarian),
@@ -30,17 +29,17 @@ export class VeterinarianService {
     }
     
     static deleteVeterinarian(id: string) {
-        return fetch(`${VeterinarianService.baseUrl}/veterinarian/${id}`, {
+        return fetch(`${VeterinarianService.baseUrl}/${id}`, {
         method: 'DELETE',
         });
     }
 
-   
 
-
-    static getMedicalRecordForSpecificVet(vet_id: string) {
-        return fetch(`${VeterinarianService.baseUrl}/medicalrecord/all/veterinarian/${vet_id}`, {
-            method: 'GET'
+    static searchVeterinarian(name: string | null, city: string | null) {
+        return fetch(`${VeterinarianService.baseUrl}/search`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({name, city}),
         });
     }
 }

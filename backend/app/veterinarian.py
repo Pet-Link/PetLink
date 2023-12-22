@@ -115,14 +115,51 @@ def get_all_veterinarians():
     try:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute('SELECT * FROM Veterinarian')
+        cursor.execute('SELECT v.*, u.name AS veterinarian_name FROM Veterinarian v JOIN User u ON v.user_ID = u.user_ID')
         veterinarians = cursor.fetchall()
         if veterinarians:
+            veterinarians = [dict(zip([key[0] for key in cursor.description], vet)) for vet in veterinarians]
             return jsonify(veterinarians)
         return Response(f'No veterinarians exist', status=404)
     except Exception as e:
         print(e)
         return Response(f'Veterinarians could not be fetched with exception {e}', status=500)
+
+# Search and filter Veterinarians - PUT
+@veterinarian.route('/search', methods=['PUT'])
+def search_veterinarians():
+    try:
+        # Get query parameters for name and city
+        data = request.get_json()
+        name = data['name']
+        city = data['city']
+        
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        query = "SELECT v.*, u.name AS veterinarian_name FROM Veterinarian v JOIN User u on v.user_ID = u.user_ID WHERE 1=1"
+        params = []
+
+        # Veterinarians can be searched based on name or city or both
+        if name:
+            query += " AND u.name LIKE %s"
+            params.append(f"%{name}%")  # wildcards
+        if city:
+            query += " AND city = %s"
+            params.append(city)
+            
+        cursor.execute(query, params)
+        veterinarians = cursor.fetchall()
+        
+        if not veterinarians:
+            return Response(f'No veterinarians found with the given filters', status=404)
+
+        # Convert veterinarians to a list of dictionaries to return as JSON
+        veterinarians = [dict(zip([key[0] for key in cursor.description], vet)) for vet in veterinarians]
+        return jsonify(veterinarians)
+    
+    except Exception as e:
+        return Response(f'Error while searching veterinarians: {e}', status=500)
 
 
 # Update Veterinarian - PUT
