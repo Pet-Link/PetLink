@@ -57,6 +57,7 @@ def adoption_fees_summary():
                 MAX(adoption_fee) AS MaxFee,
                 MIN(adoption_fee) AS MinFee
             FROM Pet
+            WHERE shelter_ID IS NOT NULL
         ),
         MaxFeePet AS (
             SELECT
@@ -69,6 +70,7 @@ def adoption_fees_summary():
                 JOIN User u ON p.shelter_ID = u.user_ID
             WHERE
                 p.adoption_fee = (SELECT MaxFee FROM MinMaxFees)
+                AND p.shelter_ID IS NOT NULL
             LIMIT 1
         ),
         MinFeePet AS (
@@ -82,6 +84,7 @@ def adoption_fees_summary():
                 JOIN User u ON p.shelter_ID = u.user_ID
             WHERE
                 p.adoption_fee = (SELECT MinFee FROM MinMaxFees)
+                AND p.shelter_ID IS NOT NULL
             LIMIT 1
         )
         SELECT
@@ -93,7 +96,7 @@ def adoption_fees_summary():
             mnp.min_fee_shelter_name,
             mnp.min_fee_adoption_status,
             mnp.min_fee,
-            COALESCE((SELECT SUM(adoption_fee) FROM Pet WHERE adoption_status = TRUE), 0) AS total_adoption_fee
+            COALESCE((SELECT SUM(adoption_fee) FROM Pet WHERE adoption_status = TRUE AND shelter_ID IS NOT NULL), 0) AS total_adoption_fee
         FROM
             MaxFeePet mfp,
             MinFeePet mnp;

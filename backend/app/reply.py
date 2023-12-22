@@ -37,7 +37,7 @@ def create_reply():
         # trunkate the discriminator_ID to fall into range ot int of mysql
         discriminator_ID = discriminator_ID % 2147483647
         date = datetime.datetime.now(pytz.timezone('Europe/Istanbul'))
-        expert_verify_status = False
+        expert_verify_status = data['expert_verify_status']
         content = data['content']
         replier_ID = data['replier_ID']
 
@@ -75,6 +75,21 @@ def get_reply(post_ID, discriminator_ID):
             return jsonify(reply)
         else:
             return Response(f'Reply with post ID {post_ID} and discriminator ID {discriminator_ID} does not exist', status=404)
+    except Exception as e:
+        return Response(f'Failed to get reply\n{e}', status=500)
+    
+# Get all replies - GET
+@reply.route('/all', methods=['GET'])
+def get_all_replies():
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute('SELECT * FROM Reply')
+        replies = cursor.fetchall()
+        # convert replies to dictionary with keys
+        replies = [dict(zip([key[0] for key in cursor.description], reply)) for reply in replies]
+        return jsonify(replies)
+
     except Exception as e:
         return Response(f'Failed to get reply\n{e}', status=500)
     

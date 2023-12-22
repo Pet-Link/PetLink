@@ -11,7 +11,7 @@ export default function AboutUs() {
                 justifyContent: 'center',
                 alignItems: 'center',
                 p: 6,
-                mt: 20,
+                mt: 10,
             }}
         >
             <CssBaseline />

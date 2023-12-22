@@ -29,7 +29,7 @@ import SearchVets from '../pages/adopter/SearchVets';
 import SystemReports from '../pages/administrator/systemReports';
 import Forum from '../pages/forum/Forum';
 import PetCareInfo from '../pages/petcare/PetCareInfo';
-import VetAppointments from '../pages/adopter/VetApointments';
+import VetAppointments from '../pages/adopter/VetAppointments';
 import PetListings from '../pages/administrator/petListings';
 import ForgotPassword from '../pages/forgotPassword';
 import EnterPetCareInfo from '../pages/administrator/EnterPetCareInfo';

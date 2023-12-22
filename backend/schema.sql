@@ -261,20 +261,20 @@ JOIN Adopter adopter ON aa.adopter_ID = adopter.user_ID
 JOIN Pet p ON aa.pet_ID = p.pet_ID
 JOIN User shelter_user ON p.shelter_id = shelter_user.user_ID;
 
-DELIMITER $$
+CREATE VIEW Detailed_Post_View AS
+SELECT 
+    p.*,
+    u.name AS poster_name,
+    COALESCE(rc.reply_count, 0) AS reply_count
+FROM Post p
+JOIN User u ON p.poster_ID = u.user_ID
+LEFT JOIN (
+    SELECT post_ID, COUNT(*) AS reply_count
+    FROM Reply
+    GROUP BY post_ID
+) rc ON p.post_ID = rc.post_ID
+ORDER BY p.post_date DESC;
 
-CREATE TRIGGER After_Reply_Insertion
-AFTER INSERT ON Reply
-FOR EACH ROW
-BEGIN
-    IF EXISTS (SELECT * FROM Veterinarian WHERE user_ID = NEW.replier_ID) THEN
-        UPDATE Reply
-        SET expert_verify_status = TRUE
-        WHERE post_ID = NEW.post_ID AND replier_ID = NEW.replier_ID;
-    END IF;
-END$$
-
-DELIMITER ;
 
 DELIMITER $$
 
@@ -337,14 +337,3 @@ DELIMITER ;
 ALTER TABLE Adopter
 ADD CONSTRAINT check_balance_non_negative_or_null
 CHECK (balance >= 0 OR balance IS NULL);
-
-CREATE VIEW PostWithPosterName AS
-SELECT 
-    Post.post_ID as post_ID,
-    Post.title as title,
-    Post.content as content,
-    Post.post_date as post_date,
-    User.user_ID AS poster_ID,
-    User.name AS poster_name
-FROM Post
-JOIN User ON Post.poster_ID = User.user_ID;

@@ -6,6 +6,7 @@ type replyModel = {
     expert_verify_status: boolean;
     content: string;
     replier_ID: number;
+    replier_name?: string;
 };
 
 export default replyModel;

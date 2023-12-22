@@ -19,17 +19,21 @@ export class forumService {
         });
     }
 
-    static createReply(post: replyModel) {
+    static createReply(reply: replyModel) {
         return fetch(`${this.baseUrl}/reply/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(post)
+            body: JSON.stringify(reply)
         });
     }
 
-    static getAllRepliesForAPost(postId: string) {
-        return fetch(`${this.baseUrl}/post/${postId}/replies`);
+    static getAllRepliesForAPost(post_ID: number) {
+        return fetch(`${this.baseUrl}/post/${post_ID}/replies`);
+    }
+
+    static getAllReplies() {
+        return fetch(`${this.baseUrl}/reply/all`);
     }
 }
