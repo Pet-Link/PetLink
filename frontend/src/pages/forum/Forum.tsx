@@ -101,10 +101,10 @@ const Forum = () => {
             return;
         }
         // Send the post object to the backend
-        forumService.createPost(newPostObject).then((response) => {
+        forumService.createPost(newPostObject).then(async (response) => {
             if (response.ok) {
                 toastr.success('Post created successfully!');
-                fetchPosts();
+                await fetchPosts();
                 setOpenDialog(false);
                 setNewPost({ title: '', content: '' });
             } else {
@@ -133,11 +133,12 @@ const Forum = () => {
             date: new Date(),
         };
 
-        forumService.createReply(newReplyObject).then((response) => {
+        forumService.createReply(newReplyObject).then(async (response) => {
             if (response.ok) {
                 toastr.success('Reply created successfully!');
+                await fetchPosts();
                 if (selectedPostId) {
-                    fetchRepliesForPost(selectedPostId);
+                    await fetchRepliesForPost(selectedPostId);
                 }
                 setOpenReply(false);
             } else {
@@ -150,6 +151,51 @@ const Forum = () => {
             toastr.error("An error occurred while creating the reply: " + error.message);
         });
 
+    }
+
+    const handleDeletePost = async (post_ID: number) => {
+        forumService.deletePost(post_ID).then(async (response) => {
+            if (response.ok) {
+                toastr.success("Post successfully deleted.");
+                await fetchPosts();
+                if (selectedPostId) {
+                    fetchRepliesForPost(selectedPostId);
+                }
+            } else {
+                response.text().then((text) => {
+                    try {
+                    toastr.error('Failed to delete post.');
+                    console.log(text);
+                    } catch (error) {
+                        console.error('Invalid JSON:', text);
+                    }
+                });
+            }
+        }
+        );
+    }
+
+    // Method to delete a reply
+    const handleDeleteReply = async (post_ID: number, discriminator_ID: number) => {
+        forumService.deleteReply(post_ID, discriminator_ID).then(async (response) => {
+            if (response.ok) {
+                toastr.success("Reply successfully deleted.");
+                await fetchPosts();
+                if (selectedPostId) {
+                    fetchRepliesForPost(selectedPostId);
+                }
+            } else {
+                response.text().then((text) => {
+                    try {
+                    toastr.error('Failed to delete reply.');
+                    console.log(text);
+                    } catch (error) {
+                        console.error('Invalid JSON:', text);
+                    }
+                });
+            }
+        }
+        );
     }
 
     const handleShareClick = (postContent: string) => {
@@ -199,6 +245,18 @@ const Forum = () => {
                                 <Typography variant="subtitle2" >
                                     {post.reply_count} Replies
                                 </Typography>
+                                {localStorage.getItem("user_ID") === String(post.poster_ID) && (
+                                    <Button
+                                        variant="contained"
+                                        style={{ backgroundColor: "red" }}
+                                        onClick={(event) => {
+                                            event.stopPropagation(); // Prevents the CardContent onClick from being triggered
+                                            handleDeletePost(post.post_ID);
+                                        }}
+                                    >
+                                        Delete Post
+                                    </Button>
+                                )}
                             </CardContent>
                             {selectedPostId === post.post_ID && (
                             <div> 
@@ -217,7 +275,18 @@ const Forum = () => {
                                             Replied by {reply.replier_name}{' '}
                                             {reply.date.toString()}
                                         </Typography>
-                                            <Typography paragraph>{reply.content}</Typography>
+                                        <Typography paragraph>{reply.content}</Typography>
+                                        {localStorage.getItem("user_ID") === String(reply.replier_ID) && (
+                                        <Button
+                                            variant="contained"
+                                            style={{ backgroundColor: "red" }}
+                                            onClick={(event) => {
+                                                handleDeleteReply(post.post_ID, reply.discriminator_ID || 0);
+                                            }}
+                                        >
+                                            Delete Reply
+                                        </Button>
+                                        )}
                                         </div>  </CardContent>
                                     ))}
                                 </CardContent>

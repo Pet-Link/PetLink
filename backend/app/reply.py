@@ -94,11 +94,19 @@ def get_all_replies():
         return Response(f'Failed to get reply\n{e}', status=500)
     
 # Delete a reply - DELETE
-@reply.route('/<int:post_ID>/<int:discriminator_ID>', methods=['DELETE'])
+@reply.route('/delete/<int:post_ID>/<int:discriminator_ID>', methods=['DELETE'])
 def delete_reply(post_ID, discriminator_ID):
     try:
         connection = get_connection()
         cursor = connection.cursor()
+        
+        # Check if the reply exists
+        cursor.execute('SELECT * FROM Reply WHERE post_ID = %s AND discriminator_ID = %s', (post_ID, discriminator_ID))
+        reply = cursor.fetchone()
+
+        if not reply:
+            return Response(f'Reply with post ID {post_ID} and discriminator ID post ID {discriminator_ID} does not exist', status=409)
+        
         cursor.execute('DELETE FROM Reply WHERE post_ID = %s AND discriminator_ID = %s', (post_ID, discriminator_ID))
         connection.commit()
         return Response(f'Reply with post ID {post_ID} and discriminator ID {discriminator_ID} deleted!', status=200)

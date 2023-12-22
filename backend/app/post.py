@@ -98,10 +98,19 @@ def update_post(post_id):
     return response
 
 # Delete Post - DELETE
-@post.route('/<int:post_id>', methods=['DELETE'])
+@post.route('/delete/<int:post_id>', methods=['DELETE'])
 def delete_post(post_id):
     connection = get_connection()
     cursor = connection.cursor()
+    
+    # Check if post exists
+    cursor.execute('SELECT * FROM Post WHERE post_ID = %s', (post_id,))
+    post = cursor.fetchone()
+
+    if post is None:
+        response = Response('Post does not exist!', status=400, mimetype='application/json')
+        return response
+    
     cursor.execute('DELETE FROM Post WHERE post_ID = %s', (post_id,))
     connection.commit()
 
