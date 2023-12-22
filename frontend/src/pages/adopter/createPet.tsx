@@ -90,11 +90,7 @@ const CreatePet = () => {
             toastr.error('Age must be a number');
             return;
         }
-        // // check if adoption fee is a number
-        // if (isNaN(parseInt(adoptionFee))) {
-        //     toastr.error('Adoption fee must be a number');
-        //     return;
-        // }
+
         // check if sex field is empty string
         if (sex === '') {
             toastr.error('Sex must be selected');
@@ -145,17 +141,6 @@ const CreatePet = () => {
         PetService.addPet(pet).then((response) => {
             if (response.ok) {
                 toastr.success('Successfully added animal');
-                // if (photo) {
-                //     const formData = new FormData();
-                //     formData.append('file', photo);
-                //     PetService.addPhoto(response.data.pet_ID, formData).then((response) => {
-                //         if (response.status === 201) {
-                //             toastr.success('Successfully added photo');
-                //         } else {
-                //             toastr.error('Failed to add photo');
-                //         }
-                //     });
-                // }
             } else {
                 toastr.error('Failed to add animal');
             }

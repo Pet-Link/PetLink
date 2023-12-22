@@ -15,7 +15,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 
 const AdminOverseeRecordView: React.FC = () => {
-    //TODO: get records from service, display verification status
     const [overseeRecords, setOverseeRecords] = useState<overseeRecordModel[]>([
         {
             record_ID: 1,

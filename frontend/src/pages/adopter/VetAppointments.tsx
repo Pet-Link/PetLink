@@ -62,7 +62,6 @@ const VetAppointments = () => {
                 throw new Error('Network response was not ok.');
             }
             const data: appointmentModel[] = await response.json();
-            console.log(data);
             setAppointments(data);
         } catch (error) {
             console.error("There was an error while fetching the appointments:", error);

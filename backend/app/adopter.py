@@ -38,8 +38,6 @@ CREATE TABLE IF NOT EXISTS User(
 '''
 
 
-# TODO: Add updating profile picture - through Google cloud perhaps?
-
 # CRUD operations
 
 # Create adopter - POST

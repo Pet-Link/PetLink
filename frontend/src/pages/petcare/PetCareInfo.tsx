@@ -26,8 +26,6 @@ import { PetCareInfoService } from '../../services/petCareInfoService';
 import toastr from 'toastr';
 
 const PetCareInfo = () => {
-    // Mock data for posts
-    //TODO: retrieve pet care info from be
     const [posts, setPosts] = useState<petCareInfoModel[]>([]);
 
     const fetchPetCareInfo = async () => {

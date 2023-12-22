@@ -4,7 +4,6 @@ import HomeAdmin from './pages/administrator/HomeAdministrator/HomeAdministrator
 import SeeApplicationDetails from './pages/administrator/SeeApplicationDetailsAdministrator/SeeApplicationDetailsAdministrator';
 import RegisterAdmin from './pages/administrator/registerAdmin';
 import viewApplications from './pages/administrator/viewApplications';
-import AdminApproveRegistration from './pages/administrator/AdminApproveRegistration/AdminApproveRegistration';
 import AdminAddOverseeRecord from './pages/administrator/AdminAddOverseeRecord/AdminAddOverseeRecord';
 import AdminOverseeRecordView from './pages/administrator/AdminOverseeRecordView/AdminOverseeRecordView';
 

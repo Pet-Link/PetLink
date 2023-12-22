@@ -9,7 +9,6 @@ import {
 
 import overseeRecordModel from '../../../models/overseeRecord';
 
-//TODO add record service connection
 const AddOverseeRecordPage: React.FC = () => {
     const [newRecord, setNewRecord] = useState<overseeRecordModel>({
         record_ID: 0,

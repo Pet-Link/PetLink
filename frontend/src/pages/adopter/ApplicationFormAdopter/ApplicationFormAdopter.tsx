@@ -66,7 +66,6 @@ const AdoptionApplicationPage = () => {
         setAdoptionReason(event.target.value);
     };
     
-    // TODO Balance? 
     const handleApply = () => {
         // Validation checks
         if (!age || isNaN(parseInt(age)) || parseInt(age) <= 0 || parseInt(age) >= 130) {

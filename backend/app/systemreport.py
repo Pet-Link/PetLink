@@ -46,7 +46,7 @@ def top_veterinarians():
         return Response(f'Failed to create a system report for top veterinarians\n{e}', status=500)
 
 # Get total (adopted), min and max adoption fees with their pets - GET
-# ULTRA DIAMOND COMPLEX QUERY EXAMPLE
+# COMPLEX QUERY EXAMPLE
 @systemreport.route('/adoption-fees-summary', methods=['GET'])
 def adoption_fees_summary():
     try:
