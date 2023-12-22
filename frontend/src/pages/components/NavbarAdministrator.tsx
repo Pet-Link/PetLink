@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router';
 
 const pages = ['Forum', 'Pets', 'Adoption Applications', "System Reports", "Create pet care information"];
 const links = ["/administrator/forum", "/administrator/pet-listings", "/administrator/view-applications", "/administrator/statistics", "/administrator/create-pet-care-info"]
-const settings = ['Dashboard', 'Logout'];
+const settings = [ 'Logout'];
 
 function ResponsiveAppBar() {
     const navigate = useNavigate();

@@ -301,9 +301,6 @@ const EditPetDetailsPage = () => {
 
                     <Button variant="contained" color="secondary" onClick={handleSubmit}>Submit Edit</Button>
                     <Button variant="contained" color="primary" onClick={handleDelete} sx={{bgcolor: '#C30404'}}>Delete Pet</Button>
-                    {/* <Button onClick={goBackHome} variant='contained' color='primary'>
-                        Go to Dashboard
-                    </Button> */}
                 </Stack>
             </Stack>
         </Grid>

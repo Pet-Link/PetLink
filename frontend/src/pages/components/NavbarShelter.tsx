@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router';
 
 const pages = ['Forum', 'Add a Pet'];
 const links = ["/shelter/forum", "/shelter/enter-animal"]
-const settings = ['Dashboard', 'Logout'];
+const settings = ['Logout'];
 
 function ResponsiveAppBarShelter() {
     const navigate = useNavigate();

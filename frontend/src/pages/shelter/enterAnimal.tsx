@@ -160,9 +160,6 @@ const EnterAnimalDetailsPage = () => {
         );
     };
     
-    const goBackHome = () => {
-        navigate('/shelter/home');
-    }
 
     return (
         <Grid sx={{ 
@@ -257,9 +254,6 @@ const EnterAnimalDetailsPage = () => {
                     </Grid>
 
                     <Button variant="contained" color="secondary" onClick={handleSubmit}>Submit</Button>
-                    <Button onClick={goBackHome} variant='contained' color='primary'>
-                        Go to Dashboard
-                    </Button>
                 </Stack>
             </Stack>
         </Grid>

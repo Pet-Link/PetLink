@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router';
 
 const pages = ['Forum', 'Appointments', 'Log Medical Details'];
 const links = ["/veterinarian/forum", "/veterinarian/see-appointments", "/veterinarian/log-medical-details"]
-const settings = ['Dashboard', 'Logout'];
+const settings = [ 'Logout'];
 
 function ResponsiveAppBarVet() {
     const navigate = useNavigate();
@@ -57,7 +57,7 @@ function ResponsiveAppBarVet() {
                         variant="h6"
                         noWrap
                         component="a"
-                        onClick={() => navigate('/administrator/home')}
+                        onClick={() => navigate('/veterinarian/home')}
                         sx={{
                             mr: 2,
                             display: { xs: 'none', md: 'flex' },
