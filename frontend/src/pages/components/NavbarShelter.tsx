@@ -145,7 +145,7 @@ function ResponsiveAppBarShelter() {
                         color = "secondary"  // Change the color to red
                         sx={{ marginRight: 2, textTransform: 'none' }}
                         onClick={() => {
-                            navigate("meet-and-greets")
+                            navigate("/shelter/meet-and-greets")
                         }}
                     >
                         See My Meet&Greets
