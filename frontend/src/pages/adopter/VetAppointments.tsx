@@ -38,6 +38,9 @@ const VetAppointments = () => {
     const [appointmentDetails, setAppointmentDetails] = useState('');
     const [pets, setPets] = useState<petModel[]>([]);
     const [selectedPetID, setSelectedPetID] = useState(0);
+    const [veterinarianCities, setVeterinarianCities] = useState([]);
+    const [selectedCity, setSelectedCity] = useState<string>("");
+
 
     // NOTE: this is the format that MySQL expects
     const formatDateToMySQL = (date: Date) => {
@@ -61,8 +64,8 @@ const VetAppointments = () => {
             const data: appointmentModel[] = await response.json(); 
             setAppointments(data);
         } catch (error) {
-            console.error("There was an error while fetching the applications:", error);
-            toastr.error("There was an internal error while fetching the applications.");
+            console.error("There was an error while fetching the appointments:", error);
+            toastr.error("There was an internal error while fetching the appointments.");
         }
 
         try {
@@ -78,6 +81,26 @@ const VetAppointments = () => {
             } else {
                 const data: veterinarianModel[] = await response.json(); 
                 setVeterinarians(data);
+            }  
+        } catch (error) {
+            console.error("There was an error while fetching all veterinarians:", error);
+            toastr.error("There was an internal error while fetching the veterinarians.");
+        }
+
+        
+        try {
+            const response = await VeterinarianService.getVeterinarianCities();
+
+            if (response.status === 404) {
+                setVeterinarianCities([]);
+                response.text().then((text) => {
+                    toastr.info(text);
+                });
+            } else if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            } else {
+                const data: [] = await response.json(); 
+                setVeterinarianCities(data);
             }  
         } catch (error) {
             console.error("There was an error while fetching all veterinarians:", error);
@@ -99,7 +122,8 @@ const VetAppointments = () => {
     // Function to handle searching for a vet
     const handleSearchVet = async () => {
         try {
-            const response = await VeterinarianService.searchVeterinarian(veterinarian_name, null);
+            const queryCity = selectedCity[0] ? selectedCity[0] : null;
+            const response = await VeterinarianService.searchVeterinarian(veterinarian_name, queryCity);
             if (response.status === 404) {
                 setVeterinarians([]);
                 response.text().then((text) => {
@@ -112,7 +136,7 @@ const VetAppointments = () => {
                 setVeterinarians(data);
             }  
         } catch (error) {
-            console.error("There was an error while fetching the applications:", error);
+            console.error("There was an error while fetching the veterinarians:", error);
             toastr.error("There was an internal error while fetching the veterinarians.");
         }
     };
@@ -124,6 +148,10 @@ const VetAppointments = () => {
 
     const handlePetIDChange = (event: SelectChangeEvent) => {
         setSelectedPetID(parseInt(event.target.value));
+    };
+
+    const handleSelectedCityChange = (event: SelectChangeEvent) => {
+        setSelectedCity(event.target.value);
     };
 
     const handleScheduleAppointment = () => {
@@ -245,9 +273,25 @@ const VetAppointments = () => {
                     type="text"
                     value={veterinarian_name}
                     onChange={(e) => setVeterinarianName(e.target.value)}
-                    placeholder="Search Vet"
-                    sx={{width:'20vw'}}
+                    placeholder="Search Veterinarian"
+                    sx={{width:'20vw', mb: 2}}
                 />
+                <Select
+                sx={{width:'20vw'}}
+                value={selectedCity}
+                label="Veterinarian City"
+                onChange={handleSelectedCityChange}
+                
+            >
+                <MenuItem value="" disabled>
+                    Filter Veterinarian City
+                </MenuItem>
+                {veterinarianCities.map((city, index) => (
+                    <MenuItem key={index} value={city}>
+                        {city}
+                    </MenuItem>
+                ))}
+            </Select>
                 <Button sx={{mt:2}} variant="contained" onClick={handleSearchVet}>
                     Search
                 </Button>
@@ -307,13 +351,14 @@ const VetAppointments = () => {
                         label="Reason for appointment"
                         value={appointmentDetails}
                         onChange={(e) => setAppointmentDetails(e.target.value)}
-                        sx={{ mt: 2, width: '100%' }}
+                        sx={{ mt: 2, width: '60%' }}
                     />
                     <InputLabel>Pet Name</InputLabel>
                     <Select 
                         value={selectedPetID.toString()}
                         label="Pet Name"
                         onChange={handlePetIDChange}
+                        sx={{ mt: 2, width: '60%' }}
                     >
                         {pets.map((pet) => (
                             <MenuItem key={pet.pet_ID} value={pet.pet_ID}>

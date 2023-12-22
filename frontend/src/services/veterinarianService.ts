@@ -10,6 +10,10 @@ export class VeterinarianService {
     static getVeterinarianById(id: string) {
         return fetch(`${VeterinarianService.baseUrl}/veterinarian_id/${id}`);
     }
+
+    static getVeterinarianCities() {
+        return fetch(`${VeterinarianService.baseUrl}/cities`);
+    }
     
     static addVeterinarian(veterinarian: any) {
         console.log(JSON.stringify(veterinarian));

@@ -229,3 +229,24 @@ def delete_veterinarian(user_ID):
     except Exception as e:
         print(e)
         return Response(f'Veterinarian with user_ID {user_ID} could not be deleted with exception {e}', status=500)
+    
+# return the distinct veterinarian cities in the database - GET
+@veterinarian.route('/cities', methods=['GET'])
+def get_cities():
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        # Get distinct cities
+        cursor.execute('''
+            SELECT DISTINCT city
+            FROM Veterinarian
+        ''')
+
+        cities = cursor.fetchall()
+        
+        return jsonify(cities)
+
+    except Exception as e:
+        print(e)
+        return Response(f'Error fetching cities with exception {e}', status=500)
