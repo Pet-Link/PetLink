@@ -31,8 +31,8 @@ const EnterAnimalDetailsPage = () => {
         setBreed(event.target.value);
     };
 
-    const handleSpeciesChange = (event: SelectChangeEvent) => {
-        setSpecies(event.target.value as string);
+    const handleSpeciesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSpecies(event.target.value);
     };
 
     const handleAgeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -189,13 +189,13 @@ const EnterAnimalDetailsPage = () => {
 
                     <FormControl>
                         <FormLabel>Species</FormLabel>
-                        <Select value={species} onChange={handleSpeciesChange}>
-                            <MenuItem value="dog">Dog</MenuItem>
-                            <MenuItem value="cat">Cat</MenuItem>
-                        </Select>
+                        <TextField
+                            label="Enter breed"
+                            value={species}
+                            onChange={handleSpeciesChange}
+                            fullWidth
+                        />
                     </FormControl>
-
-
 
                     <FormControl>
                         <FormLabel>Age</FormLabel>

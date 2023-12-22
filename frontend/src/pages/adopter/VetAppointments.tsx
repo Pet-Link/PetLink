@@ -61,7 +61,8 @@ const VetAppointments = () => {
             if (!response.ok) {
                 throw new Error('Network response was not ok.');
             }
-            const data: appointmentModel[] = await response.json(); 
+            const data: appointmentModel[] = await response.json();
+            console.log(data);
             setAppointments(data);
         } catch (error) {
             console.error("There was an error while fetching the appointments:", error);
@@ -387,6 +388,7 @@ const VetAppointments = () => {
                             <TableCell>Veterinarian Name</TableCell>
                             <TableCell>Pet Name</TableCell>
                             <TableCell>Date</TableCell>
+                            <TableCell>Status</TableCell>
                             <TableCell>Action</TableCell>
                         </TableRow>
                     </TableHead>
@@ -396,6 +398,7 @@ const VetAppointments = () => {
                                 <TableCell>{appointment.veterinarian_name}</TableCell>
                                 <TableCell>{appointment.pet_name}</TableCell>
                                 <TableCell>{appointment.date}</TableCell>
+                                <TableCell>{appointment.approval_status === null ? "Pending" : appointment.approval_status ? "Approved" : "Rejected" }</TableCell>
                                 <TableCell>
                                     <Button
                                         variant="contained"

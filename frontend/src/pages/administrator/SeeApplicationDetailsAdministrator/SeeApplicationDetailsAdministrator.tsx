@@ -111,7 +111,7 @@ const SeeAdoptionApplicationPage = () => {
                     bgcolor: '#C0C304',
                     }
                 }>
-                    Go to Dog Detail Page
+                    Edit Pet Details
                 </Button>
             </Grid>
 

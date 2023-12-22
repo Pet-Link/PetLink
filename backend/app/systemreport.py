@@ -45,7 +45,8 @@ def top_veterinarians():
     except Exception as e:
         return Response(f'Failed to create a system report for top veterinarians\n{e}', status=500)
 
-# Get total (adopted), min and max adoption fees with their pets - GET 
+# Get total (adopted), min and max adoption fees with their pets - GET
+# ULTRA DIAMOND COMPLEX QUERY EXAMPLE
 @systemreport.route('/adoption-fees-summary', methods=['GET'])
 def adoption_fees_summary():
     try:
@@ -149,6 +150,7 @@ def top_adopters():
         return Response(f'Failed to fetch top adopters\n{e}', status=500)
 
 # Get breeds that were the most adopted - GET 
+# GROUP QUERY EXAMPLE
 @systemreport.route('/top-adopted-breeds', methods=['GET'])
 def top_adopted_breeds():
     try:

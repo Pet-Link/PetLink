@@ -202,10 +202,10 @@ const ManageAppointmentsVet: React.FC = () => {
                                 <TableCell>Pet Breed</TableCell>
                                 <TableCell>Pet Species</TableCell>
                                 <TableCell>Details</TableCell>
-                                <TableCell>Date</TableCell>
-                                <TableCell>Time</TableCell>
+                                <TableCell>Date and Time</TableCell>
                                 <TableCell>Status</TableCell>
                                 <TableCell>Actions</TableCell>
+                                <TableCell></TableCell>
                                 <TableCell></TableCell>
                             </TableRow>
                         </TableHead>

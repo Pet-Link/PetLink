@@ -595,6 +595,7 @@ def filter_pets_by_shelter(shelter_ID, adopted):
         return Response(f'Error filtering pets with exception {e}', status=500)
     
 # Search pets by name - PUT
+# COMPLEX LIKE QUERY EXAMPLE
 @pet.route('/search/<int:adopted>', methods=['PUT']) # 0 = unadopted, 1 = all pets except the ones added by the adopter
 def search_pet_name(adopted):
     try:

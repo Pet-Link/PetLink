@@ -126,6 +126,7 @@ def get_all_veterinarians():
         return Response(f'Veterinarians could not be fetched with exception {e}', status=500)
 
 # Search and filter Veterinarians - PUT
+# COMPLEX LIKE QUERY EXAMPLE
 @veterinarian.route('/search', methods=['PUT'])
 def search_veterinarians():
     try:

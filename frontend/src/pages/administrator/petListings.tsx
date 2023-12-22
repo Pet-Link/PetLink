@@ -387,7 +387,7 @@ const PetListings: React.FC = () => {
             </Grid>
 
             <Typography variant="h5" align="center" style={{fontWeight: "bold", marginTop: 25}}>
-                All the Pets Available in the PetLink
+                All the Pets Available in the PetLink Added by Shelters
             </Typography>
             <Grid container justifyContent="center" spacing={2} style={{ marginTop: 20 }}>
                 <TableContainer component={Box}>
@@ -418,16 +418,18 @@ const PetListings: React.FC = () => {
                                     <TableCell>{pet.neutered_status ? 'Neutered' : 'Not Neutered'}</TableCell>
                                     <TableCell>{pet.adoption_fee} $</TableCell>
                                     <TableCell>{pet.adoption_status ? 'Adopted' : 'Not Adopted'}</TableCell>
-                                    <TableCell>
-                                        <Button
-                                            variant="contained"
-                                            color="secondary"
-                                            style={{ backgroundColor: "orange", height: "25%" }}
-                                            onClick={() => handleManageListing(pet.pet_ID || 0)}
-                                        >
-                                            Manage Listing
-                                        </Button>
-                                    </TableCell>
+                                    {!pet.adoption_status && (
+                                        <TableCell>
+                                            <Button
+                                                variant="contained"
+                                                color="secondary"
+                                                style={{ backgroundColor: "orange", height: "25%" }}
+                                                onClick={() => handleManageListing(pet.pet_ID || 0)}
+                                            >
+                                                Manage Listing
+                                            </Button>
+                                        </TableCell>
+                                    )}
                                 </TableRow>
                             ))}
                         </TableBody>
