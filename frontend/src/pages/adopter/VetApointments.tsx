@@ -44,8 +44,11 @@ const VetAppointments = () => {
     useEffect(() => {
         fetchAppointments();
     }, []);
-    
 
+    const handleModalOpen = () => {
+        setIsModalOpen(true);
+    }
+    
     // Function to handle searching for a vet
     const handleSearchVet = () => {
         // Perform search logic here
@@ -122,7 +125,7 @@ const VetAppointments = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Vet Name</TableCell>
+                            <TableCell>Vet ID</TableCell>
                             <TableCell>Address</TableCell>
                             <TableCell>Speciality</TableCell>
                             <TableCell>Years Of Experience</TableCell>
@@ -130,20 +133,19 @@ const VetAppointments = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {/*appointments.map((appointment) => (
+                        {/*vets.map((vet) => (
                             <TableRow key={appointment.id}>
-                                <TableCell>{appointment.vetName}</TableCell>
-                                <TableCell>{appointment.date}</TableCell>
-                                <TableCell>{appointment.time}</TableCell>
+                                <TableCell>{vet.user_ID}</TableCell>
+                                <TableCell>{vet.street + ' ' + vet.district + ' ' + vet.city}</TableCell>
+                                <TableCell>{vet.speciality}</TableCell>
                                 <TableCell>
                                     <Button
                                         variant="contained"
-                                        onClick={() => handleScheduleAppointment(appointment.vetId)}
+                                        onClick={handleModalOpen}
                                     >
                                         Schedule
                                     </Button>
                                 </TableCell>
-                                <TableCell><Button>Schedule Appointment</Button></TableCell>
                             </TableRow>
                         ))*/}
                     </TableBody>
