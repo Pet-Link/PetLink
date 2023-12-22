@@ -156,15 +156,6 @@ const HomeAdopter = () => {
         );
     }
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         await fetchPets();
-    //     };
-    //     fetchData();
-    //     populateBreedDropdown();
-    //     populateSpeciesDropdown();
-    // }, []);
-
     const handleDetails = (pet_ID: number) => {
         navigate('/adopter/pet-details', { state: { pet_ID: pet_ID } });
     };
@@ -181,17 +172,24 @@ const HomeAdopter = () => {
     , []);
 
     const handleSearch = () => {
-        const query = searchQuery.toLowerCase();
-        const filteredData = petData.filter(pet => {            
-            if (pet.shelter_name !== null) {
-                return pet.name.toLowerCase().includes(query) || 
-                pet.shelter_name.toLowerCase().includes(query)
+        if (searchQuery === '') {
+            fetchPets();
+        }
+        // Filter the data
+        PetService.searchPetsbyName("0", searchQuery).then(async (response) => {
+            if (response.status === 404) {
+                setFilteredPetData([]);
+                response.text().then((text) => {
+                    toastr.info(text);
+                });
+            } else if (!response.ok) {
+                throw new Error('Network response was not ok.');
             } else {
-                return pet.name.toLowerCase().includes(query)
-            }
+                const data: petModel[] = await response.json(); 
+                setFilteredPetData(data);
+            }  
         }
         );
-        setFilteredPetData(filteredData);
     };  
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -383,7 +381,7 @@ const HomeAdopter = () => {
                 </Modal>
                 <Grid item xs={12} sm={6}>
                     <TextField 
-                        label="Search Animals by Shelter Name or Pet Name..." 
+                        label="Search Animals by Pet Name" 
                         variant="outlined" 
                         fullWidth 
                         value={searchQuery}

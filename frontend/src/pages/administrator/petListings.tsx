@@ -169,12 +169,24 @@ const PetListings: React.FC = () => {
     , []);
 
     const handleSearch = () => {
-        const query = searchQuery.toLowerCase();
-        const filteredData = petData.filter(pet => {   
-            return pet.name.toLowerCase().includes(query)
+        if (searchQuery === '') {
+            fetchPets();
+        }
+        // Filter the data
+        PetService.searchPetsbyName("1", searchQuery).then(async (response) => {
+            if (response.status === 404) {
+                setFilteredPetData([]);
+                response.text().then((text) => {
+                    toastr.info(text);
+                });
+            } else if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            } else {
+                const data: petModel[] = await response.json(); 
+                setFilteredPetData(data);
+            }  
         }
         );
-        setFilteredPetData(filteredData);
     };  
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -358,7 +370,7 @@ const PetListings: React.FC = () => {
                 </Modal>
                 <Grid item xs={12} sm={6}>
                     <TextField 
-                        label="Search Animals by Their Name..." 
+                        label="Search Animals by Their Name" 
                         variant="outlined" 
                         fullWidth 
                         value={searchQuery}

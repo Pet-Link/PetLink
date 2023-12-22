@@ -172,12 +172,29 @@ const HomeShelter = () => {
     , []);
 
     const handleSearch = () => {
-        const query = searchQuery.toLowerCase();
-        const filteredData = petData.filter(pet => {   
-            return pet.name.toLowerCase().includes(query)
+        if (searchQuery === '') {
+            fetchPets();
         }
-        );
-        setFilteredPetData(filteredData);
+        // Filter the data
+        var shelter_ID = localStorage.getItem('user_ID');
+        if (shelter_ID !== null) {
+            PetService.searchPetsbyNameAndShelter(shelter_ID, "1", searchQuery).then(async (response) => {
+                if (response.status === 404) {
+                    setFilteredPetData([]);
+                    response.text().then((text) => {
+                        toastr.info(text);
+                    });
+                } else if (!response.ok) {
+                    throw new Error('Network response was not ok.');
+                } else {
+                    const data: petModel[] = await response.json(); 
+                    setFilteredPetData(data);
+                }  
+            }
+            );
+        } else {
+            toastr.error("Please login to filter pets!");
+        }
     };  
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

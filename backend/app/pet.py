@@ -427,7 +427,7 @@ def get_pet_shelter(pet_ID):
         print(e)
         return Response(f'Pet with pet_ID {pet_ID} could not be fetched with exception {e}', status=500)
     
-@pet.route('/filter/<int:adopted>', methods=['PUT']) # 0 = unadopted, 1 = all pets
+@pet.route('/filter/<int:adopted>', methods=['PUT']) # 0 = unadopted, 1 = all pets except the ones added by the adopter
 def filter_pets(adopted):
     try:
         data = request.get_json()
@@ -511,7 +511,7 @@ def filter_pets(adopted):
         return Response(f'Error filtering pets with exception {e}', status=500)
     
 # filter the pets of a shelter
-@pet.route('/filter-by-shelter/<int:shelter_ID>/<int:adopted>', methods=['PUT']) # 0 = unadopted, 1 = all pets
+@pet.route('/filter-by-shelter/<int:shelter_ID>/<int:adopted>', methods=['PUT']) # 0 = unadopted, 1 = all pets 
 def filter_pets_by_shelter(shelter_ID, adopted):
     try:
         data = request.get_json()
@@ -593,3 +593,65 @@ def filter_pets_by_shelter(shelter_ID, adopted):
     except Exception as e:
         print(e)
         return Response(f'Error filtering pets with exception {e}', status=500)
+    
+# Search pets by name - PUT
+@pet.route('/search/<int:adopted>', methods=['PUT']) # 0 = unadopted, 1 = all pets except the ones added by the adopter
+def search_pet_name(adopted):
+    try:
+        # Get query parameters for name and city
+        data = request.get_json()
+        name = data['name']
+        
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM Pet_Shelter_Details_View WHERE name LIKE %s"
+        params = (f"%{name}%",) # wildcards
+        
+        if adopted == 0:
+            query += " AND adoption_status = 0"
+            
+        cursor.execute(query, params)
+        pets = cursor.fetchall()
+        
+        if not pets:
+            return Response(f'No pets found with the given filters', status=404)
+
+        # Convert pets to a list of dictionaries to return as JSON
+        pets = [dict(zip([key[0] for key in cursor.description], pet)) for pet in pets]
+        return jsonify(pets)
+    
+    except Exception as e:
+        return Response(f'Error while searching pets: {e}', status=500)
+    
+# Search pets by name from shelters  - PUT
+@pet.route('/search/<int:shelter_ID>/<int:adopted>', methods=['PUT']) # 0 = unadopted, 1 = all pets of the shelter
+def search_pet_name_by_shelters(shelter_ID, adopted):
+    try:
+        # Get query parameters for name and city
+        data = request.get_json()
+        name = data['name']
+        
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM Pet_Shelter_Details_View WHERE name LIKE %s"
+        params = (f"%{name}%",) # wildcards
+        
+        if adopted == 0:
+            query += " AND adoption_status = 0"
+        
+        query += " AND shelter_ID = {0}".format(shelter_ID)
+            
+        cursor.execute(query, params)
+        pets = cursor.fetchall()
+        
+        if not pets:
+            return Response(f'No pets found with the given filters', status=404)
+
+        # Convert pets to a list of dictionaries to return as JSON
+        pets = [dict(zip([key[0] for key in cursor.description], pet)) for pet in pets]
+        return jsonify(pets)
+    
+    except Exception as e:
+        return Response(f'Error while searching pets: {e}', status=500)

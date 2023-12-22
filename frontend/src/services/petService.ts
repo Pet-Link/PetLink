@@ -96,4 +96,20 @@ export class PetService {
   static getDetailsOfAdopterPet(pet_ID: string) {
     return fetch(`${PetService.baseUrl}/adopter-pet/${pet_ID}`);
   }
+
+  static searchPetsbyName(adopted: string, name: string) {
+    return fetch(`${PetService.baseUrl}/search/${adopted}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({name}),
+    });
+  }
+
+  static searchPetsbyNameAndShelter(shelter_ID: string, adopted: string, name: string) {
+    return fetch(`${PetService.baseUrl}/search/${shelter_ID}/${adopted}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({name}),
+    });
+  }
 }
