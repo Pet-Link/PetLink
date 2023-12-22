@@ -113,7 +113,12 @@ def delete_post(post_id):
 def get_all_replies(post_id):
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute('SELECT * FROM Reply WHERE post_ID = %s', (post_id,))
+    cursor.execute("""SELECT r.*, u.name AS replier_name 
+                   FROM Reply r 
+                   JOIN User u ON u.user_ID = r.replier_ID 
+                   WHERE r.post_ID = %s 
+                   ORDER BY r.date DESC
+                   """, (post_id,))
     replies = cursor.fetchall()
     # convert replies into dictionary with keys
     replies = [dict(zip([key[0] for key in cursor.description], reply)) for reply in replies]
@@ -137,7 +142,7 @@ def delete_all_replies(post_id):
 def get_all_posts_with_name():
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute('SELECT * from PostWithPosterName')
+    cursor.execute('SELECT * from Detailed_Post_View')
     posts = cursor.fetchall()
     # convert posts into dictionary with keys
     posts = [dict(zip([key[0] for key in cursor.description], post)) for post in posts]
@@ -151,7 +156,7 @@ def get_all_posts_with_name():
 def get_post_with_name(post_id):
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute('SELECT * from PostWithPosterName WHERE post_ID = %s', (post_id,))
+    cursor.execute('SELECT * from Detailed_Post_View WHERE post_ID = %s', (post_id,))
     post = cursor.fetchone()
 
     if post is None:

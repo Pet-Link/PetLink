@@ -31,25 +31,70 @@ const Forum = () => {
     const [posts, setPosts] = useState<postModel[]>([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [newPost, setNewPost] = useState({ title: '', content: '' });
-    const [reply, setReply] = useState({ content: '' });
+    const [newReply, setNewReply] = useState({ post_ID: 0, content: '' });
     const [replies, setReplies] = useState<replyModel[]>([]);
     const [openReply, setOpenReply] = useState(false);
+    const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 
-    const handleDialogOpen = () => {
-        setOpenDialog(true);
+    const fetchPosts = async () => {
+        try {
+            const response = await forumService.getAllPosts();
+            if (response.status === 404) {
+                setPosts([]);
+                response.text().then((text) => {
+                    toastr.info(text);
+                });
+            } else if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            } else {
+                const data: postModel[] = await response.json();
+                setPosts(data);
+            }
+        } catch (error) {
+            toastr.error('Internal error fetching posts.');
+            console.error('Error:', error);
+        }  
+
+    }
+
+    const fetchRepliesForPost = async (post_ID: number) => {
+        try {
+            const response = await forumService.getAllRepliesForAPost(post_ID);
+            if (response.status === 404) {
+                setReplies([]);
+                response.text().then((text) => {
+                    toastr.info(text);
+                });
+            } else if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            } else {
+                const data: replyModel[] = await response.json();
+                setReplies(data);
+            }
+        } catch (error) {
+            toastr.error('Internal error fetching replies.');
+            console.error('Error:', error);
+        }  
+    }
+
+    useEffect(() => {
+        fetchPosts();
+    }
+    , []);
+
+    const handlePostClick = async (post_ID: number) => {
+        setSelectedPostId(selectedPostId === post_ID ? null : post_ID); // when a selected post is clicked again, its replies are collapsed
+        fetchRepliesForPost(post_ID);
     };
 
-    const handleDialogClose = () => {
-        setOpenDialog(false);
-    };
     const handleCreatePost = () => {
         // Create a new post object
         const newPostObject: postModel = {
             title: newPost.title,
             content: newPost.content,
             post_date: '',
-            poster_ID: (parseInt(localStorage.getItem('user_ID') || '0')).toString(),
-            post_ID: "0",
+            poster_ID: parseInt(localStorage.getItem('user_ID') || '0'),
+            post_ID: 0,
         };
         if (parseInt(localStorage.getItem('user_ID') || '0') === 0) {
             toastr.error("You must be logged in to create a post!");
@@ -59,19 +104,7 @@ const Forum = () => {
         forumService.createPost(newPostObject).then((response) => {
             if (response.ok) {
                 toastr.success('Post created successfully!');
-                // If the post was created successfully, fetch the posts again
-                // forumService.getAllPosts().then((response) => {     
-
-                //     if (response.ok) {
-                //     response.json().then((data) => {
-                //         setPosts(data);
-                //     });
-
-                //     
-                //     
-                //     }
-                // });
-                setPosts((prev) => [...prev, newPostObject]);
+                fetchPosts();
                 setOpenDialog(false);
                 setNewPost({ title: '', content: '' });
             } else {
@@ -85,75 +118,28 @@ const Forum = () => {
         });
     };
 
-    useEffect(() => {
-        handleFetch();
-    }
-    , []);
-    
 
-    const handleFetch = () => {
-        forumService.getAllPosts().then((response) => {
-            if (response.ok) {
-                response.json().then((data) => {
-                    setPosts(data);
-                });
-            }
-            }
-
-        );
-    
-        //reply fetch edilecek
-        /*posts.map((post) => {
-            forumService.getAllRepliesForAPost(post.post_ID).then((response) => {
-                console.log(response);
-                if (response.ok) {
-                    response.json().then((data) => {
-                        setReplies(data);
-                    });
-                }
-                });    
-        });*/
-    }
-
-    const handleOpenReply = () => {
-        setOpenReply(true);
-    }   
-
-    const handleCloseReply = () => {
-        setOpenReply(false);
-    }
-
-    const handleReply = () => {
-        const newReplyObject: replyModel = {
-            content: reply.content,
-            replier_ID: (parseInt(localStorage.getItem('user_ID') || '0')),
-            post_ID: 1,
-            expert_verify_status: localStorage.getItem('user_role') === 'veterinarian' ? true : false,
-            date: new Date(),
-            discriminator_ID: 0,
-        };
+    const handleCreateReply = () => {
         if (parseInt(localStorage.getItem('user_ID') || '0') === 0) {
-            toastr.error("You must be logged in to create a post!");
+            toastr.error("You must be logged in to create a reply!");
             return;
         }
+
+        const newReplyObject: replyModel = {
+            content: newReply.content,
+            replier_ID: (parseInt(localStorage.getItem('user_ID') || '0')),
+            post_ID: newReply.post_ID,
+            expert_verify_status: localStorage.getItem('user_role') === 'veterinarian' ? true : false,
+            date: new Date(),
+        };
+
         forumService.createReply(newReplyObject).then((response) => {
             if (response.ok) {
                 toastr.success('Reply created successfully!');
-                // If the post was created successfully, fetch the posts again
-                // forumService.getAllPosts().then((response) => {     
-
-                //     if (response.ok) {
-                //     response.json().then((data) => {
-                //         setPosts(data);
-                //     });
-
-                //     
-                //     
-                //     }
-                // });
-                setReplies((prev) => [...prev, newReplyObject]);
-                setOpenDialog(false);
-                setNewPost({ title: '', content: '' });
+                if (selectedPostId) {
+                    fetchRepliesForPost(selectedPostId);
+                }
+                setOpenReply(false);
             } else {
                 response.text().then((data) => {
                     toastr.error("Reply creation failed with error: " + data);
@@ -165,6 +151,31 @@ const Forum = () => {
         });
 
     }
+
+    const handleShareClick = (postContent: string) => {
+        navigator.clipboard.writeText(postContent).then(() => {
+          toastr.success('Content copied to clipboard!');
+        }, (err) => {
+          toastr.error('Could not copy text: ', err);
+        });
+    };
+   
+    const handleOpenReply = (post_ID: number) => {
+        setNewReply((prev) => ({ ...prev, post_ID: post_ID}))
+        setOpenReply(true);
+    }   
+
+    const handleCloseReply = () => {
+        setOpenReply(false);
+    }
+
+    const handleDialogOpen = () => {
+        setOpenDialog(true);
+    };
+
+    const handleDialogClose = () => {
+        setOpenDialog(false);
+    };
 
     return (
         <div>
@@ -179,29 +190,43 @@ const Forum = () => {
                 <Grid>
                     {posts.map((post) => (
                         <Card key={post.post_ID} sx={{ mb: 2, width: '50vw' }}>
-                            <CardContent>
+                            <CardContent onClick={() => handlePostClick(post.post_ID)}>
                                 <Typography variant="h6">{post.title}</Typography>
                                 <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                                     Posted by {post.poster_name} {post.post_date}
                                 </Typography>
                                 <Typography paragraph>{post.content}</Typography>
+                                <Typography variant="subtitle2" >
+                                    {post.reply_count} Replies
+                                </Typography>
                             </CardContent>
-                            <Divider />
-                            <CardContent>
-                                <Typography>Replies</Typography>
-                                {replies.map((reply) => (
-                                    <div key={reply.discriminator_ID}>
-                                        <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                                            Expert verify status: {(reply.expert_verify_status === true ? 'Expert Answer ' : 'Not expert ')}{reply.date.toString()}
+                            {selectedPostId === post.post_ID && (
+                            <div> 
+                                <Divider />
+                                <CardContent>
+                                    <Typography>Replies</Typography>
+                                    {replies.map((reply) => (<CardContent style={{ background: reply.expert_verify_status ? '#e8f5e9' : '' }} >
+                                        <div key={reply.discriminator_ID}>
+                                        <Typography variant="subtitle2" gutterBottom>
+                                            {reply.expert_verify_status ? (
+                                                <>
+                                                    <strong>Veterinarian Answer</strong>
+                                                    <br />
+                                                </>
+                                            ) : null}
+                                            Replied by {reply.replier_name}{' '}
+                                            {reply.date.toString()}
                                         </Typography>
-                                        <Typography paragraph>{reply.content}</Typography>
-                                    </div>
-                                ))}
-                            </CardContent>
-                            <Divider />
+                                            <Typography paragraph>{reply.content}</Typography>
+                                        </div>  </CardContent>
+                                    ))}
+                                </CardContent>
+                                <Divider />
+                            </div>
+                            )}
                             <CardActions>
-                                <Button startIcon={<Share />} size="small">Share</Button>
-                                <Button startIcon={<ChatBubbleOutline />} onClick={handleOpenReply} size="small">Reply</Button>
+                                <Button startIcon={<Share />} size="small" onClick={() => handleShareClick(`${post.title}  \n${post.content}`)} >Share</Button>
+                                <Button startIcon={<ChatBubbleOutline />} onClick={() => handleOpenReply(post.post_ID)} size="small">Reply</Button>
                             </CardActions>
                         </Card>
                     ))}
@@ -215,13 +240,13 @@ const Forum = () => {
                         multiline
                         rows={4}
                         label="Content"
-                        value={reply.content}
-                        onChange={(e) => setReply((prev) => ({ ...prev, content: e.target.value }))}              
+                        value={newReply.content}
+                        onChange={(e) => setNewReply((prev) => ({ ...prev, content: e.target.value }))}              
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseReply}>Cancel</Button>
-                    <Button onClick={handleReply} variant="contained" color="primary">
+                    <Button onClick={handleCreateReply} variant="contained" color="primary">
                         Reply
                     </Button>
                 </DialogActions>
@@ -230,9 +255,6 @@ const Forum = () => {
                 <Button variant="contained" color="secondary" onClick={handleDialogOpen}>
                     Create Post
                 </Button>
-                {/* <Button variant="contained" color="secondary" onClick={handleFetch}>
-                    Fetch Forum
-                </Button> */}
             </div>
             <Dialog open={openDialog} onClose={handleDialogClose}>
                 <DialogTitle>Create a New Post</DialogTitle>

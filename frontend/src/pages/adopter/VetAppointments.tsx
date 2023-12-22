@@ -166,7 +166,7 @@ const VetAppointments = () => {
                     </Typography>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
-                            label="Schedule Meet & Greet"
+                            label="Schedule Appointment"
                             value={selectedDate}
                             onChange={handleScheduleAppointment}
                         />
