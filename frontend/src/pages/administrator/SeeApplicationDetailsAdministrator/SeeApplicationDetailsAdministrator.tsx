@@ -98,22 +98,19 @@ const SeeAdoptionApplicationPage = () => {
         <Grid container spacing={2} style={{maxWidth: '700px', margin: 'auto', marginTop: '35px', textAlign: 'center'}}>
             <Grid item xs={12}>
                 <Typography variant="h4" align="center" gutterBottom>
-                    Requested pet:
+                    Requested pet: {application?.pet_name || ''} from {application?.shelter_name || ''}
                 </Typography>
-                <img
-                    src={`./HomePageAnimals/dog-1.png`}
-                    style={{width: '350px', height: 'auto', borderRadius: 15}}
-                />
             </Grid>
             <Grid item xs={12}>
-                <Button variant="contained" color="secondary" sx={{
+                <Button variant="contained" color="secondary" onClick={() => navigate('/administrator/edit-pet-details',  { state: { adopter_ID: adopter_ID, pet_ID: pet_ID } })} sx={{
                     marginLeft: 5,
                     width: 200,
                     height: 50,
                     marginBottom: '20px',
                     alignItems: 'center',
-                    bgcolor: '#C0C304'
-                }}>
+                    bgcolor: '#C0C304',
+                    }
+                }>
                     Go to Dog Detail Page
                 </Button>
             </Grid>
