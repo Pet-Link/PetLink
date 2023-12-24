@@ -28,6 +28,7 @@ __pycache__/
 # C extensions
 *.so
 
+frontend/Docs/
 # Distribution / packaging
 .Python
 build/

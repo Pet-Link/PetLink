@@ -4,11 +4,11 @@ from email.mime.multipart import MIMEMultipart
 
 def send_email(verification_code, e_mail):
     # Email credentials
-    username = 'petlink011@gmail.com'
-    password = 'onho tsfu yncj ymmb'
+    username = ''
+    password = ''
 
     # Email content
-    sender_email = 'petlink011@gmail.com'
+    sender_email = ''
     receiver_email = e_mail
     subject = 'Your PetLink Verification Code!'
     body = f"Your verification code is: {verification_code}"
